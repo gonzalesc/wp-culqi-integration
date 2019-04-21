@@ -1,0 +1,58 @@
+#culqi_payments_basic .handlediv,
+#culqi_payments_basic .hndle,
+#culqi_payments_source .handlediv,
+#culqi_payments_source .hndle {
+	display: none;
+}
+
+#culqi_payments_basic .culqi_payments_h2 {
+	margin: 0;
+	font-size: 21px;
+	font-weight: 400;
+	line-height: 1.2;
+	text-shadow: 1px 1px 1px #fff;
+	padding: 0;
+}
+
+#culqi_payments_basic .culqi_payments_h3 {
+	color: #333;
+    margin: 1.33em 0 0;
+    font-size: 14px;
+}
+
+#culqi_payments_basic .culqi_payments_subh2 {
+	margin: 0;
+	font-weight: 400;
+	line-height: 1.6em;
+	font-size: 16px;
+	color: #777;
+}
+
+.culqi_data_column_container {
+	clear: both;
+}
+
+.culqi_data_column_container .culqi_data_column {
+	width: 50%;
+	float: left;
+}
+
+.plan_msg {
+	background-color: #EEE;
+	padding: 5px 20px;
+	font-weight: bold;
+	text-align: left;
+	color: #0073aa;
+}
+
+
+.culqi_data_column_container label {
+	display: block;
+	font-weight: bold;
+}
+
+.culqi_data_column_container input,
+.culqi_data_column_container select {
+	height: 32px;
+	width: 50%;
+}

@@ -1,0 +1,51 @@
+<?php
+class FullCulqi_Provider {
+
+	/**
+	* Payments List
+	* @return ARRAY $output 
+	*/
+	static public function list_payments($last_records = 100) {
+		global $culqi;
+
+		// Validate $culqi global
+		if( ! $culqi )
+			return array( 'status' => 'error', 'msg' => __('There is not Culqi credentials', 'letsgo') );
+
+		// Connect to the API Culqi
+		try {
+			$payments = $culqi->Charges->all( array( 'limit' => $last_records ) );
+
+			if( isset($payments->data) && count($payments->data) > 0 )
+				$output = array('status' => 'ok', 'data' => $payments->data );
+			else
+				$output = array('status' => 'error', 'msg' => $payments->merchant_message );
+
+		} catch(Exception $e) {
+			$output = array('status' => 'error', 'msg' => $e->getMessage() );
+		}
+
+		return $output;
+	}
+
+
+	static public function create_payment($args) {
+		global $culqi;
+
+		try {
+			$payment = $culqi->Charges->create($args);
+
+			if( isset($payment->object) && $payment->object != 'error' )
+				$output = array('status' => 'ok', 'data' => $payment );
+			else
+				$output = array('status' => 'error', 'msg' => $payment->merchant_message );
+
+		} catch(Exception $e) {
+			$output = array('status' => 'error', 'msg' => $e->getMessage() );
+		}
+
+		return $output;
+	}
+
+}
+?>

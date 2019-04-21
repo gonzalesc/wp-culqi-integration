@@ -1,0 +1,165 @@
+<?php
+
+if( !function_exists('fullculqi_get_settings') ) {
+	function fullculqi_get_settings() {
+
+		$settings = get_option( 'fullculqi_options', array() );
+		$settings = wp_parse_args( $settings, fullculqi_get_default() );
+
+		return apply_filters('fullculqi/global/get_settings', $settings);
+	}
+}
+
+
+if( !function_exists('fullculqi_get_default') ) {
+	function fullculqi_get_default() {
+		$default = [
+					'commerce'			=> '',
+					'public_key'		=> '',
+					'secret_key'		=> '',
+					'woo_payment'		=> 'no',
+				];
+
+		return apply_filters('fullculqi/global/get_default', $default);
+	}
+}
+
+
+if( !function_exists('fullculqi_get_woo_settings') ) {
+	function fullculqi_get_woo_settings() {
+
+		$settings = fullculqi_get_settings();
+
+		if( $settings['woo_payment'] != 'yes' )
+			return array();
+
+		$method_string = get_option('woocommerce_fullculqi_settings');
+
+		if( !$method_string )
+			return array();
+
+		$method_array = maybe_unserialize($method_string);
+
+		return apply_filters('fullculqi/global/get_woo_settings', $method_array);
+	}
+}
+
+
+if( !function_exists('fullculqi_get_currencies') ) {
+	function fullculqi_get_currencies($type = 'name') {
+
+		switch($type) {
+			case 'symbol' : 
+					$output = array(
+									'PEN' => 'S/.',
+									'USD' => '$',
+								);
+					break;
+			default :
+					$output = array(
+									'PEN' => __('Peruvian Sol','letsgo'),
+									'USD' => __('Dollars','letsgo'),
+								);
+						break;
+		}
+		
+		return apply_filters('fullculqi/global/get_currencies', $output);
+	}
+}
+
+
+
+if( !function_exists('fullculqi_get_current_user_id') ) {
+	function fullculqi_get_current_user_id($email = null) {
+		
+		if( is_user_logged_in() )
+			return get_current_user_id();
+			
+		if( $email != null ) {
+			$user = get_user_by('email', $email);
+
+			if( $user != false )
+				return $user->ID;
+		}
+
+		return false;
+	}
+}
+
+
+if( !function_exists('fullculqi_format_price') ) {
+	function fullculqi_format_price($amount = 0, $currency = 'PEN') {
+		$symbols = fullculqi_get_currencies('symbol');
+
+		$output = $symbols[$currency].' '.number_format($amount, 2);
+
+		return apply_filters('fullculqi/global/format_price', $output, $amount, $currency);
+	}
+}
+
+
+if( !function_exists('fullculqi_postid_from_meta') ) {
+
+	function fullculqi_postid_from_meta($meta_key = null, $meta_value = null) {
+		if( empty($meta_key) || empty($meta_value) )
+			return 0;
+		
+		global $wpdb;
+
+		$key_meta_key = md5($meta_key);
+		$key_meta_value = md5($meta_value);
+		$key_postid_from_meta = 'fullculqi_postid_'.$key_meta_key.'_'.$key_meta_value;
+
+		$post_id = wp_cache_get( $key_postid_from_meta );
+		
+		if ( false === $post_id ) {
+
+			$query = $wpdb->prepare('SELECT
+										post_id
+									FROM
+										'.$wpdb->postmeta.'
+									WHERE
+										meta_key=%s && meta_value=%s'
+								,
+								$meta_key,
+								$meta_value
+							);
+
+			$post_id = $wpdb->get_var($query);
+
+			wp_cache_set( $key_postid_from_meta, $post_id );
+		}
+
+		return $post_id;
+	}
+}
+
+
+if( !function_exists('fullculqi_get_template') ) {
+
+	function fullculqi_get_template( $template_name, $args = array(), $template_path = '' ) {
+
+		if ( ! empty( $args ) && is_array( $args ) ) {
+			extract( $args );
+		}
+
+		if( $template_path != '' )
+			$located = trailingslashit($template_path) . $template_name;
+		else
+			$located = FULLCULQI_PLUGIN_DIR . $template_name;
+		
+		// Allow 3rd party plugin filter template file from their plugin.
+		$located = apply_filters( 'fullculqi/global/located', $located, $args);
+
+		if( ! file_exists( $located ) ) {
+			printf(__('File %s is not exists','letsgo'), $located);
+			return;
+		}
+
+		do_action( 'fullculqi/template/before', $located, $args );
+
+		include $located;
+
+		do_action( 'fullculqi/template/after', $located, $args );
+	}
+}

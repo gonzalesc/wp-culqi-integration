@@ -1,0 +1,13 @@
+{
+    "name": "letsgodev/woocommerce-integration-culqi",
+    "type": "Woocommerce Plugin",
+    "require": {
+        "culqi/culqi-php": "1.3.4"
+    },
+    "authors": [
+        {
+            "name": "Lets Go Dev",
+            "email": "support@letsgodev.com"
+        }
+    ]
+}
