@@ -1,16 +1,2 @@
-2019-02-01 - version 1.1.0
-* Feature : New shortcode to consult the address
-
-
-2019-01-27 - version 1.0.3
-* Fix : New hook "shiparea/checkout/vars" for the restriction of countries in the autocomplete field
-
-2019-01-11 - version 1.0.2
-* Bug : message about minimum price doesnt must appear when choose other shipping method
-* Bug : message about "avoid purchase" doesnt must appear when choose other shipping method
-
-2019-01-09 - version 1.0.1
-* Bug : count post in the functions.php
-
-2019-01-02 - version 1.0.0
+2019-04-22 - version 1.0.0
 * Ready
