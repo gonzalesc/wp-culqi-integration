@@ -7,6 +7,7 @@ class FullCulqi_Ajax {
 		add_action('wp_ajax_nopriv_fullculqi', [ $this, 'do_payment']);
 
 		add_action('wp_ajax_fullculqi_get_payments', [ $this, 'get_payments'] );
+		add_action('wp_ajax_fullculqi_delete_all', [$this, 'delete_all'] );
 	}
 
 
@@ -128,6 +129,39 @@ class FullCulqi_Ajax {
 
 		$output = FullCulqi_Payments::sync_posts($_POST['last_records']);
 		wp_send_json($output);
+	}
+
+
+	public function delete_all() {
+		global $wpdb;
+
+		if( !wp_verify_nonce( $_POST['wpnonce'], 'fullculqi-wpnonce' ) )
+			wp_send_json( array('status' => 'error', 'msg' => __('Busted!','letsgo') ));
+
+		$cpt = esc_html($_POST['cpt']);
+
+		if( in_array($cpt, fullculqi_get_cpts() ) ) {
+
+			$sql = $wpdb->prepare('DELETE a, b, c
+						FROM '.$wpdb->posts.' a
+						LEFT JOIN '.$wpdb->term_relationships.' b
+						ON (a.ID = b.object_id)
+						LEFT JOIN '.$wpdb->postmeta.' c
+						ON (a.ID = c.post_id)
+						WHERE a.post_type = "%s"', $cpt);
+
+			$wpdb->query($sql);
+
+			do_action('fullculqi/delete_all', $_POST);
+
+			wp_send_json(array('status' => 'ok'));
+		}
+
+		wp_send_json(array(
+						'status'	=> 'error',
+						'msg'		=> sprintf(__('%s is not a Fullculqi CPT','letsgo'), $cpt)
+					)
+				);
 	}
 }
 ?>

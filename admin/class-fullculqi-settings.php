@@ -13,20 +13,27 @@ class FullCulqi_Settings {
 	public function enqueue_scripts() {
 		$screen = get_current_screen();
 
-		if( !isset($screen->base) || $screen->base != 'culqi-full-integration_page_fullculqi_settings' )
+		if( !isset($screen->base) ||
+			( $screen->base != 'culqi-full-integration_page_fullculqi_settings' &&
+			$screen->base != 'dashboard_page_fullculqi-welcome' ) )
 			return;
 
 		wp_enqueue_script( 'fullculqi-js', FULLCULQI_PLUGIN_URL . 'admin/assets/js/fullculqi_admin.js', [ 'jquery' ], false, true );
 
 		wp_localize_script( 'fullculqi-js', 'fullculqi',
 			[
-				'url_ajax'		=> admin_url('admin-ajax.php'),
-				'url_loading'	=> admin_url('images/spinner.gif'),
-				'url_success'	=> admin_url('images/yes.png'),
-				'url_failure'	=> admin_url('images/no.png'),
-				'text_loading'	=> __('Synchronizing. It may take several minutes.','letsgo'),
-				'text_success'	=> __('Complete synchronization.','letsgo'),
-				'nonce'			=> wp_create_nonce( 'fullculqi-wpnonce' ),
+				'url_ajax'			=> admin_url('admin-ajax.php'),
+				'url_loading'		=> admin_url('images/spinner.gif'),
+				'url_success'		=> admin_url('images/yes.png'),
+				'url_failure'		=> admin_url('images/no.png'),
+				'sync_loading'		=> __('Synchronizing. It may take several minutes.','letsgo'),
+				'sync_success'		=> __('Complete synchronization.','letsgo'),
+				'delete_loading'	=> __('Deleting post from %s.','letsgo'),
+				'delete_success'	=> __('%s : Posts deleted.','letsgo'),
+				'delete_cpts'		=> fullculqi_get_cpts(),
+				'text_confirm'		=> __('if you continue, you will delete all fullculqi posts','letsgo'),
+				'is_welcome'		=> $screen->base == 'dashboard_page_fullculqi-welcome' ? true : false,
+				'nonce'				=> wp_create_nonce( 'fullculqi-wpnonce' ),
 			]
 		);
 	}
@@ -120,6 +127,14 @@ class FullCulqi_Settings {
 			'fullculqi_section' // Section
 		);
 
+		add_settings_field(
+			'fullculqi_button_clear', // ID
+			__('Delete all','letsgo'), // Simple Payment
+			[ $this, 'input_delete_all' ], // Callback
+			'fullculqi_page', // Page
+			'fullculqi_section' // Section
+		);
+
 		do_action('fullculqi/settings/after_fields', $settings, $this);
 	}
 
@@ -170,6 +185,13 @@ class FullCulqi_Settings {
 		echo '<label for="fullculqi_woo_payment">
 				<input type="checkbox" id="fullculqi_woo_payment" name="fullculqi_options[woo_payment]" value="yes" '.checked($settings['woo_payment'], 'yes', false).' />
 				<p>'.__('If checked, the Culqi payment method will appear in Woocommerce.', 'letsgo').'</p>
+			</label>';
+	}
+
+	public function input_delete_all() {
+		echo '<label for="fullculqi_delete_all">
+				<button id="fullculqi_delete_all" class="fullculqi_delete_all button button-secondary button-hero">'.__('Clear all','letsgo').'</button>
+				<div id="fullculqi_delete_all_loading"></div>
 			</label>';
 	}
 

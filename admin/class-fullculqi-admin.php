@@ -41,13 +41,13 @@ class FullCulqi_Admin {
 
 	public function welcome_panel() {
 
-		if( isset($_POST['fullculqi_options']['commerce']) &&
+		if( isset($_POST['fullculqi_install']) &&
+			isset($_POST['fullculqi_options']['commerce']) &&
 			!empty($_POST['fullculqi_options']['commerce']) &&
 			isset($_POST['fullculqi_options']['public_key']) &&
 			!empty($_POST['fullculqi_options']['public_key']) &&
 			isset($_POST['fullculqi_options']['secret_key']) &&
 			!empty($_POST['fullculqi_options']['secret_key']) &&
-			isset($_POST['fullculqi_install']) &&
 			wp_verify_nonce( $_POST['fullculqi_install'], 'fullculqi_wpnonce' )
 		) {
 			$fullculqi_options = array_map( 'esc_html', $_POST['fullculqi_options'] );
@@ -56,7 +56,7 @@ class FullCulqi_Admin {
 
 			wp_safe_redirect(
 				add_query_arg(
-					array( 'page' => 'fullculqi_settings', 'synchronize' => 'all' ),
+					array( 'page' => 'fullculqi_settings', 'synchronize' => 'payments' ),
 					admin_url( 'admin.php' )
 				)
 			);

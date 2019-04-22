@@ -31,7 +31,24 @@ if ( ! defined( 'ABSPATH' ) )
 				</div>
 
 				<br /><br /><br />
-				<form action="" method="POST">
+
+				<?php if(fullculqi_have_posts()) : ?>
+					<table>
+						<tr><th>
+							<div class="alignright" style="margin-left: 20px;">
+								<img src="<?php echo FULLCULQI_PLUGIN_URL . 'admin/assets/images/alert.png'; ?>" alt="alert" style="margin-bottom: 0;" />
+							</div>
+							<p><?php _e('We have realized that you have posts related to fullculqi plugin. It is advisable to delete that information before proceeding.', 'letsgo'); ?></p>
+						</th></tr>
+						<tr><td>
+							<button id="fullculqi_delete_all" class="fullculqi_delete_all button button-secondary button-hero"><?php _e('Clear all','letsgo'); ?></button>
+							<div id="fullculqi_delete_all_loading"></div>
+						</td></tr>
+					</table>
+					<br /><br />
+				<?php else : ?>
+
+					<form action="" method="POST">
 					<table>
 						<tr><td>
 							<label for="commerce"><b><?php _e('Commerce Name','letsgo'); ?> : </b></label>
@@ -59,6 +76,9 @@ if ( ! defined( 'ABSPATH' ) )
 					</table>
 					<?php wp_nonce_field( 'fullculqi_wpnonce', 'fullculqi_install' ); ?>
 				</form>
+				<?php endif; ?>
+
+				
 
 				<a href="<?php echo admin_url('admin.php?page=fullculqi_settings'); ?>"><?php _e('Not now','letsgo'); ?></a>
 			</div>

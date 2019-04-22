@@ -135,6 +135,28 @@ if( !function_exists('fullculqi_postid_from_meta') ) {
 }
 
 
+if( !function_exists('fullculqi_get_cpts') ) {
+	function fullculqi_get_cpts() {
+		$array_cpts = array('culqi_payments');
+
+		return apply_filters('fullculqi/global/get_cpts', $array_cpts);
+	}
+}
+
+if( !function_exists('fullculqi_have_posts') ) {
+	function fullculqi_have_posts() {
+		foreach( fullculqi_get_cpts() as $cpt ) {
+			$count_posts = wp_count_posts($cpt);
+
+			if( isset($count_posts->publish) && $count_posts->publish != 0 )
+				return true;
+		}
+
+		return false;
+	}
+}
+
+
 if( !function_exists('fullculqi_get_template') ) {
 
 	function fullculqi_get_template( $template_name, $args = array(), $template_path = '' ) {
