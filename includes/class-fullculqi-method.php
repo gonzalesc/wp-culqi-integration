@@ -8,7 +8,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		$this->id 					= 'fullculqi';
 		$this->method_title			= __('Culqi Full Integration','letsgo');
 		$this->method_description 	= __( 'Allows payments by Card Credit', 'letsgo' );
-		$this->icon 				= FULLCULQI_PLUGIN_URL . '/admin/assets/images/cards.png';
+		$this->icon 				= FULLCULQI_PLUGIN_URL . 'public/assets/images/cards.png';
 		
 		// Define user set variables
 		$this->has_fields	= false;
