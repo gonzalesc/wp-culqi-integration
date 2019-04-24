@@ -62,6 +62,11 @@ class FullCulqi_Settings {
 	}
 
 	public function menu_settings() {
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( __('You do not have sufficient permissions to access this page.','letsgo') );
+        }
+
 		include_once FULLCULQI_PLUGIN_DIR.'admin/layouts/settings_options.php';
 	}
 
@@ -140,7 +145,16 @@ class FullCulqi_Settings {
 
 
 	public function settings_sanitize($inputs) {
-		return $inputs;
+
+		$default = fullculqi_get_default();
+		$settings = array_map('esc_html', $inputs);
+
+		foreach( $default as $key => $value) {
+			if( !isset($settings[$key]) || empty($settings[$key]) )
+				$settings[$key] = $default[$key];	
+		}
+
+		return $settings;
 	}
 
 	public function print_section_info() {

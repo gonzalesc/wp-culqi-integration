@@ -156,10 +156,10 @@ class FullCulqi_Payments extends FullCulqi_Entities {
 
 				update_post_meta($post_id, 'culqi_id', $data->id);
 				update_post_meta($post_id, 'culqi_data', $data);
-				update_post_meta($post_id, 'culqi_ip', $data->source->client->ip);
+				update_post_meta($post_id, 'culqi_ip', esc_html($data->source->client->ip));
 
 				if( isset($data->source->metadata->order_id) )
-					update_post_meta($post_id, 'culqi_order_id', $data->source->metadata->order_id);
+					update_post_meta($post_id, 'culqi_order_id', esc_html($data->source->metadata->order_id));
 				else
 					update_post_meta($post_id, 'culqi_order_id', '');
 
@@ -173,7 +173,7 @@ class FullCulqi_Payments extends FullCulqi_Entities {
 							'culqi_card_number'		=> $data->source->card_number,
 						);
 
-				update_post_meta($post_id, 'culqi_basic', $basic);
+				update_post_meta($post_id, 'culqi_basic', array_map('esc_html', $basic));
 
 				$customer = array(
 							'culqi_email'		=> $data->email,
@@ -184,7 +184,7 @@ class FullCulqi_Payments extends FullCulqi_Entities {
 							'culqi_phone'		=> $data->antifraud_details->phone,
 						);
 
-				update_post_meta($post_id, 'culqi_customer', $customer);
+				update_post_meta($post_id, 'culqi_customer', array_map('esc_html', $customer));
 			}
 
 			do_action('fullculqi/payments/sync_posts/after', $payments, $post);
