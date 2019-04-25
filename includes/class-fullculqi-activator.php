@@ -29,22 +29,6 @@ class fullculqi_Activator {
 				'edit_published_payments',
 				'publish_payments',
 				//'read_private_payments',
-
-				'edit_customers',
-				'edit_published_customers',
-				'publish_customers',
-
-				'delete_plans',
-				'delete_published_plans',
-				'edit_plans',
-				'edit_others_plans',
-				'edit_published_plans',
-				'publish_plans',
-
-				'edit_others_subscribers',
-				'edit_subscribers',
-				'edit_published_subscribers',
-				'publish_subscribers',
 			);
 
 		$admin_caps = apply_filters('fullculqi/capabilities', $admin_caps);

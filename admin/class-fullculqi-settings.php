@@ -147,7 +147,7 @@ class FullCulqi_Settings {
 	public function settings_sanitize($inputs) {
 
 		$default = fullculqi_get_default();
-		$settings = array_map('esc_html', $inputs);
+		$settings = array_map('sanitize_text_field', $inputs);
 
 		foreach( $default as $key => $value) {
 			if( !isset($settings[$key]) || empty($settings[$key]) )

@@ -16,9 +16,9 @@ class FullCulqi_Ajax {
 		if( isset($_POST) ) {
 			global $culqi;
 
-			$order_id 		= esc_html($_POST['order_id']);
-			$token_id		= esc_html($_POST['token_id']);
-			$installments 	= isset($_POST['installments']) ? (int)esc_html($_POST['installments']) : 0;
+			$order_id 		= sanitize_key($_POST['order_id']);
+			$token_id		= sanitize_text_field($_POST['token_id']);
+			$installments 	= isset($_POST['installments']) ? (int)sanitize_key($_POST['installments']) : 0;
 
 			$order = new WC_Order( $order_id );
 
@@ -116,7 +116,7 @@ class FullCulqi_Ajax {
 		if( !wp_verify_nonce( $_POST['wpnonce'], 'fullculqi-wpnonce' ) )
 			wp_send_json( array('status' => 'error', 'msg' => __('Busted!','letsgo') ));
 
-		$output = FullCulqi_Payments::sync_posts(esc_html($_POST['last_records']));
+		$output = FullCulqi_Payments::sync_posts(sanitize_key($_POST['last_records']));
 		wp_send_json($output);
 	}
 
@@ -127,7 +127,7 @@ class FullCulqi_Ajax {
 		if( !wp_verify_nonce( $_POST['wpnonce'], 'fullculqi-wpnonce' ) )
 			wp_send_json( array('status' => 'error', 'msg' => __('Busted!','letsgo') ));
 
-		$cpt = esc_html($_POST['cpt']);
+		$cpt = sanitize_text_field($_POST['cpt']);
 
 		if( in_array($cpt, fullculqi_get_cpts() ) ) {
 
