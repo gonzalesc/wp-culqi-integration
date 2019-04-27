@@ -66,7 +66,7 @@ if ( ! defined( 'ABSPATH' ) )
 							<input type="text" id="secret_key" name="fullculqi_options[secret_key]" value="" />
 						</td></tr>
 						<tr><td>
-							<label for="woo_payment"><b><?php _e('Activate payment to Woocommerce','letsgo'); ?> : </b></label>
+							<label for="woo_payment"><b><?php _e('Activate the payment method for Woocommerce','letsgo'); ?> : </b></label>
 						</td><td>
 							<input type="checkbox" name="fullculqi_options[woo_payment]" value="yes" />
 						</td></tr>

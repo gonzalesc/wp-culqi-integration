@@ -13,9 +13,12 @@ class FullCulqi_Settings {
 	public function enqueue_scripts() {
 		$screen = get_current_screen();
 
+		update_option('kalex551', print_r($screen,true));
+
 		if( !isset($screen->base) ||
 			( $screen->base != 'culqi-full-integration_page_fullculqi_settings' &&
-			$screen->base != 'dashboard_page_fullculqi-welcome' ) )
+				$screen->base != 'culqi-integracion_page_fullculqi_settings' &&
+				$screen->base != 'dashboard_page_fullculqi-welcome' ) )
 			return;
 
 		wp_enqueue_script( 'fullculqi-js', FULLCULQI_PLUGIN_URL . 'admin/assets/js/fullculqi_admin.js', [ 'jquery' ], false, true );

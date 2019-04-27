@@ -33,14 +33,34 @@ if( !function_exists('fullculqi_get_woo_settings') ) {
 		if( $settings['woo_payment'] != 'yes' )
 			return array();
 
-		$method_string = get_option('woocommerce_fullculqi_settings');
+		$method_string = get_option('woocommerce_fullculqi_settings', array());
 
 		if( !$method_string )
-			return array();
+			return fullculqi_get_woo_default();
 
 		$method_array = maybe_unserialize($method_string);
+		$method_array = wp_parse_args( $method_array, fullculqi_get_woo_default() );
 
 		return apply_filters('fullculqi/global/get_woo_settings', $method_array);
+	}
+}
+
+
+if( !function_exists('fullculqi_get_woo_default') ) {
+	function fullculqi_get_woo_default() {
+
+		$default = [
+					'enabled'			=> 1,
+					'title'				=> __('Culqi Full Integration','letsgo'),
+					'description'		=> '',
+					'payment_type'		=> 'simple',
+					'status_success'	=> 'wc-processing',
+					'payment_log'		=> 1,
+					'msg_fail'			=> __('Im sorry! an error occurred making the payment. A email was sent to shop manager with your information.','letsgo'),
+					'time_modal'		=> 0,
+				];
+
+		return apply_filters('fullculqi/global/get_woo_default', $default);
 	}
 }
 

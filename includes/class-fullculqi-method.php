@@ -125,7 +125,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 									'default'		=> 'simple',
 									'desc_tip'		=> true,
 									'options'		=> array(
-										'simple'		=> __('Only accepts simple payments','letsgo'),
+										'simple'		=> __('Simple Payment','letsgo'),
 									),
 								),
 								'status_success' => array(
@@ -138,16 +138,16 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 									'options'  => wc_get_order_statuses(),
 								),
 								'payment_log' => array(
-									'title'			=> __('Payment Log','letsgo'),
+									'title'			=> __('Payments Log','letsgo'),
 									'type'			=> 'checkbox',
-									'description'	=> __('If you enable, a box will appear bellow in the order detail with the log of the payment transactions.', 'letsgo'),
-									'default'		=> false,
-									'label'			=> __('Enabled Payment Log', 'letsgo'),
+									'description'	=> __('If you enable, a panel will appear bellow in the order detail with the log of the payment transactions.', 'letsgo'),
+									'default'		=> true,
+									'label'			=> __('Enabled Payments Log', 'letsgo'),
 									'desc_tip'		=> false,
 								),
 								'msg_fail' => array(
 									'title'			=> __('Failed Message', 'letsgo'),
-									'description'	=> __('This is the message it will show to the customer if there is a error in the payment','letsgo'),
+									'description'	=> __('This is the message will be shown to the customer if there is a error in the payment','letsgo'),
 									'class'			=> '',
 									'type'			=> 'textarea',
 									'desc_tip'		=> false,

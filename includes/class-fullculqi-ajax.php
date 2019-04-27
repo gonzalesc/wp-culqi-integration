@@ -24,7 +24,7 @@ class FullCulqi_Ajax {
 
 			if( $order && wp_verify_nonce( $_POST['wpnonce'], 'fullculqi' ) ) {
 
-				$pnames = array();
+				$pnames = $provider_payment = array();
 
 				$method_array	= fullculqi_get_woo_settings();
 				$payment_type	= $method_array['payment_type'];
@@ -78,7 +78,7 @@ class FullCulqi_Ajax {
 						$note = sprintf(__('Culqi Payment created: %s','letsgo'), $provider_payment['data']->id);
 						$order->add_order_note($note);
 
-						$log->set_msg_payment('notice', sprintf(__('Culqi Payment created : %s','letsgo'), $provider_payment['data']->id) );
+						$log->set_msg_payment('notice', sprintf(__('Culqi Payment created: %s','letsgo'), $provider_payment['data']->id) );
 
 						$post_id = FullCulqi_Integrator::create_payment($provider_payment['data']);
 
@@ -101,6 +101,14 @@ class FullCulqi_Ajax {
 				}
 
 				$provider_payment = apply_filters('fullculqi/do_payment/create', $provider_payment, $payment_type, $token_id, $log, $order);
+
+				// If empty
+				if( count($provider_payment) == 0 ) {
+
+					$log->set_msg_payment('error', __('Culqi Provider Payment error : There is not set a type payment','letsgo') );
+
+					$provider_payment = array( 'status' => 'error' );
+				}
 
 				wp_send_json($provider_payment);
 			}
