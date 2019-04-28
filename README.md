@@ -1,9 +1,8 @@
-
 # Culqi Integration - Wordpress Plugin
 
 Bienvenido al respositorio de Culqi Integración para Wordpress. Este plugin te permite sincronizar tus pagos con Culqi y activar la pasarela de pagos para Woocommerce y capturar pagos si lo requieres.
 
-## Requerimientos
+## Requisitos
 
 - Version PHP mínimo requerido es 5.6
 - [Credenciales de Culqi](https://www.culqi.com)
@@ -32,16 +31,11 @@ Una vez llenado todo correctamente, al presionar "Guardar", éste le enviará a 
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/settings.jpg "Configure you Settings page")
 
 
-## Lista de pagos y su detalle
-
-
-
 ## Pasarela Culqi para Woocommerce
 
 Si activaste el método de pago, debes ir a configurarlo.
 
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/woo.jpg "Woocommerce Payment")
-
 
 
 ## Problemas Comunes desde el servicio de Culqi ##
