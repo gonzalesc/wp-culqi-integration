@@ -3,13 +3,13 @@
 Bienvenido al respositorio de Culqi Integración para Wordpress. Este plugin te permite sincronizar tus pagos con Culqi y activar la pasarela de pagos para Woocommerce y capturar pagos si lo requieres.
 
 
-## Requisitos
+## Requisitos ##
 
 - Version PHP mínimo requerido es 5.6
 - [Credenciales de Culqi](https://www.culqi.com)
 
 
-## Instalación
+## Instalación ##
 
 Podes descargar el plugin desde el repositorio de Wordpress :
 [https://wordpress.org/plugins/culqi-full-integration/](https://wordpress.org/plugins/culqi-full-integration/)
@@ -24,7 +24,7 @@ Buscar "Culqi", instalar y activar
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/plugin.jpg "Add New Plugin")
 
 
-## Instalación desde Github
+## Instalación desde Github ##
 
 **1. Clonar Repositorio**
 ```git clone git@github.com:gonzalesc/wp-culqi-integration.git```
@@ -33,25 +33,38 @@ Buscar "Culqi", instalar y activar
 ```composer update```
 
 
-## Página de Bienvenida
+## Credenciales de Culqi ##
+
+Debes registrarte en [https://www.culqi.com](https://www.culqi.com) y luego accedes al panel de integración. Una vez ahi, irás a Desarrollo > ApiKey y así obtendrás tus credenciales:
+
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2019/04/apikey.png "Credenciales Culqi")
+
+## Página de Bienvenida ##
 
 Cuando actives el plugin, éste te redireccionará a una página de bienvenida donde deberás poner tus credenciales de Culqi y otras cosas más.
 
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/welcome.jpg "Welcome Page")
 
 
-## Página de Configuración
+## Página de Configuración ##
 
 Una vez llenado todo correctamente, al presionar "Guardar", éste le enviará a la página de configuración del plugin y empezará a sincronizar los pagos automáticamente.
 
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/settings.jpg "Configure you Settings page")
 
 
-## Pasarela Culqi para Woocommerce
+## Pasarela Culqi para Woocommerce ##
 
 Si activaste el método de pago, debes ir a configurarlo.
 
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/woo.jpg "Woocommerce Payment")
+
+
+## Log de transacciones ##
+
+Si habilitaste el log en la configuración de la pasarela de pago, cada pedido tendrá un detalle de todos los pasos que sigue Culqi para hacer el pago. Aqui también se registrará los errores si los hay.
+
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/log.jpg "Log")
 
 
 ## Problemas Comunes desde el servicio de Culqi ##
