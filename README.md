@@ -10,11 +10,26 @@ Bienvenido al respositorio de Culqi Integración para Wordpress. Este plugin te 
 
 ## Instalación
 
-Go to : Plugins > Add New | Ir a  : Complementos > Agregar Nuevo
+Podes descargar el plugin desde el repositorio de Wordpress :
+[https://wordpress.org/plugins/culqi-full-integration/](https://wordpress.org/plugins/culqi-full-integration/)
+
+
+O podes instalarlo desde el mismo Wordpress. Ir a Plugins > Agregar nuevo
 
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/08/install_plugin1.png "Add New Plugin")
 
-Buscar "Culqi Integration", instalar y activar
+Buscar "Culqi", instalar y activar
+
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/plugin.jpg "Add New Plugin")
+
+
+## Instalación desde Github
+
+### Clonar Repositorio ###
+```git clone git@github.com:gonzalesc/wp-culqi-integration.git```
+
+### Descargar Biblioteca Culqi ###
+```composer update```
 
 
 ## Página de Bienvenida
