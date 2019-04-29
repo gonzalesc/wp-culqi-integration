@@ -58,9 +58,9 @@ Si activaste el método de pago, debes ir a configurarlo.
 
 El servicio de Culqi suele ser óptimo cuando se trata de registrar pagos simples pero, raras veces, cuando empiezas a interactuar con otros servicios puede traernos estos tipos de problemas, si sueles tener alguno, comunicate con ellos.
 
-- Ups! Algo salió mal en Culqi. Contáctate con soporte@culqi.com para obtener mas información. - *El servicio de Culqi, para el servicio solicitado, no está disponible en ese momento*
+- `Ups! Algo salió mal en Culqi. Contáctate con soporte@culqi.com para obtener mas información` - *El servicio de Culqi, para el servicio solicitado, no está disponible en ese momento*
 
-- Endpoint request timed out - *El endpoint del API de Culqi a agotado su tiempo de solicitud*
+- `Endpoint request timed out` - *El endpoint del API de Culqi a agotado su tiempo de solicitud*
 
 
 **Para hacer una verificación del servicio de Culqi, [te invito a seguir esta guía simple y sencilla](https://blog.letsgodev.com/tips-es/verificar-servicio-de-culqi-en-10-minutos/). Sólo te tomará 10 minutos.**
