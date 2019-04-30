@@ -13,7 +13,7 @@ Requires at least: 4.7
 Tested up to: 5.1.1
 Stable tag: 4.9
 WC requires at least: 3.0.0
-WC tested up to: 3.5.8
+WC tested up to: 3.6.2
 */
 
 // If this file is called directly, abort.
