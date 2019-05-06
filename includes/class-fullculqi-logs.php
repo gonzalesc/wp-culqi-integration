@@ -9,17 +9,14 @@ class FullCulqi_Logs {
 
 	}
 
-	public function set_settings_payment( $permission = 'no', $post_id = null) {
+	public function set_settings_payment( $post_id = null) {
 		
 		if( is_numeric($post_id) && $post_id > 0  )
 			$this->post_id = $post_id;
-
-		if( $permission == 'yes' )
-			$this->permission = 'yes';
 	}
 
 	public function set_msg_payment( $type = 'notice', $message = '' ) {
-		if( !$this->post_id || !$this->permission )
+		if( !$this->post_id )
 			return false;
 
 		$array_msg = get_post_meta($this->post_id, $this->slug, true );

@@ -14,8 +14,6 @@ class FullCulqi_Ajax {
 	public function do_payment() {
 
 		if( isset($_POST) ) {
-			global $culqi;
-
 			$order_id 		= sanitize_key($_POST['order_id']);
 			$token_id		= sanitize_text_field($_POST['token_id']);
 			$installments 	= isset($_POST['installments']) ? (int)sanitize_key($_POST['installments']) : 0;
@@ -24,88 +22,27 @@ class FullCulqi_Ajax {
 
 			if( $order && wp_verify_nonce( $_POST['wpnonce'], 'fullculqi' ) ) {
 
-				$pnames = $provider_payment = array();
-
-				$method_array	= fullculqi_get_woo_settings();
-				$payment_type	= $method_array['payment_type'];
-				$payment_log	= $method_array['payment_log'];
+				$provider_payment = array();
 
 				// Logs
 				$log = new FullCulqi_Logs();
-				$log->set_settings_payment($payment_log, $order_id);
+				$log->set_settings_payment($order_id);
 
-				
-				if( $payment_type == 'simple' ) {
 
-					foreach ($order->get_items() as $item ) {
-						$_product = $item->get_product();
-						$pnames[] = $_product->get_name();
-					}
-
-					// Antifraud Customer Data
-					$antifraud = array(
-									'first_name'	=> $order->get_billing_first_name(),
-									'last_name'		=> $order->get_billing_last_name(),
-									'email'			=> $order->get_billing_email(),
-									'address'		=> $order->get_billing_address_1(),
-									'address_city'	=> $order->get_billing_city(),
-									'country_code'	=> $order->get_billing_country(),
-									'phone_number'	=> $order->get_billing_phone(),
-								);
-
-					// Metadata Order
-					$metadata = array(
-									'order_id'	=> $order->get_id(),
-									'order_key'	=> $order->get_order_key(),
-								);
-
-					$args_payment = array(
-										'amount'			=> (int)($order->get_total()*100),
-										'currency_code'		=> get_woocommerce_currency(),
-										'description'		=> implode(', ', $pnames),
-										'capture'			=> false,
-										'email'				=> $order->get_billing_email(),
-										'installments'		=> $installments,
-										'source_id'			=> $token_id,
-										'metadata'			=> $metadata,
-										'antifraud_details'	=> $antifraud,
-									);
-
-					$provider_payment = FullCulqi_Provider::create_payment($args_payment);
-
-					if( $provider_payment['status'] == 'ok' ) {
+				if( apply_filters('fullculqi/do_payment/conditional', false, $order, $log) ) {
 					
-						$note = sprintf(__('Culqi Payment created: %s','letsgo'), $provider_payment['data']->id);
-						$order->add_order_note($note);
+					$provider_payment = apply_filters('fullculqi/do_payment/create', $provider_payment, $token_id, $log, $order);
 
-						$log->set_msg_payment('notice', sprintf(__('Culqi Payment created: %s','letsgo'), $provider_payment['data']->id) );
+				} else {
 
-						$post_id = FullCulqi_Integrator::create_payment($provider_payment['data']);
-
-						$log->set_msg_payment('notice', sprintf(__('Post Payment created : %s','letsgo'), $post_id) );
-
-
-						if( $method_array['status_success'] == 'wc-completed')
-							$order->payment_complete();
-						else
-							$order->update_status($method_array['status_success']);
-
-						$provider_payment = apply_filters('fullculqi/do_payment/simple_success', $provider_payment, $log, $order);
-					
-					} else {
-
-						$log->set_msg_payment('error', sprintf(__('Culqi Payment error : %s','letsgo'), $provider_payment['msg']) );
-
-						$provider_payment = apply_filters('fullculqi/do_payment/simple_error', $provider_payment, $log, $order);
-					}
+					$provider_payment = FullCulqi_Checkout::simple($order, compact('token_id', 'installments'), $log );
 				}
 
-				$provider_payment = apply_filters('fullculqi/do_payment/create', $provider_payment, $payment_type, $token_id, $log, $order);
 
 				// If empty
 				if( count($provider_payment) == 0 ) {
 
-					$log->set_msg_payment('error', __('Culqi Provider Payment error : There is not set a type payment','letsgo') );
+					$log->set_msg_payment('error', __('Culqi Provider Payment error : There was not set any payment','letsgo') );
 
 					$provider_payment = array( 'status' => 'error' );
 				}

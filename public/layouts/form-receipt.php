@@ -6,8 +6,8 @@
 
 	<?php $class_buttonpay = apply_filters('fullculqi/receipt_page/button_class', array('button','alt') ); ?>
 	
-	<button id="fullculqi_button" class="<?php echo $class_buttonpay; ?>"><?php _e('Pay with Culqi','letsgo'); ?></button>
+	<button id="fullculqi_button" class="<?php echo implode(' ', $class_buttonpay); ?>"><?php _e('Pay with Culqi','letsgo'); ?></button>
 	<a href="<?php echo $url_cancel; ?>" class="button cancel"><?php _e('Cancel','letsgo'); ?></a>
 
-	<div id="fullculqi_notify" style="padding:10px 0px;"></div>
+	<div id="fullculqi_notify" style="padding:10px 0px;"><?php echo apply_filters('fullculqi/receipt_page/notify', ''); ?></div>
 </div>

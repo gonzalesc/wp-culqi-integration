@@ -23,13 +23,9 @@ class FullCulqi {
 	protected $payment;
 
 	/**
-	 * Subscriber Instance
+	 * Checkout Instance
 	 */
-	protected $subscriber;
-	/**
-	 * Plan Instance
-	 */
-	protected $plan;
+	protected $checkout;
 
 	/**
 	 * Ajax Instance
@@ -85,6 +81,7 @@ class FullCulqi {
 		require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi-provider.php';
 		require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi-define.php';
 		require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi-logs.php';
+		require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi-checkout.php';
 		require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi-ajax.php';
 		require_once FULLCULQI_PLUGIN_DIR . 'public/class-fullculqi-integrator.php';
 		

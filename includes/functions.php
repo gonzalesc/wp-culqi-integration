@@ -53,9 +53,7 @@ if( !function_exists('fullculqi_get_woo_default') ) {
 					'enabled'			=> 1,
 					'title'				=> __('Culqi Full Integration','letsgo'),
 					'description'		=> '',
-					'payment_type'		=> 'simple',
 					'status_success'	=> 'wc-processing',
-					'payment_log'		=> 1,
 					'msg_fail'			=> __('Im sorry! an error occurred making the payment. A email was sent to shop manager with your information.','letsgo'),
 					'time_modal'		=> 0,
 				];

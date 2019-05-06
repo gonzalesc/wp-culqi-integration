@@ -7,30 +7,20 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 
 		$this->id 					= 'fullculqi';
 		$this->method_title			= __('Culqi Full Integration','letsgo');
-		$this->method_description 	= __( 'Allows payments by Card Credit', 'letsgo' );
+		$this->method_description 	= __( 'Allows payments by Card Credit. This payment method will decide if it is a simple payment or subscription or other', 'letsgo' );
 		$this->icon 				= FULLCULQI_PLUGIN_URL . 'public/assets/images/cards.png';
 		
 		// Define user set variables
-		$this->has_fields	= false;
+		$this->has_fields	= apply_filters('fullculqi/method/has_fields', false);
 		$this->title		= $this->get_option( 'title' );
 		$this->description	= $this->get_option( 'description' );
-		$this->payment_type	= $this->get_option( 'payment_type', 'simple' );
-		$this->payment_log	= $this->get_option( 'payment_log', false );
 		$this->msg_fail		= $this->get_option( 'msg_fail' );
 		$this->time_modal	= $this->get_option( 'time_modal', 0 );
 		$this->settings		= fullculqi_get_settings();
 
-		$this->supports = array(
-				'products', 
-				'subscriptions',
-				'subscription_cancellation', 
-				'subscription_suspension', 
-				'subscription_reactivation',
-				'subscription_amount_changes',
-				'subscription_date_changes',
-				'subscription_payment_method_change'
-			);
-
+		$this->supports = apply_filters('fullculqi/method/supports',
+								array( 'products', 'refunds', 'pre-orders' )
+							);
 
 		// Load the settings.
 		$this->init_form_fields();
@@ -64,7 +54,6 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 				$pnames[] = $product->get_name();
 			}
 
-			//$js_checkout	= 'https://checkout.culqi.com/v2/';
 			$js_checkout	= 'https://checkout.culqi.com/js/v3';
 			$js_fullculqi	= FULLCULQI_PLUGIN_URL . 'public/assets/js/fullculqi.js';
 			$js_waitme		= FULLCULQI_PLUGIN_URL . 'public/assets/js/waitMe.min.js';
@@ -84,7 +73,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 					'order_id'		=> $order_id,
 					'commerce'		=> $settings['commerce'],
 					'currency'		=> get_woocommerce_currency(),
-					'description'	=> implode(',', $pnames),
+					'description'	=> substr(str_pad(implode(', ', $pnames), 5, '_'), 0, 80),
 					'loading_text'	=> __('Loading. Please wait.','letsgo'),
 					'total'			=> $order->get_total()*100,
 					'msg_fail'		=> $this->msg_fail,
@@ -93,6 +82,8 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 				)
 			);
 		}
+
+		do_action('fullculqi/method/enqueue_scripts' );
 	}
 	
 
@@ -118,16 +109,6 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 									'type'			=> 'textarea',
 									'desc_tip'		=> true,
 								),
-								'payment_type' => array(
-									'title'			=> __('Payment Type','letsgo'),
-									'type'			=> 'radio',
-									'description'	=> __('You can choise how you want to work this method','letsgo'),
-									'default'		=> 'simple',
-									'desc_tip'		=> true,
-									'options'		=> array(
-										'simple'		=> __('Simple Payment','letsgo'),
-									),
-								),
 								'status_success' => array(
 									'title' => __('Success Status','letsgo'),
 									'type' => 'select',
@@ -136,14 +117,6 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 									'default' => 'wc-processing',
 									'desc_tip' => true,
 									'options'  => wc_get_order_statuses(),
-								),
-								'payment_log' => array(
-									'title'			=> __('Payments Log','letsgo'),
-									'type'			=> 'checkbox',
-									'description'	=> __('If you enable, a panel will appear bellow in the order detail with the log of the payment transactions.', 'letsgo'),
-									'default'		=> true,
-									'label'			=> __('Enabled Payments Log', 'letsgo'),
-									'desc_tip'		=> false,
 								),
 								'msg_fail' => array(
 									'title'			=> __('Failed Message', 'letsgo'),
@@ -163,6 +136,11 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 								),
 							)
 						);
+	}
+
+
+	function payment_fields() {
+		do_action('fullculqi/method/payment_fields', $this);
 	}
 
 
@@ -192,12 +170,12 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		$order = new WC_Order( $order_id );
 
 		// Mark as on-hold (we're awaiting the cheque)
-		$order->update_status( 'pending', __('Order pending confirmation','letsgo'));
+		//$order->update_status( 'pending', __('Order pending confirmation','letsgo'));
 
-		return array(
+		return apply_filters('fullculqi/method/redirect', array(
 					'result'   => 'success',
 					'redirect' => $order->get_checkout_payment_url(true),
-				);
+				), $order);
 	}
 
 
