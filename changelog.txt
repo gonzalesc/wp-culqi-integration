@@ -1,2 +1,4 @@
+2019-05-06 - version 1.0.1
+* Filters created
 2019-04-22 - version 1.0.0
 * Ready
