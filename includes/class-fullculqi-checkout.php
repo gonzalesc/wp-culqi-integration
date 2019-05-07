@@ -36,7 +36,7 @@ class FullCulqi_Checkout {
 							'amount'			=> (int)($order->get_total()*100),
 							'currency_code'		=> get_woocommerce_currency(),
 							'description'		=> substr(str_pad(implode(', ', $pnames), 5, '_'), 0, 80),
-							'capture'			=> false,
+							'capture'			=> true,
 							'email'				=> $order->get_billing_email(),
 							'installments'		=> $installments,
 							'source_id'			=> $token_id,
