@@ -156,6 +156,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		$args = array(
 					'src_image'		=> $this->icon,
 					'url_cancel'	=> esc_url( $order->get_cancel_order_url() ),
+					'order_id'		=> $order_id,
 				);
 
 		do_action('fullculqi/form-receipt/before', $order);
