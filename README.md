@@ -57,12 +57,12 @@ Una vez llenado todo correctamente, al presionar "Guardar", éste le enviará a 
 
 Si activaste el método de pago, debes ir a configurarlo.
 
-![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/woo.jpg "Woocommerce Payment")
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/woo2.jpg "Woocommerce Payment")
 
 
 ## Log de transacciones ##
 
-Si habilitaste el log en la configuración de la pasarela de pago, cada pedido tendrá un detalle de todos los pasos que sigue Culqi para hacer el pago. Aqui también se registrará los errores si los hay.
+El log siempre está habilitado, cada pedido tendrá un detalle de todos los pasos que sigue Culqi para hacer el pago. Aqui también se registrará los errores si los hay.
 
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/log.jpg "Log")
 

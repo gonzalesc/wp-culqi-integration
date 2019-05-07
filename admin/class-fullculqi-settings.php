@@ -13,8 +13,6 @@ class FullCulqi_Settings {
 	public function enqueue_scripts() {
 		$screen = get_current_screen();
 
-		update_option('kalex551', print_r($screen,true));
-
 		if( !isset($screen->base) ||
 			( $screen->base != 'culqi-full-integration_page_fullculqi_settings' &&
 				$screen->base != 'culqi-integracion_page_fullculqi_settings' &&
@@ -203,6 +201,10 @@ class FullCulqi_Settings {
 				<input type="checkbox" id="fullculqi_woo_payment" name="fullculqi_options[woo_payment]" value="yes" '.checked($settings['woo_payment'], 'yes', false).' />
 				<p>'.__('If checked, the Culqi payment method will appear in Woocommerce.', 'letsgo').'</p>
 			</label>';
+
+		if( $settings['woo_payment'] == 'yes' ) {
+			echo '<a href="'.admin_url('admin.php?page=wc-settings&tab=checkout&section=fullculqi').'">'.__('Customize Culqi Payment Gateway','letsgo').'</a>';
+		}
 	}
 
 	public function input_delete_all() {
