@@ -1,3 +1,6 @@
+2019-05-07 - version 1.0.3
+* Fix : capture payment is true
+
 2019-05-07 - version 1.0.2
 * fix: form receipt filters in do payment section
 
