@@ -1,3 +1,6 @@
+2019-05-07 - version 1.0.4
+* Fix: AntiFraud only Email
+
 2019-05-07 - version 1.0.3
 * Fix : capture payment is true
 
