@@ -67,6 +67,21 @@ El log siempre está habilitado, cada pedido tendrá un detalle de todos los pas
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/log.jpg "Log")
 
 
+## Datos Obligatorios en Checkout ##
+
+Culqi recomienda estos que estos campos sean obligatorios:
+
+- Email
+- Nombre
+- Apellido
+- Dirección
+- Ciudad
+- Código de pais ( ejem: para Perú es PE)
+- Teléfono
+
+De todos estos puntos el más importante es el `email`, los otros campos son muy necesarios para un tema de antifraude pero no son obligatorios. Yo recomiendo que tengas todos estos campos en tu checkout.
+
+
 ## Problemas Comunes desde el servicio de Culqi ##
 
 El servicio de Culqi suele ser óptimo cuando se trata de registrar pagos simples pero, raras veces, cuando empiezas a interactuar con otros servicios puede traernos estos tipos de problemas, si sueles tener alguno, comunicate con ellos.
