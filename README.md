@@ -67,9 +67,9 @@ El log siempre está habilitado, cada pedido tendrá un detalle de todos los pas
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/log.jpg "Log")
 
 
-## Datos Obligatorios en Checkout ##
+## Datos Obligatorios en el Checkout ##
 
-Culqi recomienda estos que estos campos sean obligatorios:
+Culqi recomienda que estos campos sean obligatorios:
 
 - Email
 - Nombre
