@@ -17,9 +17,7 @@ class FullCulqi_Admin {
 
 		$method_array = fullculqi_get_woo_settings();
 
-		if( isset($method_array['enabled']) && $method_array['enabled'] == 'yes' &&
-			isset($method_array['payment_log']) && $method_array['payment_log'] == 'yes'
-		) {
+		if( isset($method_array['enabled']) && $method_array['enabled'] == 'yes' ) {
 			add_meta_box(
 				'fullculqi_payment_log',
 				__( 'FullCulqi payment transactions log', 'letsgo' ),
