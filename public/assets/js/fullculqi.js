@@ -82,7 +82,7 @@ function culqi() {
 	}
 };
 
-if( !fullculqi_isSafari ) {
+if( !fullculqi_isSafari && fullculqi.time_modal > 0 ) {
 	setTimeout(function() {
 		jQuery('#fullculqi_button').trigger('click');
 	}, fullculqi.time_modal);
