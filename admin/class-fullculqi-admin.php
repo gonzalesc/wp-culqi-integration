@@ -56,7 +56,7 @@ class FullCulqi_Admin {
 
 			wp_safe_redirect(
 				add_query_arg(
-					array( 'page' => 'fullculqi_settings', 'synchronize' => 'payments' ),
+					array( 'page' => 'fullculqi_settings' ),
 					admin_url( 'admin.php' )
 				)
 			);
