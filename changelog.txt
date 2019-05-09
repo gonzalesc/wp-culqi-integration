@@ -1,3 +1,6 @@
+2019-05-09 - version 1.0.7
+*Fix: Log always is active
+
 2019-05-09 - version 1.0.6
 * Fix : Time to modal
 
