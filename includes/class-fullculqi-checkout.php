@@ -18,23 +18,30 @@ class FullCulqi_Checkout {
 		// Antifraud Customer Data
 		$antifraud = array( 'email' => $order->get_billing_email() );
 
-		if( !empty( $order->get_billing_first_name('edit') ) )
-			$antifraud['first_name'] = $order->get_billing_first_name();
+		$billing_first_name 	= $order->get_billing_first_name();
+		$billing_last_name 		= $order->get_billing_last_name();
+		$billing_address_1 		= $order->get_billing_address_1();
+		$billing_phone 			= $order->get_billing_phone();
+		$billing_city 			= $order->get_billing_city();
+		$billing_country 		= $order->get_billing_country();
 
-		if( !empty( $order->get_billing_last_name('edit') ) )
-			$antifraud['last_name'] = $order->get_billing_last_name();
+		if( !empty( $billing_first_name ) )
+			$antifraud['first_name'] = $billing_first_name;
 
-		if( !empty( $order->get_billing_address_1('edit') ) )
-			$antifraud['address'] = $order->get_billing_address_1();
+		if( !empty( $billing_last_name ) )
+			$antifraud['last_name'] = $billing_last_name;
 
-		if( !empty( $order->get_billing_city('edit') ) )
-			$antifraud['address_city'] = $order->get_billing_city();
+		if( !empty( $billing_address_1 ) )
+			$antifraud['address'] = $billing_address_1;
 
-		if( !empty( $order->get_billing_country('edit') ) )
-			$antifraud['country_code'] = $order->get_billing_country();
+		if( !empty( $billing_city ) )
+			$antifraud['address_city'] = $billing_city;
 
-		if( !empty( $order->get_billing_phone('edit') ) )
-			$antifraud['phone_number'] = $order->get_billing_phone();
+		if( !empty( $billing_country ) )
+			$antifraud['country_code'] = $billing_country;
+
+		if( !empty( $billing_phone ) )
+			$antifraud['phone_number'] = $billing_phone;
 		
 
 		// Metadata Order
