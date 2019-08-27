@@ -9,6 +9,13 @@ Culqi.settings({
 });
 
 
+if( fullculqi.installments == 'yes' ) {
+	Culqi.options({
+		installments: true
+	});
+}
+
+
 function culqi() {
 	
 	if(Culqi.error) {

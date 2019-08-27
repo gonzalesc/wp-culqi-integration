@@ -13,13 +13,14 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		// Define user set variables
 		$this->has_fields	= apply_filters('fullculqi/method/has_fields', false);
 		$this->title		= $this->get_option( 'title' );
+		$this->installments = $this->get_option( 'installments', 'no' );
 		$this->description	= $this->get_option( 'description' );
 		$this->msg_fail		= $this->get_option( 'msg_fail' );
 		$this->time_modal	= $this->get_option( 'time_modal', 0 );
 		$this->settings		= fullculqi_get_settings();
 
 		$this->supports = apply_filters('fullculqi/method/supports',
-								array( 'products', 'refunds', 'pre-orders' )
+								[ 'products', 'refunds', 'pre-orders' ]
 							);
 
 		// Load the settings.
@@ -69,6 +70,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 					'url_ajax'		=> admin_url('admin-ajax.php'),
 					'url_success'	=> $order->get_checkout_order_received_url(),
 					'public_key'	=> $settings['public_key'],
+					'installments'	=> sanitize_title($this->installments),
 					'time_modal'	=> absint($this->time_modal*1000),
 					'order_id'		=> $order_id,
 					'commerce'		=> $settings['commerce'],
@@ -90,26 +92,35 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 	function init_form_fields() {
 
 		$this->form_fields = apply_filters('fullculqi/method/form_fields', array(
-								'enabled' => array(
+								'enabled' => [
 									'title'		=> __( 'Enable/Disable', 'letsgo' ),
 									'type'		=> 'checkbox',
 									'label'		=> __( 'Enable Culqi', 'letsgo' ),
 									'default'	=> 'yes',
-								),
-								'title' => array(
+								],
+								'installments' => [
+									'title'			=> __('Installments', 'letsgo'),
+									'description'	=> __('If checked a select field will appear in the modal with the available installments','letsgo'),
+									'class'			=> '',
+									'type'			=> 'checkbox',
+									'label'			=> __('Enable Installments', 'letsgo'),
+									'default'		=> 'no',
+									'desc_tip'		=> true,
+								],
+								'title' => [
 									'title'			=> __( 'Title', 'letsgo' ),
 									'type'			=> 'text',
 									'description'	=> __( 'This controls the title which the user sees during checkout.', 'letsgo' ),
 									'desc_tip'		=> true,
-								),
-								'description' => array(
+								],
+								'description' => [
 									'title'			=> __('Description', 'letsgo'),
 									'description'	=> __('Brief description of the payment gateway. This message will be seen by the buyer','letsgo'),
 									'class'			=> '',
 									'type'			=> 'textarea',
 									'desc_tip'		=> true,
-								),
-								'status_success' => array(
+								],
+								'status_success' => [
 									'title' => __('Success Status','letsgo'),
 									'type' => 'select',
 									'class'       => 'wc-enhanced-select',
@@ -117,23 +128,23 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 									'default' => 'wc-processing',
 									'desc_tip' => true,
 									'options'  => wc_get_order_statuses(),
-								),
-								'msg_fail' => array(
+								],
+								'msg_fail' => [
 									'title'			=> __('Failed Message', 'letsgo'),
 									'description'	=> __('This is the message will be shown to the customer if there is a error in the payment','letsgo'),
 									'class'			=> '',
 									'type'			=> 'textarea',
 									'desc_tip'		=> false,
 									'default'		=> __('Im sorry! an error occurred making the payment. A email was sent to shop manager with your information.','letsgo'),
-								),
-								'time_modal' => array(
+								],
+								'time_modal' => [
 									'title'			=> __('Popup/Modal Time','letsgo'),
 									'type'			=> 'text',
 									'description'	=> __('If you want the modal window to appear after a while without clicking "buy", put the seconds here. (Warning: may it not work in Safari). If you do not want to, leave it at zero.','letsgo'),
 									'default'		=> '0',
 									'placeholder'	=> '0',
 									'desc_tip'		=> false,
-								),
+								],
 							)
 						);
 	}
