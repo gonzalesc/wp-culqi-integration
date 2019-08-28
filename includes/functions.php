@@ -81,7 +81,7 @@ if( !function_exists('fullculqi_get_currencies') ) {
 						break;
 		}
 		
-		return apply_filters('fullculqi/global/get_currencies', $output);
+		return apply_filters('fullculqi/global/get_currencies', $output, $type);
 	}
 }
 
@@ -155,11 +155,22 @@ if( !function_exists('fullculqi_postid_from_meta') ) {
 
 if( !function_exists('fullculqi_get_cpts') ) {
 	function fullculqi_get_cpts() {
-		$array_cpts = array('culqi_payments');
+		$array_cpts = ['culqi_payments'];
 
 		return apply_filters('fullculqi/global/get_cpts', $array_cpts);
 	}
 }
+
+
+if( !function_exists('fullculqi_format_total') ) {
+	function fullculqi_format_total($total) {
+		$total_points = number_format($total, 2, '.', '');
+		$total_raw = intval(floatval($total_points) * 100);
+		
+		return apply_filters('fullculqi/global/format_total', $total_raw, $total);
+	}
+}
+
 
 if( !function_exists('fullculqi_have_posts') ) {
 	function fullculqi_have_posts() {

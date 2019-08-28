@@ -83,6 +83,7 @@ class FullCulqi {
 		require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi-logs.php';
 		require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi-checkout.php';
 		require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi-ajax.php';
+		require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi-wc.php';
 		require_once FULLCULQI_PLUGIN_DIR . 'public/class-fullculqi-integrator.php';
 		
 		if( is_admin() ) {
@@ -150,7 +151,10 @@ class FullCulqi {
 	 * Set all global objects
 	 */
 	private function set_objects() {
-		$this->ajax 	= new FullCulqi_Ajax();
+		$this->ajax = new FullCulqi_Ajax();
+
+		if( !is_admin() )
+			$this->wc = new FullCulqi_WC();
 
 		if( is_admin() ) {
 			$this->settings		= new FullCulqi_settings();

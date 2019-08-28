@@ -11,13 +11,15 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		$this->icon 				= FULLCULQI_PLUGIN_URL . 'public/assets/images/cards.png';
 		
 		// Define user set variables
-		$this->has_fields	= apply_filters('fullculqi/method/has_fields', false);
-		$this->title		= $this->get_option( 'title' );
-		$this->installments = $this->get_option( 'installments', 'no' );
-		$this->description	= $this->get_option( 'description' );
-		$this->msg_fail		= $this->get_option( 'msg_fail' );
-		$this->time_modal	= $this->get_option( 'time_modal', 0 );
-		$this->settings		= fullculqi_get_settings();
+		$this->has_fields		= apply_filters('fullculqi/method/has_fields', false);
+		$this->title			= $this->get_option( 'title' );
+		$this->installments 	= $this->get_option( 'installments', 'no' );
+		$this->multipayment 	= $this->get_option( 'multipayment', 'no' );
+		$this->multi_duration	= $this->get_option( 'multi_duration', 24 );
+		$this->description		= $this->get_option( 'description' );
+		$this->msg_fail			= $this->get_option( 'msg_fail' );
+		$this->time_modal		= $this->get_option( 'time_modal', 0 );
+		$this->settings			= fullculqi_get_settings();
 
 		$this->supports = apply_filters('fullculqi/method/supports',
 								[ 'products', 'refunds', 'pre-orders' ]
@@ -49,11 +51,27 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			$order = new WC_Order( $order_id );
 
 			$settings = fullculqi_get_settings();
-			
+
+
 			foreach ($order->get_items() as $item ) {
 				$product = $item->get_product();
 				$pnames[] = $product->get_name();
 			}
+
+
+			if( $this->multipayment == 'yes' ) {
+
+				$multi_order = get_post_meta($order_id, 'culqi_order', true);
+
+				if( !$multi_order ) {
+					$log = new FullCulqi_Logs();
+					$log->set_settings_payment($order_id);
+					$multi_order = FullCulqi_Checkout::create_order($order, $this->multi_duration, $pnames, $log);
+
+					update_post_meta($order_id, 'culqi_order', $multi_order);
+				}
+			}
+			
 
 			$js_checkout	= 'https://checkout.culqi.com/js/v3';
 			$js_fullculqi	= FULLCULQI_PLUGIN_URL . 'public/assets/js/fullculqi.js';
@@ -66,11 +84,15 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			wp_enqueue_style('waitme-css', $css_waitme );
 
 			wp_localize_script( 'fullculqi-js', 'fullculqi',
-				array(
-					'url_ajax'		=> admin_url('admin-ajax.php'),
+				[
+					//'url_ajax'		=> admin_url('admin-ajax.php'),
+					'url_payment'	=> site_url('wc-api/fullculqi_create_payment/'),
+					'url_order'		=> site_url('wc-api/fullculqi_create_order/'),
 					'url_success'	=> $order->get_checkout_order_received_url(),
 					'public_key'	=> $settings['public_key'],
 					'installments'	=> sanitize_title($this->installments),
+					'multipayment'	=> sanitize_title($this->multipayment),
+					'multi_order'	=> $this->multipayment == 'yes' ? $multi_order : '',
 					'time_modal'	=> absint($this->time_modal*1000),
 					'order_id'		=> $order_id,
 					'commerce'		=> $settings['commerce'],
@@ -81,7 +103,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 					'msg_fail'		=> $this->msg_fail,
 					'msg_error'		=> __('There was some problem in the purchase process. Try again please','letsgo'),
 					'wpnonce'		=> wp_create_nonce('fullculqi'),
-				)
+				]
 			);
 		}
 
@@ -105,6 +127,35 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 									'type'			=> 'checkbox',
 									'label'			=> __('Enable Installments', 'letsgo'),
 									'default'		=> 'no',
+									'desc_tip'		=> true,
+								],
+								'multipayment' => [
+									'title'			=> __('Multipayment', 'letsgo'),
+									'description'	=> __('If checked several tabs will appear in the modal with other payments','letsgo'),
+									'class'			=> '',
+									'type'			=> 'checkbox',
+									'label'			=> __('Enable Multipayment', 'letsgo'),
+									'default'		=> 'no',
+									'desc_tip'		=> true,
+								],
+								'multi_duration' => [
+									'title'			=> __('Multipayment Duration', 'letsgo'),
+									'description'	=> __('If enable Multipayment option, you must choose the order duration. This is the time you give the customer to make the payment.','letsgo'),
+									'class'			=> '',
+									'type'			=> 'select',
+									'options'		=> [
+														'1'		=> __('1 Hour','letsgo'),
+														'2'		=> __('2 Hours','letsgo'),
+														'4'		=> __('4 Hours','letsgo'),
+														'8'		=> __('8 Hours','letsgo'),
+														'12'	=> __('12 Hours','letsgo'),
+														'24'	=> __('1 Day','letsgo'),
+														'48'	=> __('2 Days','letsgo'),
+														'96'	=> __('4 Days','letsgo'),
+														'168'	=> __('7 Days','letsgo'),
+														'360'	=> __('15 Days','letsgo'),
+													],
+									'default'		=> '24',
 									'desc_tip'		=> true,
 								],
 								'title' => [
@@ -231,8 +282,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		</tr>
 		<?php
 		return ob_get_clean();
-	}
-
+	}		
 }
 
 ?>

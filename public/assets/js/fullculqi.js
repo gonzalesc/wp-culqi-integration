@@ -1,13 +1,18 @@
 var fullculqi_isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 Culqi.publicKey = fullculqi.public_key;
 
-Culqi.settings({
+var args_settings = {
 	title: fullculqi.commerce,
 	currency: fullculqi.currency,
 	description: fullculqi.description,
 	amount: fullculqi.total
-});
+};
 
+if( fullculqi.multipayment == 'yes' && fullculqi.multi_order.status == 'ok' ) {
+	args_settings.order = fullculqi.multi_order.data.id;
+}
+
+Culqi.settings(args_settings);
 
 if( fullculqi.installments == 'yes' ) {
 	Culqi.options({
@@ -23,8 +28,7 @@ function culqi() {
 		jQuery('#fullculqi_notify').html('<p style="color:#e54848; font-weight:bold">'+ Culqi.error.user_message + '</p>');
 	
 	} else {
-		//console.log(Culqi.token.id);
-		
+
 		jQuery(document).ajaxStart(function(){
 			jQuery('#fullculqi_notify').empty();
 			
@@ -46,46 +50,90 @@ function culqi() {
 			jQuery('#receipt_page_fullculqi').waitMe('hide');
 		});
 
-		jQuery.ajax({
-			url 		: fullculqi.url_ajax,
-			type 		: 'POST',
-			dataType	: 'json',
-			data 		: {
-							action			: 'fullculqi',
-							token_id		: Culqi.token.id,
-							order_id 		: fullculqi.order_id,
-							installments	: Culqi.token.metadata.installments,
-							wpnonce			: fullculqi.wpnonce
-						},
-			
-			success: function(data) {
+		if( Culqi.order ) {
+
+			console.log(Culqi.order);
+
+			jQuery.ajax({
+				url 		: fullculqi.url_order,
+				type 		: 'POST',
+				dataType	: 'json',
+				data 		: {
+								cip_code		: Culqi.order.payment_code,
+								order_id 		: fullculqi.order_id,
+								wpnonce			: fullculqi.wpnonce
+							},
 				
-				if(data.status === 'error') {
-					jQuery('#fullculqi_notify').html('<p style="color:#e54848; font-weight:bold">'+ fullculqi.msg_fail + '</p>');
-				
-				} else {
+				success: function(data) {
 					
-					//jQuery('#fullculqi_notify').empty();
-					//jQuery('#fullculqi_notify').append("<h1 style='text-align: center;'>Pago Exitoso</h1>" +
-					//"<p style='color:#46e6aa; font-weight:bold'>Pago realizado exitosamente</p>" +
-					//"<br><button id='home'>Seguir comprando</button>");
+					if(data.status === 'error') {
+						jQuery('#fullculqi_notify').html('<p style="color:#e54848; font-weight:bold">'+ fullculqi.msg_fail + '</p>');
+					
+					} else {
 
-					jQuery('#fullculqi_notify').trigger('fullculqi.success_notify', [fullculqi]);
+						jQuery('#fullculqi_notify').trigger('fullculqi.success_notify', [fullculqi]);
 
-					location.href = fullculqi.url_success;
+						location.href = fullculqi.url_success;
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log(jqXHR);
+					console.log(textStatus);
+					console.log(errorThrown);
+
+					jQuery('#fullculqi_notify').trigger('fullculqi.error_notify', [fullculqi]);
+					
+					jQuery('#fullculqi_notify').empty();
+					jQuery('#fullculqi_notify').html(fullculqi.msg_error);
 				}
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				console.log(jqXHR);
-				console.log(textStatus);
-				console.log(errorThrown);
+			});
 
-				jQuery('#fullculqi_notify').trigger('fullculqi.error_notify', [fullculqi]);
+
+		} else if( Culqi.token ) {
+
+			console.log(Culqi.token);
+
+			jQuery.ajax({
+				url 		: fullculqi.url_payment,
+				type 		: 'POST',
+				dataType	: 'json',
+				data 		: {
+								token_id		: Culqi.token.id,
+								order_id 		: fullculqi.order_id,
+								country_code	: Culqi.token.client.ip_country_code,
+								installments	: Culqi.token.metadata.installments,
+								wpnonce			: fullculqi.wpnonce
+							},
 				
-				jQuery('#fullculqi_notify').empty();
-				jQuery('#fullculqi_notify').html(fullculqi.msg_error);
-			}
-		});
+				success: function(data) {
+					
+					if(data.status === 'error') {
+						jQuery('#fullculqi_notify').html('<p style="color:#e54848; font-weight:bold">'+ fullculqi.msg_fail + '</p>');
+					
+					} else {
+						
+						//jQuery('#fullculqi_notify').empty();
+						//jQuery('#fullculqi_notify').append("<h1 style='text-align: center;'>Pago Exitoso</h1>" +
+						//"<p style='color:#46e6aa; font-weight:bold'>Pago realizado exitosamente</p>" +
+						//"<br><button id='home'>Seguir comprando</button>");
+
+						jQuery('#fullculqi_notify').trigger('fullculqi.success_notify', [fullculqi]);
+
+						location.href = fullculqi.url_success;
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log(jqXHR);
+					console.log(textStatus);
+					console.log(errorThrown);
+
+					jQuery('#fullculqi_notify').trigger('fullculqi.error_notify', [fullculqi]);
+					
+					jQuery('#fullculqi_notify').empty();
+					jQuery('#fullculqi_notify').html(fullculqi.msg_error);
+				}
+			});
+		}
 	}
 };
 

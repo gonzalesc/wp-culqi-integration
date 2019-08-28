@@ -47,5 +47,23 @@ class FullCulqi_Provider {
 		return $output;
 	}
 
+
+	static public function create_order($args) {
+		global $culqi;
+
+		try {
+			$order = $culqi->Orders->create($args);
+
+			if( isset($order->object) && $order->object != 'error' )
+				$output = array('status' => 'ok', 'data' => $order );
+			else
+				$output = array('status' => 'error', 'msg' => $order->merchant_message );
+			
+		} catch(Exception $e) {
+			$output = array('status' => 'error', 'msg' => $e->getMessage() );
+		}
+
+		return $output;
+	}
 }
 ?>

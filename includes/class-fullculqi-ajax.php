@@ -3,57 +3,9 @@ class FullCulqi_Ajax {
 
 	public function __construct() {
 
-		add_action('wp_ajax_fullculqi', [ $this, 'do_payment'] );
-		add_action('wp_ajax_nopriv_fullculqi', [ $this, 'do_payment']);
-
-		add_action('wp_ajax_fullculqi_get_payments', [ $this, 'get_payments'] );
-		add_action('wp_ajax_fullculqi_delete_all', [$this, 'delete_all'] );
+		add_action('wp_ajax_fullculqi_get_payments', [ $this, 'get_payments' ] );
+		add_action('wp_ajax_fullculqi_delete_all', [ $this, 'delete_all' ] );
 	}
-
-
-	public function do_payment() {
-
-		if( isset($_POST) ) {
-			$order_id 		= sanitize_key($_POST['order_id']);
-			$token_id		= sanitize_text_field($_POST['token_id']);
-			$installments 	= isset($_POST['installments']) ? (int)sanitize_key($_POST['installments']) : 0;
-
-			$order = new WC_Order( $order_id );
-
-			if( $order && wp_verify_nonce( $_POST['wpnonce'], 'fullculqi' ) ) {
-
-				$provider_payment = array();
-
-				// Logs
-				$log = new FullCulqi_Logs();
-				$log->set_settings_payment($order_id);
-
-
-				if( apply_filters('fullculqi/do_payment/conditional', false, $order, $log) ) {
-					
-					$provider_payment = apply_filters('fullculqi/do_payment/create', $provider_payment, $token_id, $log, $order);
-
-				} else {
-
-					$provider_payment = FullCulqi_Checkout::simple($order, compact('token_id', 'installments'), $log );
-				}
-
-
-				// If empty
-				if( count($provider_payment) == 0 ) {
-
-					$log->set_msg_payment('error', __('Culqi Provider Payment error : There was not set any payment','letsgo') );
-
-					$provider_payment = array( 'status' => 'error' );
-				}
-
-				wp_send_json($provider_payment);
-			}
-		}
-		
-		die();
-	}
-
 
 	public function get_payments() {
 		global $culqi;
