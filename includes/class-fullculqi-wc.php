@@ -97,17 +97,25 @@ class FullCulqi_WC {
 
 
 	public function update_order() {
+
+		update_option('kalep_1', 'peticion 1');
 		
 		$inputJSON	= file_get_contents('php://input');
 		$input 		= json_decode($inputJSON);
+
+		update_option('kalep_3', print_r($input,true));
+		update_option('kalep_2', print_r($inputJSON,true));
+
+		http_response_code(200);
+		echo wp_send_json( ['result' => 'success' ] );
+		
+		die();
+
 		$data 		= json_decode($input->data);
 
 		if( $input->object == 'event' && $input->type == 'order.status.changed' ) {
 		
 			global $wpdb, $woocommerce;
-
-			update_option('kalep_4', print_r($input,true));
-			update_option('kalep_5', print_r($data,true));
 
 			$order_id = fullculqi_postid_from_meta('culqi_cip', $data->payment_code);
 
