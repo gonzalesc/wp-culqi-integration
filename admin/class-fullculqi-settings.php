@@ -60,6 +60,20 @@ class FullCulqi_Settings {
 				'fullculqi_settings',
 				[ $this, 'menu_settings' ]
 			);
+
+
+		add_submenu_page(
+				'fullculqi_menu',
+				__('Add-ons','letsgo'),
+				__('Add-ons','letsgo'),
+				'manage_options',
+				'fullculqi_addons',
+				[ $this, 'menu_addons' ]
+			);
+	}
+
+	public function menu_addons() {
+		include_once FULLCULQI_PLUGIN_DIR.'admin/layouts/addons_options.php';
 	}
 
 	public function menu_settings() {
