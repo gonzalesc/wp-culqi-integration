@@ -17,6 +17,7 @@ if( !function_exists('fullculqi_get_default') ) {
 					'commerce'			=> '',
 					'public_key'		=> '',
 					'secret_key'		=> '',
+					'logo_url'			=> '',
 					'woo_payment'		=> 'no',
 				];
 

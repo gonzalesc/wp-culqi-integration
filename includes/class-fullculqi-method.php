@@ -66,21 +66,24 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			wp_enqueue_style('waitme-css', $css_waitme );
 
 			wp_localize_script( 'fullculqi-js', 'fullculqi',
-				array(
-					'url_ajax'		=> admin_url('admin-ajax.php'),
-					'url_success'	=> $order->get_checkout_order_received_url(),
-					'public_key'	=> $settings['public_key'],
-					'installments'	=> sanitize_title($this->installments),
-					'time_modal'	=> absint($this->time_modal*1000),
-					'order_id'		=> $order_id,
-					'commerce'		=> $settings['commerce'],
-					'currency'		=> get_woocommerce_currency(),
-					'description'	=> substr(str_pad(implode(', ', $pnames), 5, '_'), 0, 80),
-					'loading_text'	=> __('Loading. Please wait.','letsgo'),
-					'total'			=> $order->get_total()*100,
-					'msg_fail'		=> $this->msg_fail,
-					'msg_error'		=> __('There was some problem in the purchase process. Try again please','letsgo'),
-					'wpnonce'		=> wp_create_nonce('fullculqi'),
+				apply_filters('fullculqi/method/localize',
+					array(
+						'url_ajax'		=> admin_url('admin-ajax.php'),
+						'url_success'	=> $order->get_checkout_order_received_url(),
+						'public_key'	=> $settings['public_key'],
+						'installments'	=> sanitize_title($this->installments),
+						'time_modal'	=> absint($this->time_modal*1000),
+						'order_id'		=> $order_id,
+						'commerce'		=> $settings['commerce'],
+						'url_logo'		=> $settings['logo_url'],
+						'currency'		=> get_woocommerce_currency(),
+						'description'	=> substr(str_pad(implode(', ', $pnames), 5, '_'), 0, 80),
+						'loading_text'	=> __('Loading. Please wait.','letsgo'),
+						'total'			=> $order->get_total()*100,
+						'msg_fail'		=> $this->msg_fail,
+						'msg_error'		=> __('There was some problem in the purchase process. Try again please','letsgo'),
+						'wpnonce'		=> wp_create_nonce('fullculqi'),
+					)
 				)
 			);
 		}

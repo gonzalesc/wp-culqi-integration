@@ -116,6 +116,14 @@ class FullCulqi_Settings {
 		);
 
 		add_settings_field(
+			'fullculqi_logo', // ID
+			__('Logo URL','letsgo'), // Logo
+			[ $this, 'input_logo' ], // Callback
+			'fullculqi_page', // Page
+			'fullculqi_section' // Section
+		);
+
+		add_settings_field(
 			'fullculqi_sync_payments', // ID
 			__('Synchronize Payments','letsgo'), // Button
 			[ $this, 'button_sync_payments' ], // Callback
@@ -166,7 +174,7 @@ class FullCulqi_Settings {
 		$settings = fullculqi_get_settings();
 
 		echo '<label for="fullculqi_commerce">
-				<input type="text" id="fullculqi_commerce" name="fullculqi_options[commerce]" value="'.$settings['commerce'].'"/>
+				<input type="text" id="fullculqi_commerce" class="regular-text" name="fullculqi_options[commerce]" value="'.$settings['commerce'].'"/>
 			</label>';
 	}
 
@@ -174,7 +182,7 @@ class FullCulqi_Settings {
 		$settings = fullculqi_get_settings();
 
 		echo '<label for="fullculqi_pubkey">
-				<input type="text" id="fullculqi_pubkey" name="fullculqi_options[public_key]" value="'.$settings['public_key'].'"/>
+				<input type="text" id="fullculqi_pubkey" class="regular-text" name="fullculqi_options[public_key]" value="'.$settings['public_key'].'"/>
 			</label>';
 	}
 
@@ -182,7 +190,16 @@ class FullCulqi_Settings {
 		$settings = fullculqi_get_settings();
 
 		echo '<label for="fullculqi_seckey">
-				<input type="text" id="fullculqi_seckey" name="fullculqi_options[secret_key]" value="'.$settings['secret_key'].'"/>
+				<input type="text" id="fullculqi_seckey" class="regular-text" name="fullculqi_options[secret_key]" value="'.$settings['secret_key'].'"/>
+			</label>';
+	}
+
+	public function input_logo() {
+		$settings = fullculqi_get_settings();
+
+		echo '<label for="fullculqi_logo">
+				<input type="text" id="fullculqi_logo" class="regular-text" name="fullculqi_options[logo_url]" value="'.$settings['logo_url'].'"/>
+				<p class="help">'.__('This logo will appear in the Culqi Modal/Popup','letsgo').'</p>
 			</label>';
 	}
 
@@ -199,7 +216,7 @@ class FullCulqi_Settings {
 
 		echo '<label for="fullculqi_woo_payment">
 				<input type="checkbox" id="fullculqi_woo_payment" name="fullculqi_options[woo_payment]" value="yes" '.checked($settings['woo_payment'], 'yes', false).' />
-				<p>'.__('If checked, the Culqi payment method will appear in Woocommerce.', 'letsgo').'</p>
+				<p class="help">'.__('If checked, the Culqi payment method will appear in Woocommerce.', 'letsgo').'</p>
 			</label>';
 
 		if( $settings['woo_payment'] == 'yes' ) {
