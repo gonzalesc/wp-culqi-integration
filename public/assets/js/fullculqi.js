@@ -32,7 +32,6 @@ function culqi() {
 		jQuery('#fullculqi_notify').html('<p style="color:#e54848; font-weight:bold">'+ Culqi.error.user_message + '</p>');
 	
 	} else {
-		//console.log(Culqi.token.id);
 		
 		jQuery(document).ajaxStart(function(){
 			jQuery('#fullculqi_notify').empty();
