@@ -103,7 +103,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 								],
 								'installments' => [
 									'title'			=> __('Installments', 'letsgo'),
-									'description'	=> __('If checked a select field will appear in the modal with the available installments','letsgo'),
+									'description'	=> __('If checked, a selection field will appear in the modal with the available installments.','letsgo'),
 									'class'			=> '',
 									'type'			=> 'checkbox',
 									'label'			=> __('Enable Installments', 'letsgo'),
