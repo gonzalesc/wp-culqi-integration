@@ -52,6 +52,8 @@ class FullCulqi_Settings {
 				54.1
 			);
 
+		do_action('fullculqi/settings/before_menu');
+
 		add_submenu_page(
 				'fullculqi_menu',
 				__('Settings','letsgo'),
@@ -60,6 +62,8 @@ class FullCulqi_Settings {
 				'fullculqi_settings',
 				[ $this, 'menu_settings' ]
 			);
+
+		do_action('fullculqi/settings/after_menu');
 	}
 
 	public function menu_settings() {
