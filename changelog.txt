@@ -1,3 +1,6 @@
+2019-09-29 - version 1.1.1
+* Feature : we add new hooks to admin settings
+
 2019-09-09 - version 1.1.0
 * Feature : Enable Logo in the modal
 
