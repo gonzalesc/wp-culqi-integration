@@ -1,3 +1,6 @@
+2019-09-30 - version 1.2.0
+* Feature : add addons section
+
 2019-09-29 - version 1.1.1
 * Feature : we add new hooks to admin settings
 
