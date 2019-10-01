@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Culqi Integration\n"
-"POT-Creation-Date: 2019-09-09 23:48-0300\n"
-"PO-Revision-Date: 2019-09-09 23:49-0300\n"
+"POT-Creation-Date: 2019-09-30 22:48-0300\n"
+"PO-Revision-Date: 2019-09-30 22:50-0300\n"
 "Last-Translator: \n"
 "Language-Team: Letsgodev\n"
 "Language: es\n"
@@ -66,104 +66,158 @@ msgstr "Reembolsado"
 msgid "Order"
 msgstr "Pedido"
 
-#: admin/class-fullculqi-settings.php:30
+#: admin/class-fullculqi-settings.php:32
 msgid "Synchronizing. It may take several minutes."
 msgstr "Sincronizando. Esto puede tomar varios minutos."
 
-#: admin/class-fullculqi-settings.php:31
+#: admin/class-fullculqi-settings.php:33
 msgid "Complete synchronization."
 msgstr "Sincronización completa."
 
-#: admin/class-fullculqi-settings.php:32
+#: admin/class-fullculqi-settings.php:34
 #, php-format
 msgid "Deleting post from %s."
 msgstr "Borrando post desde %s."
 
-#: admin/class-fullculqi-settings.php:33
+#: admin/class-fullculqi-settings.php:35
 #, php-format
 msgid "%s : Posts deleted."
 msgstr "%s : Posts borrados."
 
-#: admin/class-fullculqi-settings.php:35
+#: admin/class-fullculqi-settings.php:37
 msgid "if you continue, you will delete all fullculqi posts"
 msgstr "si continuas, borrarás todos los posts de Culqi en WP"
 
-#: admin/class-fullculqi-settings.php:46 admin/class-fullculqi-settings.php:47
+#: admin/class-fullculqi-settings.php:48 admin/class-fullculqi-settings.php:49
 #: includes/class-fullculqi-method.php:9 includes/functions.php:55
 msgid "Culqi Full Integration"
 msgstr "Culqi Integración"
 
-#: admin/class-fullculqi-settings.php:57 admin/class-fullculqi-settings.php:58
+#: admin/class-fullculqi-settings.php:61 admin/class-fullculqi-settings.php:62
 msgid "Settings"
 msgstr "Configuración"
 
-#: admin/class-fullculqi-settings.php:68
+#: admin/class-fullculqi-settings.php:73 admin/class-fullculqi-settings.php:74
+msgid "Add-ons"
+msgstr "Add-ons"
+
+#: admin/class-fullculqi-settings.php:88
 msgid "You do not have sufficient permissions to access this page."
 msgstr "No tienes suficientes permisos para acceder a esta página."
 
-#: admin/class-fullculqi-settings.php:89
+#: admin/class-fullculqi-settings.php:109
 msgid "Culqi Full Integration Settings"
 msgstr "Configuración de Culqi Integración"
 
-#: admin/class-fullculqi-settings.php:96
+#: admin/class-fullculqi-settings.php:116
 msgid "Commerce name"
 msgstr "Nombre del Comercio"
 
-#: admin/class-fullculqi-settings.php:104 admin/layouts/welcome_panel.php:59
+#: admin/class-fullculqi-settings.php:124 admin/layouts/welcome_panel.php:59
 msgid "Public Key"
 msgstr "Lláve Pública"
 
-#: admin/class-fullculqi-settings.php:112 admin/layouts/welcome_panel.php:64
+#: admin/class-fullculqi-settings.php:132 admin/layouts/welcome_panel.php:64
 msgid "Secret Key"
 msgstr "Llave Secreta"
 
-#: admin/class-fullculqi-settings.php:120
+#: admin/class-fullculqi-settings.php:140
 msgid "Logo URL"
 msgstr "URL del Logo"
 
-#: admin/class-fullculqi-settings.php:128
+#: admin/class-fullculqi-settings.php:148
 msgid "Synchronize Payments"
 msgstr "Sincronizar Pagos"
 
-#: admin/class-fullculqi-settings.php:138
+#: admin/class-fullculqi-settings.php:158
 msgid "Activate Payment Method in Woocommerce"
 msgstr "Activar método de pago para Woocommerce"
 
-#: admin/class-fullculqi-settings.php:146
+#: admin/class-fullculqi-settings.php:166
 msgid "Delete all"
 msgstr "Borrar todo"
 
-#: admin/class-fullculqi-settings.php:170
+#: admin/class-fullculqi-settings.php:190
 msgid "Options"
 msgstr "Opciones"
 
-#: admin/class-fullculqi-settings.php:202
+#: admin/class-fullculqi-settings.php:222
 msgid "This logo will appear in the Culqi Modal/Popup"
 msgstr "Este logo aparecerá en el Modal/Popup de Culqi"
 
-#: admin/class-fullculqi-settings.php:208
+#: admin/class-fullculqi-settings.php:228
 msgid "Last"
 msgstr "Últimos"
 
-#: admin/class-fullculqi-settings.php:208
+#: admin/class-fullculqi-settings.php:228
 msgid "records"
 msgstr "filas"
 
-#: admin/class-fullculqi-settings.php:209
+#: admin/class-fullculqi-settings.php:229
 msgid "Synchronize Now"
 msgstr "Sincronizar ahora"
 
-#: admin/class-fullculqi-settings.php:219
+#: admin/class-fullculqi-settings.php:239
 msgid "If checked, the Culqi payment method will appear in Woocommerce."
 msgstr "Si marcas la casilla, el método de pago aparecerá en Woocommerce."
 
-#: admin/class-fullculqi-settings.php:223
+#: admin/class-fullculqi-settings.php:243
 msgid "Customize Culqi Payment Gateway"
 msgstr "Personalizar Pasarela de Pago Culqi"
 
-#: admin/class-fullculqi-settings.php:229 admin/layouts/welcome_panel.php:44
+#: admin/class-fullculqi-settings.php:249 admin/layouts/welcome_panel.php:44
 msgid "Clear all"
 msgstr "Limpiar todo"
+
+#: admin/layouts/addons_options.php:3
+msgid "Culqi Addons"
+msgstr "Culqi Addons"
+
+#: admin/layouts/addons_options.php:13
+msgid "Culqi One Click Payments"
+msgstr "Culqi Pagos con un click"
+
+#: admin/layouts/addons_options.php:14
+msgid ""
+"Your buyers will can do their purchase with a single click in the checkout "
+"page"
+msgstr ""
+"Sus compradores podrán hacer sus transacciones con un simple click en la "
+"página de pago"
+
+#: admin/layouts/addons_options.php:20 admin/layouts/addons_options.php:43
+#: admin/layouts/addons_options.php:66
+msgid "Installed"
+msgstr "Instalado"
+
+#: admin/layouts/addons_options.php:23 admin/layouts/addons_options.php:46
+#: admin/layouts/addons_options.php:70
+msgid "Download"
+msgstr "Descargar"
+
+#: admin/layouts/addons_options.php:36
+msgid "Culqi Subscriptions"
+msgstr "Culqi Suscripciones"
+
+#: admin/layouts/addons_options.php:37
+msgid ""
+"Your ecommerce will can sell products or services using Culqi recurring "
+"payment."
+msgstr ""
+"Su ecommerce podrá vender productos o servicios usando los pagos recurrentes "
+"de Culqi"
+
+#: admin/layouts/addons_options.php:59
+msgid "Culqi Payment Buttons"
+msgstr "Culqi Botones de Pago"
+
+#: admin/layouts/addons_options.php:60
+msgid ""
+"You can use Culqi payments buttons in everywhere of you website without have "
+"a ecommerce installed."
+msgstr ""
+"Podrás usar los botones de pago en cualquier lugar de tu website sin tener "
+"un ecommerce instalado"
 
 #: admin/layouts/metaboxes/metabox_order_log.php:10
 msgid "Date/Hour"
@@ -423,7 +477,7 @@ msgid ""
 msgstr ""
 "Este es el mensaje que será mostrado al comprador si hay un error en el pago"
 
-#: includes/class-fullculqi-method.php:141 includes/functions.php:58
+#: includes/class-fullculqi-method.php:141 includes/functions.php:59
 msgid ""
 "Im sorry! an error occurred making the payment. A email was sent to shop "
 "manager with your information."
@@ -470,15 +524,15 @@ msgstr ""
 "El plugin Woocommerce Culqi Integración necesita que la moneda en el "
 "ecommerce sea PEN o USD para funcionar!"
 
-#: includes/functions.php:79
+#: includes/functions.php:80
 msgid "Peruvian Sol"
 msgstr "Sol Peruano"
 
-#: includes/functions.php:80
+#: includes/functions.php:81
 msgid "Dollars"
 msgstr "Dolares"
 
-#: includes/functions.php:196
+#: includes/functions.php:197
 #, php-format
 msgid "File %s is not exists"
 msgstr "Fichero %s no existe"
