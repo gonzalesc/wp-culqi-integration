@@ -17,6 +17,7 @@ if( !function_exists('fullculqi_get_default') ) {
 					'commerce'			=> '',
 					'public_key'		=> '',
 					'secret_key'		=> '',
+					'logo_url'			=> '',
 					'woo_payment'		=> 'no',
 				];
 
@@ -54,6 +55,7 @@ if( !function_exists('fullculqi_get_woo_default') ) {
 					'title'				=> __('Culqi Full Integration','letsgo'),
 					'description'		=> '',
 					'status_success'	=> 'wc-processing',
+					'installments'		=> 'no',
 					'msg_fail'			=> __('Im sorry! an error occurred making the payment. A email was sent to shop manager with your information.','letsgo'),
 					'time_modal'		=> 0,
 				];

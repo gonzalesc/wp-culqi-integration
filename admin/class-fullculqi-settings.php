@@ -13,6 +13,8 @@ class FullCulqi_Settings {
 	public function enqueue_scripts() {
 		$screen = get_current_screen();
 
+		wp_enqueue_style( 'fullculqi-css', FULLCULQI_PLUGIN_URL . 'admin/assets/css/fullculqi_addons.css');
+
 		if( !isset($screen->base) ||
 			( $screen->base != 'culqi-full-integration_page_fullculqi_settings' &&
 				$screen->base != 'culqi-integracion_page_fullculqi_settings' &&
@@ -52,6 +54,8 @@ class FullCulqi_Settings {
 				54.1
 			);
 
+		do_action('fullculqi/settings/before_menu');
+
 		add_submenu_page(
 				'fullculqi_menu',
 				__('Settings','letsgo'),
@@ -60,6 +64,22 @@ class FullCulqi_Settings {
 				'fullculqi_settings',
 				[ $this, 'menu_settings' ]
 			);
+
+
+		do_action('fullculqi/settings/after_menu');
+
+		add_submenu_page(
+				'fullculqi_menu',
+				__('Add-ons','letsgo'),
+				__('Add-ons','letsgo'),
+				'manage_options',
+				'fullculqi_addons',
+				[ $this, 'menu_addons' ]
+			);
+	}
+
+	public function menu_addons() {
+		include_once FULLCULQI_PLUGIN_DIR . 'admin/layouts/addons_options.php';
 	}
 
 	public function menu_settings() {
@@ -68,7 +88,7 @@ class FullCulqi_Settings {
             wp_die( __('You do not have sufficient permissions to access this page.','letsgo') );
         }
 
-		include_once FULLCULQI_PLUGIN_DIR.'admin/layouts/settings_options.php';
+		include_once FULLCULQI_PLUGIN_DIR . 'admin/layouts/settings_options.php';
 	}
 
 
@@ -111,6 +131,14 @@ class FullCulqi_Settings {
 			'fullculqi_seckey', // ID
 			__('Secret Key','letsgo'), // Secret Key
 			[ $this, 'input_seckey' ], // Callback
+			'fullculqi_page', // Page
+			'fullculqi_section' // Section
+		);
+
+		add_settings_field(
+			'fullculqi_logo', // ID
+			__('Logo URL','letsgo'), // Logo
+			[ $this, 'input_logo' ], // Callback
 			'fullculqi_page', // Page
 			'fullculqi_section' // Section
 		);
@@ -166,7 +194,7 @@ class FullCulqi_Settings {
 		$settings = fullculqi_get_settings();
 
 		echo '<label for="fullculqi_commerce">
-				<input type="text" id="fullculqi_commerce" name="fullculqi_options[commerce]" value="'.$settings['commerce'].'"/>
+				<input type="text" id="fullculqi_commerce" class="regular-text" name="fullculqi_options[commerce]" value="'.$settings['commerce'].'"/>
 			</label>';
 	}
 
@@ -174,7 +202,7 @@ class FullCulqi_Settings {
 		$settings = fullculqi_get_settings();
 
 		echo '<label for="fullculqi_pubkey">
-				<input type="text" id="fullculqi_pubkey" name="fullculqi_options[public_key]" value="'.$settings['public_key'].'"/>
+				<input type="text" id="fullculqi_pubkey" class="regular-text" name="fullculqi_options[public_key]" value="'.$settings['public_key'].'"/>
 			</label>';
 	}
 
@@ -182,7 +210,16 @@ class FullCulqi_Settings {
 		$settings = fullculqi_get_settings();
 
 		echo '<label for="fullculqi_seckey">
-				<input type="text" id="fullculqi_seckey" name="fullculqi_options[secret_key]" value="'.$settings['secret_key'].'"/>
+				<input type="text" id="fullculqi_seckey" class="regular-text" name="fullculqi_options[secret_key]" value="'.$settings['secret_key'].'"/>
+			</label>';
+	}
+
+	public function input_logo() {
+		$settings = fullculqi_get_settings();
+
+		echo '<label for="fullculqi_logo">
+				<input type="text" id="fullculqi_logo" class="regular-text" name="fullculqi_options[logo_url]" value="'.$settings['logo_url'].'"/>
+				<p class="help">'.__('This logo will appear in the Culqi Modal/Popup','letsgo').'</p>
 			</label>';
 	}
 
@@ -199,7 +236,7 @@ class FullCulqi_Settings {
 
 		echo '<label for="fullculqi_woo_payment">
 				<input type="checkbox" id="fullculqi_woo_payment" name="fullculqi_options[woo_payment]" value="yes" '.checked($settings['woo_payment'], 'yes', false).' />
-				<p>'.__('If checked, the Culqi payment method will appear in Woocommerce.', 'letsgo').'</p>
+				<p class="help">'.__('If checked, the Culqi payment method will appear in Woocommerce.', 'letsgo').'</p>
 			</label>';
 
 		if( $settings['woo_payment'] == 'yes' ) {

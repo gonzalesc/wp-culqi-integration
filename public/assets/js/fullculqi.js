@@ -14,12 +14,21 @@ if( fullculqi.multipayment == 'yes' && fullculqi.multi_order.status == 'ok' ) {
 
 Culqi.settings(args_settings);
 
+args_options = {};
+
+// If is enable the installments option
 if( fullculqi.installments == 'yes' ) {
-	Culqi.options({
-		installments: true
-	});
+	args_options.installments = true;
 }
 
+// if is set the logo url
+if( fullculqi.url_logo.length > 0 ) {
+	args_options.style = { logo : fullculqi.url_logo };	
+}
+
+if( Object.keys(args_options).length > 0 ) {
+	Culqi.options(args_options);
+}
 
 function culqi() {
 	
