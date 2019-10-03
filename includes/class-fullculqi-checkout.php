@@ -118,7 +118,6 @@ class FullCulqi_Checkout {
 
 		$args_order = apply_filters('fullculqi/checkout/order_args', [
 						'amount'			=> fullculqi_format_total($order->get_total()),
-						'amount'			=> $order->get_total() * 100,
 						'currency_code'		=> $order->get_currency(),
 						'description'		=> substr(str_pad(implode(', ', $product_names), 5, '_'), 0, 80),
 						'order_number'		=> $order->get_order_number(),
@@ -156,7 +155,7 @@ class FullCulqi_Checkout {
 		$log->set_msg_payment('notice', __('This order is a Multipayment', 'letsgo') );
 		$log->set_msg_payment('notice', sprintf(__('Culqi Multipayment CIP: %s','letsgo'), $cip_code) );
 
-		$order->update_status( 'on-hold', __('Culqi Method: Multipayment', 'letsgo') );
+		$order->update_status( 'pending', __('Culqi Method: Multipayment', 'letsgo') );
 
 		$note = sprintf(__('Culqi Multipayment CIP: %s','letsgo'), $cip_code);
 		$order->add_order_note($note);

@@ -98,49 +98,64 @@ class FullCulqi_WC {
 
 	public function update_order() {
 
-		update_option('kalep_1', 'peticion 1');
-		
 		$inputJSON	= file_get_contents('php://input');
 		$input 		= json_decode($inputJSON);
 
-		update_option('kalep_3', print_r($input,true));
-		update_option('kalep_2', print_r($inputJSON,true));
-
-		http_response_code(200);
-		echo wp_send_json( ['result' => 'success' ] );
-		
-		die();
-
-		$data 		= json_decode($input->data);
 
 		if( $input->object == 'event' && $input->type == 'order.status.changed' ) {
-		
-			global $wpdb, $woocommerce;
 
-			$order_id = fullculqi_postid_from_meta('culqi_cip', $data->payment_code);
+			$data = json_decode($input->data);
+			$order_id = $data->metadata->order_id;
 
-			if( $order_id ) {
+			$cip_code = $data->payment_code;
+			$order = new WC_Order( $order_id );
 
-				$order = new WC_Order( $order_id );
+			if( $order ) {
+
+				$method_array = fullculqi_get_woo_settings();
+
+				// Logs
+				$log = new FullCulqi_Logs();
+				$log->set_settings_payment($order_id);
 
 				switch($data->state) {
 					case 'paid' :
-						$order->payment_complete();
+
+						$note = sprintf(__('The order was paid. The CIP %s was paid','letsgo'), $cip_code);
+						$order->add_order_note($note);
+
+						$log->set_msg_payment('notice', sprintf(__('The CIP %s was paid','letsgo'), $cip_code) );
+
+						if( $method_array['status_success'] == 'wc-completed')
+							$order->payment_complete();
+						else
+							$order->update_status($method_array['status_success']);
+
 						break;
 
-					case 'expired' : 
-						$order->update_status( 'failed', __('The order was not paid on time','letsgo') );
+					case 'expired' :
+
+						$log->set_msg_payment('notice', sprintf(__('The CIP %s expired','letsgo'), $cip_code) );
+
+						$order->update_status( 'failed', sprintf(__('The order was not paid on time. The CIP %s expired','letsgo'), $cip_code) );
+
 						break;
 
 					case 'deleted' :
-						$order->update_status( 'cancelled', __('The order was not paid on time','letsgo') );
+
+						$log->set_msg_payment('notice', sprintf(__('The CIP %s was deleted','letsgo'), $cip_code) );
+						
+						$order->update_status( 'cancelled', sprintf(__('The order was not paid on time. The CIP %s was deleted','letsgo'), $cip_code) );
+
 						break;
 				}
 
-				echo wp_send_json( ['result' => 'success' ] );
-				http_response_code(200);
+				do_action('fullculqi/update_order/' . $data->state, $order, $log, $data);
 			}
 		}
+
+		http_response_code(200);
+		echo wp_send_json( ['result' => 'success' ] );
 		die();
 	}
 }
