@@ -137,7 +137,7 @@ class FullCulqi_WC {
 
 						$log->set_msg_payment('notice', sprintf(__('The CIP %s expired','letsgo'), $cip_code) );
 
-						$order->update_status( 'failed', sprintf(__('The order was not paid on time. The CIP %s expired','letsgo'), $cip_code) );
+						$order->update_status( 'cancelled', sprintf(__('The order was not paid on time. The CIP %s expired','letsgo'), $cip_code) );
 
 						break;
 
