@@ -13,32 +13,38 @@ class FullCulqi_Settings {
 	public function enqueue_scripts() {
 		$screen = get_current_screen();
 
-		wp_enqueue_style( 'fullculqi-css', FULLCULQI_PLUGIN_URL . 'admin/assets/css/fullculqi_addons.css');
+		if( isset($screen->base) &&
+			$screen->base == 'culqi-integracion_page_fullculqi_addons'
+		) {
+			wp_enqueue_style(
+				'fullculqi-css',
+				FULLCULQI_PLUGIN_URL . 'admin/assets/css/fullculqi_addons.css'
+			);
+		}
 
-		if( !isset($screen->base) ||
-			( $screen->base != 'culqi-full-integration_page_fullculqi_settings' &&
-				$screen->base != 'culqi-integracion_page_fullculqi_settings' &&
-				$screen->base != 'dashboard_page_fullculqi-welcome' ) )
-			return;
+		if( isset($screen->base) &&
+			( $screen->base == 'culqi-integracion_page_fullculqi_settings' ||
+				$screen->base == 'dashboard_page_fullculqi-welcome' )
+		) {
+			wp_enqueue_script( 'fullculqi-js', FULLCULQI_PLUGIN_URL . 'admin/assets/js/fullculqi_admin.js', [ 'jquery' ], false, true );
 
-		wp_enqueue_script( 'fullculqi-js', FULLCULQI_PLUGIN_URL . 'admin/assets/js/fullculqi_admin.js', [ 'jquery' ], false, true );
-
-		wp_localize_script( 'fullculqi-js', 'fullculqi',
-			[
-				'url_ajax'			=> admin_url('admin-ajax.php'),
-				'url_loading'		=> admin_url('images/spinner.gif'),
-				'url_success'		=> admin_url('images/yes.png'),
-				'url_failure'		=> admin_url('images/no.png'),
-				'sync_loading'		=> __('Synchronizing. It may take several minutes.','letsgo'),
-				'sync_success'		=> __('Complete synchronization.','letsgo'),
-				'delete_loading'	=> __('Deleting post from %s.','letsgo'),
-				'delete_success'	=> __('%s : Posts deleted.','letsgo'),
-				'delete_cpts'		=> fullculqi_get_cpts(),
-				'text_confirm'		=> __('if you continue, you will delete all fullculqi posts','letsgo'),
-				'is_welcome'		=> $screen->base == 'dashboard_page_fullculqi-welcome' ? true : false,
-				'nonce'				=> wp_create_nonce( 'fullculqi-wpnonce' ),
-			]
-		);
+			wp_localize_script( 'fullculqi-js', 'fullculqi',
+				[
+					'url_ajax'			=> admin_url('admin-ajax.php'),
+					'url_loading'		=> admin_url('images/spinner.gif'),
+					'url_success'		=> admin_url('images/yes.png'),
+					'url_failure'		=> admin_url('images/no.png'),
+					'sync_loading'		=> __('Synchronizing. It may take several minutes.','letsgo'),
+					'sync_success'		=> __('Complete synchronization.','letsgo'),
+					'delete_loading'	=> __('Deleting post from %s.','letsgo'),
+					'delete_success'	=> __('%s : Posts deleted.','letsgo'),
+					'delete_cpts'		=> fullculqi_get_cpts(),
+					'text_confirm'		=> __('if you continue, you will delete all fullculqi posts','letsgo'),
+					'is_welcome'		=> $screen->base == 'dashboard_page_fullculqi-welcome' ? true : false,
+					'nonce'				=> wp_create_nonce( 'fullculqi-wpnonce' ),
+				]
+			);
+		}
 	}
 
 	
