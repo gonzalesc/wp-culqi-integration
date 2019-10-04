@@ -58,9 +58,9 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			}
 
 			// Disabled from thirds
-			$this->multipayment = apply_filters('fullculqi/method/disabled_multipayments', false, $order) ? 'no' : $this->multipayment;
+			$this->multipayment = apply_filters('fullculqi/method/disabled_multipayments', false, $order, 'order') ? 'no' : $this->multipayment;
 
-			$this->installments = apply_filters('fullculqi/method/disabled_installments', false, $order) ? 'no' : $this->installments;
+			$this->installments = apply_filters('fullculqi/method/disabled_installments', false, $order, 'order') ? 'no' : $this->installments;
 			
 
 			if( $this->multipayment == 'yes' ) {
