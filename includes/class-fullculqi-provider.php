@@ -5,7 +5,7 @@ class FullCulqi_Provider {
 	* Payments List
 	* @return ARRAY $output 
 	*/
-	static public function list_payments($last_records = 100) {
+	static public function list_payments($records = 100) {
 		global $culqi;
 
 		// Validate $culqi global
@@ -14,7 +14,7 @@ class FullCulqi_Provider {
 
 		// Connect to the API Culqi
 		try {
-			$payments = $culqi->Charges->all( array( 'limit' => $last_records ) );
+			$payments = $culqi->Charges->all( array( 'limit' => $records ) );
 
 			if( isset($payments->data) && count($payments->data) > 0 )
 				$output = array('status' => 'ok', 'data' => $payments->data );

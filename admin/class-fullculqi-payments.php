@@ -101,8 +101,8 @@ class FullCulqi_Payments extends FullCulqi_Entities {
 	}
 
 
-	static public function sync_posts($last_records = 100) {
-		$payments = FullCulqi_Provider::list_payments($last_records);
+	static public function sync_posts($records = 100) {
+		$payments = FullCulqi_Provider::list_payments($records);
 
 		if( $payments['status'] == 'ok' ) {
 

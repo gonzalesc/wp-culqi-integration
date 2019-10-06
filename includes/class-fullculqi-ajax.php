@@ -13,7 +13,7 @@ class FullCulqi_Ajax {
 		if( !wp_verify_nonce( $_POST['wpnonce'], 'fullculqi-wpnonce' ) )
 			wp_send_json( array('status' => 'error', 'msg' => __('Busted!','letsgo') ));
 
-		$output = FullCulqi_Payments::sync_posts(sanitize_key($_POST['last_records']));
+		$output = FullCulqi_Payments::sync_posts(sanitize_key($_POST['records']));
 		wp_send_json($output);
 	}
 
