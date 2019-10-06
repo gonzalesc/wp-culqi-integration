@@ -9,7 +9,7 @@ Bienvenido al respositorio de Culqi Integración para Wordpress. Este plugin te 
 - [Credenciales de Culqi](https://www.culqi.com)
 
 
-## Instalación ##
+## Instalación desde el repositorio de WP ##
 
 Podes descargar el plugin desde el repositorio de Wordpress :
 [https://wordpress.org/plugins/culqi-full-integration/](https://wordpress.org/plugins/culqi-full-integration/)
@@ -67,7 +67,7 @@ El log siempre está habilitado, cada pedido tendrá un detalle de todos los pas
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/log.jpg "Log")
 
 
-## Datos Obligatorios en el Checkout ##
+## Datos recomendados en el Checkout ##
 
 Culqi recomienda que estos campos sean obligatorios:
 
@@ -79,7 +79,22 @@ Culqi recomienda que estos campos sean obligatorios:
 - Código de pais ( ejem: para Perú es PE)
 - Teléfono
 
-De todos estos puntos el más importante es el `email`, los otros campos son muy necesarios para un tema de antifraude pero no son obligatorios. Yo recomiendo que tengas todos estos campos en tu checkout.
+De todos estos puntos el más importante es el `email`, los otros campos son muy necesarios para un tema de antifraude pero no son obligatorios. Yo recomiendo que tengas todos estos campos en tu checkout. El plugin no validará estos campos.
+
+## Multipagos - Configurar Evento ##
+
+Puedes habilitar Multipagos en la sección de configuración de la pasarela de pago Culqi. Cada vez que se genera una orden de pago, le llegará al cliente un email con el CIP de pago.
+
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/webhook_settings.jpg "Multipagos")
+
+
+Cuando el cliente page su código CIP, Culqi avisará al comercio mediante un `evento` el cual debemos configurar: para ello, debemos entrar al panel de Culqi e ir a la sección de `eventos` y al submenu de `webhooks`. Finalmente le damos click al botón `Añadir` que está arriba a la derecha.
+
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/webhook_create.jpg "Event")
+
+
+Debes elegir el evento : `order.status.changed`
+y la URL que debes poner está en la configuración de la pasarela de pago Culqi para Woocommerce: `URL del Webhook`
 
 
 ## Problemas Comunes desde el servicio de Culqi ##

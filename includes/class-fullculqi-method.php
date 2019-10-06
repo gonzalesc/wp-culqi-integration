@@ -122,6 +122,11 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 
 		$this->form_fields = apply_filters('fullculqi/method/form_fields',
 							[
+								'basic_section' => [
+									'title' => __('BASIC SETTING','letsgo'),
+									'type'  => 'title'
+								],
+
 								'enabled' => [
 									'title'		=> __( 'Enable/Disable', 'letsgo' ),
 									'type'		=> 'checkbox',
@@ -137,8 +142,27 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 									'default'		=> 'no',
 									'desc_tip'		=> true,
 								],
+								'title' => [
+									'title'			=> __( 'Title', 'letsgo' ),
+									'type'			=> 'text',
+									'description'	=> __( 'This controls the title which the user sees during checkout.', 'letsgo' ),
+									'desc_tip'		=> true,
+								],
+								'description' => [
+									'title'			=> __('Description', 'letsgo'),
+									'description'	=> __('Brief description of the payment gateway. This message will be seen by the buyer','letsgo'),
+									'class'			=> '',
+									'type'			=> 'textarea',
+									'desc_tip'		=> true,
+								],
+
+								'multi_section' => [
+									'title' => __('MULTIPAYMENT SETTING','letsgo'),
+									'type'  => 'title'
+								],
+
 								'multipayment' => [
-									'title'			=> __('Multipayment', 'letsgo'),
+									'title'			=> __('Enable', 'letsgo'),
 									'description'	=> __('If checked several tabs will appear in the modal with other payments','letsgo'),
 									'class'			=> '',
 									'type'			=> 'checkbox',
@@ -147,7 +171,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 									'desc_tip'		=> true,
 								],
 								'multi_duration' => [
-									'title'			=> __('Multipayment Duration', 'letsgo'),
+									'title'			=> __('Duration', 'letsgo'),
 									'description'	=> __('If enable Multipayment option, you must choose the order duration. This is the time you give the customer to make the payment.','letsgo'),
 									'class'			=> '',
 									'type'			=> 'select',
@@ -166,19 +190,19 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 									'default'		=> '24',
 									'desc_tip'		=> true,
 								],
-								'title' => [
-									'title'			=> __( 'Title', 'letsgo' ),
-									'type'			=> 'text',
-									'description'	=> __( 'This controls the title which the user sees during checkout.', 'letsgo' ),
-									'desc_tip'		=> true,
+								'multi_url' => [
+									'title' => __('Webhook URL','letsgo'),
+									'type' => 'multiurl',
+									'description' => __('If you have enabled the multipayment, so you need configure the webhooks usign this URL','letsgo'),
+									'desc_tip' => true,
+									'default' => 'yes',
 								],
-								'description' => [
-									'title'			=> __('Description', 'letsgo'),
-									'description'	=> __('Brief description of the payment gateway. This message will be seen by the buyer','letsgo'),
-									'class'			=> '',
-									'type'			=> 'textarea',
-									'desc_tip'		=> true,
+
+								'additional_section' => [
+									'title' => __('ADDITIONAL SETTING','letsgo'),
+									'type'  => 'title'
 								],
+
 								'status_success' => [
 									'title' => __('Success Status','letsgo'),
 									'type' => 'select',
@@ -290,7 +314,29 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		</tr>
 		<?php
 		return ob_get_clean();
-	}		
+	}
+
+	function generate_multiurl_html($key, $data) {
+		ob_start();
+		?>
+
+		<tr valign="top">
+			<th scope="row" class="titledesc">
+				<label for="<?php echo esc_attr( $field_key ); ?>"><?php echo wp_kses_post( $data['title'] ); ?></label>
+				<?php echo $this->get_tooltip_html( $data ); ?>
+			</th>
+			<td class="forminp">
+				<fieldset>
+					<legend class="screen-reader-text"><span><?php echo wp_kses_post( $data['title'] ); ?></span></legend>
+					<b><?php echo site_url('?wc-api=fullculqi_update_order'); ?></b>
+					<?php echo $this->get_description_html( $data ); ?>
+				</fieldset>
+			</td>
+		</tr>
+
+		<?php
+		return ob_get_clean();
+	}
 }
 
 ?>
