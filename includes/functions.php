@@ -163,6 +163,24 @@ if( !function_exists('fullculqi_get_cpts') ) {
 	}
 }
 
+if( !function_exists('fullculqi_get_language') ) {
+	function fullculqi_get_language() {
+		
+		$lang_locale = $language = get_locale();
+		$allows = [ 'es', 'en' ];
+
+		// get_locale
+		if( strpos($lang_locale, '_') != FALSE )
+			list($language, $country) = array_map('strtolower', explode('_', $lang_locale));
+
+		// Default
+		if( !in_array($language, $allows) )
+			$language = $allows[0];
+		
+		return apply_filters('fullculqi/global/language', $language);
+	}
+}
+
 
 if( !function_exists('fullculqi_format_total') ) {
 	function fullculqi_format_total($total) {

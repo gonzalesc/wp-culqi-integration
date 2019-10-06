@@ -57,6 +57,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 				$pnames[] = $product->get_name();
 			}
 
+
 			// Disabled from thirds
 			$this->multipayment = apply_filters('fullculqi/method/disabled_multipayments', false, $order, 'order') ? 'no' : $this->multipayment;
 
@@ -93,19 +94,20 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 					'url_payment'	=> site_url('wc-api/fullculqi_create_payment/'),
 					'url_order'		=> site_url('wc-api/fullculqi_create_order/'),
 					'url_success'	=> $order->get_checkout_order_received_url(),
-					'public_key'	=> $settings['public_key'],
+					'public_key'	=> sanitize_text_field($settings['public_key']),
 					'installments'	=> sanitize_title($this->installments),
 					'multipayment'	=> sanitize_title($this->multipayment),
 					'multi_order'	=> $this->multipayment == 'yes' ? $multi_order : '',
+					'lang'			=> fullculqi_get_language(),
 					'time_modal'	=> absint($this->time_modal*1000),
-					'order_id'		=> $order_id,
-					'commerce'		=> $settings['commerce'],
-					'url_logo'		=> $settings['logo_url'],
+					'order_id'		=> absint($order_id),
+					'commerce'		=> sanitize_text_field($settings['commerce']),
+					'url_logo'		=> esc_url($settings['logo_url']),
 					'currency'		=> get_woocommerce_currency(),
 					'description'	=> substr(str_pad(implode(', ', $pnames), 5, '_'), 0, 80),
 					'loading_text'	=> __('Loading. Please wait.','letsgo'),
-					'total'			=> $order->get_total()*100,
-					'msg_fail'		=> $this->msg_fail,
+					'total'			=> fullculqi_format_total($order->get_total()),
+					'msg_fail'		=> sanitize_text_field($this->msg_fail),
 					'msg_error'		=> __('There was some problem in the purchase process. Try again please','letsgo'),
 					'wpnonce'		=> wp_create_nonce('fullculqi'),
 				])

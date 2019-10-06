@@ -15,6 +15,7 @@ if( fullculqi.multipayment == 'yes' && fullculqi.multi_order.status == 'ok' ) {
 Culqi.settings(args_settings);
 
 args_options = {};
+args_options.lang = fullculqi.lang;
 
 // If is enable the installments option
 if( fullculqi.installments == 'yes' ) {
