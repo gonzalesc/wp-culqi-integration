@@ -65,5 +65,24 @@ class FullCulqi_Provider {
 
 		return $output;
 	}
+
+
+	static public function create_token($args) {
+		global $culqi;
+
+		try {
+			$token = $culqi->Tokens->create($args);
+
+			if( isset($token->object) && $token->object != 'error' )
+				$output = array('status' => 'ok', 'data' => $token );
+			else
+				$output = array('status' => 'error', 'msg' => $token->merchant_message );
+			
+		} catch(Exception $e) {
+			$output = array('status' => 'error', 'msg' => $e->getMessage() );
+		}
+
+		return $output;
+	}
 }
 ?>

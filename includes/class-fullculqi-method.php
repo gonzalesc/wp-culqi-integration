@@ -110,7 +110,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 					'msg_fail'		=> sanitize_text_field($this->msg_fail),
 					'msg_error'		=> __('There was some problem in the purchase process. Try again please','letsgo'),
 					'wpnonce'		=> wp_create_nonce('fullculqi'),
-				])
+				], $this)
 			);
 		}
 
@@ -270,7 +270,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		return apply_filters('fullculqi/method/redirect', array(
 					'result'   => 'success',
 					'redirect' => $order->get_checkout_payment_url(true),
-				), $order);
+				), $order, $this);
 	}
 
 
