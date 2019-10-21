@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "46f3597252e24cbb2a0f0fa5a0cff43b",
+    "content-hash": "771d6a9f962e3dc54736ac4cf2f02a5c",
     "packages": [
         {
             "name": "culqi/culqi-php",
-            "version": "v1.3.4",
+            "version": "v1.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/culqi/culqi-php.git",
-                "reference": "fe7e2743439661bab1751d2e45a03b83e400f515"
+                "reference": "8933bc7d86b5080285c4b4c360fcb3183e396f01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/culqi/culqi-php/zipball/fe7e2743439661bab1751d2e45a03b83e400f515",
-                "reference": "fe7e2743439661bab1751d2e45a03b83e400f515",
+                "url": "https://api.github.com/repos/culqi/culqi-php/zipball/8933bc7d86b5080285c4b4c360fcb3183e396f01",
+                "reference": "8933bc7d86b5080285c4b4c360fcb3183e396f01",
                 "shasum": ""
             },
             "require": {
@@ -54,7 +54,7 @@
                 "peru",
                 "php"
             ],
-            "time": "2018-10-10T21:53:37+00:00"
+            "time": "2019-04-12T17:51:37+00:00"
         },
         {
             "name": "rmccue/requests",

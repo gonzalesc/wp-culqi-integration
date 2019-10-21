@@ -104,12 +104,16 @@ class FullCulqi {
 	}
 
 	public function plugins_loaded() {
-		global $culqi;
+		global $culqi, $culqi_token;
 
 		$settings = fullculqi_get_settings();
 
 		if( isset($settings['secret_key']) && !empty($settings['secret_key']) ) {
-			$GLOBALS['culqi'] = new Culqi\Culqi( array( 'api_key' => $settings['secret_key'] ) );
+			$GLOBALS['culqi'] = new Culqi\Culqi( [ 'api_key' => $settings['secret_key'] ] );
+		}
+
+		if( isset($settings['public_key']) && !empty($settings['public_key']) ) {
+			$GLOBALS['culqi_token'] = new Culqi\Culqi( [ 'api_key' => $settings['public_key'] ] );
 		}
 
 		if( $settings['woo_payment'] == 'yes' ) {

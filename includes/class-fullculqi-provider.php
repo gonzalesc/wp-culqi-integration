@@ -68,10 +68,10 @@ class FullCulqi_Provider {
 
 
 	static public function create_token($args) {
-		global $culqi;
+		global $culqi_token;
 
 		try {
-			$token = $culqi->Tokens->create($args);
+			$token = $culqi_token->Tokens->create($args);
 
 			if( isset($token->object) && $token->object != 'error' )
 				$output = array('status' => 'ok', 'data' => $token );

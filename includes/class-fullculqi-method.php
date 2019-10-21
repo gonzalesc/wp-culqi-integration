@@ -274,6 +274,11 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 	}
 
 
+	function validate_fields() {
+		return apply_filters('fullculqi/method/validate', true, $this);
+	}
+
+
 	function generate_radio_html( $key, $data ) {
 
 		$field_key = $this->get_field_key( $key );
