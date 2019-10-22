@@ -157,8 +157,9 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 								],
 
 								'multi_section' => [
-									'title' => __('MULTIPAYMENT SETTING','letsgo'),
-									'type'  => 'title'
+									'title'			=> __('MULTIPAYMENT SETTING','letsgo'),
+									'type'			=> 'title',
+									'description'	=> apply_filters('fullculqi/method/multi_html',''),
 								],
 
 								'multipayment' => [
