@@ -3,7 +3,7 @@
 Plugin Name: Culqi Full Integration 
 Plugin URI:https://wordpress.org/plugins/wp-culqi-integration
 Description: Culqi is a Payment method to Peru. This plugin is a full integration with the Culqi API.
-Version: 1.4.1
+Version: 1.4.2
 Author: Lets Go Dev
 Author URI: https://www.letsgodev.com/
 Developer: Alexander Gonzales
@@ -13,7 +13,7 @@ Requires at least: 4.7
 Tested up to: 5.2.4
 Stable tag: 4.9
 WC requires at least: 3.0.0
-WC tested up to: 3.7.1
+WC tested up to: 3.8.0
 */
 
 // If this file is called directly, abort.
