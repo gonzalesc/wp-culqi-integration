@@ -30,7 +30,7 @@ class FullCulqi_WC {
 
 				if( apply_filters('fullculqi/do_payment/conditional', false, $order, $log) ) {
 					
-					$provider_payment = apply_filters('fullculqi/do_payment/create', $provider_payment, $token_id, $log, $order);
+					$provider_payment = apply_filters('fullculqi/do_payment/create', $provider_payment, compact('token_id', 'installments', 'country_code'), $log, $order);
 
 				} else {
 
