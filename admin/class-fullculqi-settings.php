@@ -13,8 +13,6 @@ class FullCulqi_Settings {
 	public function enqueue_scripts() {
 		$screen = get_current_screen();
 
-		update_option('nalex_9', print_r($screen,true));
-
 		if( isset($screen->base) && (
 			$screen->base == 'culqi-integracion_page_fullculqi_addons' ||
 			$screen->base == 'culqi-full-integration_page_fullculqi_addons'

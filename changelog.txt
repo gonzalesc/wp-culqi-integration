@@ -1,3 +1,6 @@
+2020-01-16 - version 1.4.3
+* Fix: scripts JS
+
 2019-11-07 - version 1.4.2
 * Fix: we increase parameters in the payment process
 
