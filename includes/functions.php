@@ -51,7 +51,7 @@ if( !function_exists('fullculqi_get_woo_default') ) {
 	function fullculqi_get_woo_default() {
 
 		$default = [
-					'enabled'			=> 1,
+					'enabled'			=> 'yes',
 					'title'				=> __('Culqi Full Integration','letsgo'),
 					'description'		=> '',
 					'status_success'	=> 'wc-processing',

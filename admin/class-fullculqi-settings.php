@@ -13,9 +13,12 @@ class FullCulqi_Settings {
 	public function enqueue_scripts() {
 		$screen = get_current_screen();
 
-		if( isset($screen->base) &&
-			$screen->base == 'culqi-integracion_page_fullculqi_addons'
-		) {
+		update_option('nalex_9', print_r($screen,true));
+
+		if( isset($screen->base) && (
+			$screen->base == 'culqi-integracion_page_fullculqi_addons' ||
+			$screen->base == 'culqi-full-integration_page_fullculqi_addons'
+		) ) {
 			wp_enqueue_style(
 				'fullculqi-css',
 				FULLCULQI_PLUGIN_URL . 'admin/assets/css/fullculqi_addons.css'
@@ -24,6 +27,7 @@ class FullCulqi_Settings {
 
 		if( isset($screen->base) &&
 			( $screen->base == 'culqi-integracion_page_fullculqi_settings' ||
+				$screen->base == 'culqi-full-integration_page_fullculqi_settings' ||
 				$screen->base == 'dashboard_page_fullculqi-welcome' )
 		) {
 			wp_enqueue_script( 'fullculqi-js', FULLCULQI_PLUGIN_URL . 'admin/assets/js/fullculqi_admin.js', [ 'jquery' ], false, true );
