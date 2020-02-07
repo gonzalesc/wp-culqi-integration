@@ -21,7 +21,7 @@ class FullCulqi_WC {
 
 			if( $order && wp_verify_nonce( $_POST['wpnonce'], 'fullculqi' ) ) {
 
-				$provider_payment = array();
+				$provider_payment = [];
 
 				// Logs
 				$log = new FullCulqi_Logs();
@@ -41,7 +41,7 @@ class FullCulqi_WC {
 				// If empty
 				if( count($provider_payment) == 0 ) {
 
-					$log->set_msg_payment('error', __('Culqi Provider Payment error : There was not set any payment','letsgo') );
+					$log->set_msg_payment('error', esc_html__('Culqi Provider Payment error : There was not set any payment','letsgo') );
 
 					$provider_payment = array( 'status' => 'error' );
 				}
@@ -83,7 +83,7 @@ class FullCulqi_WC {
 				// If empty
 				if( count($provider_order) == 0 ) {
 
-					$log->set_msg_payment('error', __('Culqi Provider Order error : There was not set any payment','letsgo') );
+					$log->set_msg_payment('error', esc_html__('Culqi Provider Order error : There was not set any payment','letsgo') );
 
 					$provider_order = array( 'status' => 'error' );
 				}
@@ -121,10 +121,10 @@ class FullCulqi_WC {
 				switch($data->state) {
 					case 'paid' :
 
-						$note = sprintf(__('The order was paid. The CIP %s was paid','letsgo'), $cip_code);
+						$note = sprintf(esc_html__('The order was paid. The CIP %s was paid','letsgo'), $cip_code);
 						$order->add_order_note($note);
 
-						$log->set_msg_payment('notice', sprintf(__('The CIP %s was paid','letsgo'), $cip_code) );
+						$log->set_msg_payment('notice', sprintf(esc_html__('The CIP %s was paid','letsgo'), $cip_code) );
 
 						if( $method_array['status_success'] == 'wc-completed')
 							$order->payment_complete();
@@ -135,17 +135,17 @@ class FullCulqi_WC {
 
 					case 'expired' :
 
-						$log->set_msg_payment('notice', sprintf(__('The CIP %s expired','letsgo'), $cip_code) );
+						$log->set_msg_payment('notice', sprintf(esc_html__('The CIP %s expired','letsgo'), $cip_code) );
 
-						$order->update_status( 'cancelled', sprintf(__('The order was not paid on time. The CIP %s expired','letsgo'), $cip_code) );
+						$order->update_status( 'cancelled', sprintf(esc_html__('The order was not paid on time. The CIP %s expired','letsgo'), $cip_code) );
 
 						break;
 
 					case 'deleted' :
 
-						$log->set_msg_payment('notice', sprintf(__('The CIP %s was deleted','letsgo'), $cip_code) );
+						$log->set_msg_payment('notice', sprintf(esc_html__('The CIP %s was deleted','letsgo'), $cip_code) );
 						
-						$order->update_status( 'cancelled', sprintf(__('The order was not paid on time. The CIP %s was deleted','letsgo'), $cip_code) );
+						$order->update_status( 'cancelled', sprintf(esc_html__('The order was not paid on time. The CIP %s was deleted','letsgo'), $cip_code) );
 
 						break;
 				}

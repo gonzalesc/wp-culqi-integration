@@ -96,11 +96,11 @@ class FullCulqi {
 
 
 	public function notice_woo() {
-		echo '<div class="error"><p>' . sprintf( __( 'Woocommerce Culqi Full Integration plugin depends on the last version of %s to work!', 'letsgo' ), '<a href="http://wordpress.org/extend/plugins/woocommerce/">WooCommerce</a>' ) . '</p></div>';
+		echo '<div class="error"><p>' . sprintf( esc_html__( 'Woocommerce Culqi Full Integration plugin depends on the last version of %s to work!', 'letsgo' ), '<a href="http://wordpress.org/extend/plugins/woocommerce/">WooCommerce</a>' ) . '</p></div>';
 	}
 
 	public function notice_currency() {
-		echo '<div class="error"><p>' . __( 'Woocommerce Culqi Full Integration plugin needs the currency in the commerce be PEN or USD to work!', 'letsgo' ) . '</p></div>';
+		echo '<div class="error"><p>' . esc_html__( 'Woocommerce Culqi Full Integration plugin needs the currency in the commerce be PEN or USD to work!', 'letsgo' ) . '</p></div>';
 	}
 
 	public function plugins_loaded() {
