@@ -106,7 +106,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 					'url_logo'		=> esc_url($settings['logo_url']),
 					'currency'		=> get_woocommerce_currency(),
 					'description'	=> substr(str_pad(implode(', ', $pnames), 5, '_'), 0, 80),
-					'loading_text'	=> esc_htmlesc_html__('Loading. Please wait.','letsgo'),
+					'loading_text'	=> esc_html__('Loading. Please wait.','letsgo'),
 					'total'			=> fullculqi_format_total($order->get_total()),
 					'msg_fail'		=> sanitize_text_field($this->msg_fail),
 					'msg_error'		=> esc_html__('There was some problem in the purchase process. Try again please','letsgo'),
