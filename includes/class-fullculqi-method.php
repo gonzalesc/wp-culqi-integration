@@ -56,7 +56,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			foreach ($order->get_items() as $item ) {
 				$product = $item->get_product();
 
-				if( $product )
+				if( $product && method_exists($product, 'get_name' ) )
 					$pnames[] = $product->get_name();
 			}
 
