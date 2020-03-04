@@ -1,3 +1,6 @@
+2020-02-08 - version 1.4.5
+* Fix: double function
+
 2020-02-07 - version 1.4.4
 * Fix: description on checkout page
 * Compatilibity Woocommerce 3.9.x
