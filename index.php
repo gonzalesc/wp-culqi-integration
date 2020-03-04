@@ -9,9 +9,10 @@ Author URI: https://www.letsgodev.com/
 Developer: Alexander Gonzales
 Developer URI: https://vcard.gonzalesc.org/
 Text Domain: culqi, woocommerce, method payment
-Requires at least: 4.7
+Requires at least: 5.1
 Tested up to: 5.3.2
-Stable tag: 4.9
+Stable tag: 5.1
+Requires PHP: 5.6
 WC requires at least: 3.0.0
 WC tested up to: 3.9.2
 */
