@@ -55,8 +55,14 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 
 			foreach ($order->get_items() as $item ) {
 				$product = $item->get_product();
-				$pnames[] = $product->get_name();
+
+				if( $product )
+					$pnames[] = $product->get_name();
 			}
+
+			// If empty
+			if( count($pnames) == 0 )
+				$pnames[0] = 'Product';
 
 
 			// Disabled from thirds
