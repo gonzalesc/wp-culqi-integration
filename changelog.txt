@@ -1,3 +1,6 @@
+2020-03-04 - version 1.4.6
+* Fix: when the product doesnt exist on the order
+
 2020-02-08 - version 1.4.5
 * Fix: double function
 
