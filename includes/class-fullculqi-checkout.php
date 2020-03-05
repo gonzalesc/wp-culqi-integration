@@ -12,8 +12,15 @@ class FullCulqi_Checkout {
 
 		foreach ($order->get_items() as $item ) {
 			$_product = $item->get_product();
-			$pnames[] = $_product->get_name();
+			
+			if( $_product && method_exists($_product, 'get_name' ) )
+				$pnames[] = $_product->get_name();
 		}
+
+		// If empty
+		if( count($pnames) == 0 )
+			$pnames[0] = 'Product';
+		
 
 		// Antifraud Customer Data
 		$antifraud = [ 'email' => $order->get_billing_email() ];
