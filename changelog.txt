@@ -1,5 +1,8 @@
+2020-03-05 - version 1.4.8
+* Fix: if the product has get_name method
+
 2020-03-04 - version 1.4.7
-*Fix: if method exist
+* Fix: if method exist
 
 2020-03-04 - version 1.4.6
 * Fix: when the product doesnt exist on the order
