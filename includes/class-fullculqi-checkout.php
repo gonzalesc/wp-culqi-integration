@@ -3,12 +3,12 @@ class FullCulqi_Checkout {
 
 	static public function simple($order, $culqi_token, $log) {
 
-		$pnames = $provider_payment = array();
+		$pnames = $provider_payment = [];
 		$method_array = fullculqi_get_woo_settings();
 
 		extract($culqi_token);
 
-		$log->set_msg_payment('notice', __('This order is a simple payment','letsgo') );
+		$log->set_msg_payment( 'notice', esc_html__( 'This order is a simple payment', 'letsgo' ) );
 
 		foreach ($order->get_items() as $item ) {
 			$_product = $item->get_product();
@@ -55,49 +55,69 @@ class FullCulqi_Checkout {
 
 		// Metadata Order
 		$metadata = [
-						'order_id'		=> $order->get_id(),
-						'order_number'	=> $order->get_order_number(),
-						'order_key'		=> $order->get_order_key(),
-					];
+			'order_id'		=> $order->get_id(),
+			'order_number'	=> $order->get_order_number(),
+			'order_key'		=> $order->get_order_key(),
+		];
 
 		$args_payment = apply_filters('fullculqi/checkout/simple_args', [
-							'amount'			=> fullculqi_format_total($order->get_total()),
-							'currency_code'		=> $order->get_currency(),
-							'description'		=> substr(str_pad(implode(', ', $pnames), 5, '_'), 0, 80),
-							'capture'			=> true,
-							'email'				=> $order->get_billing_email(),
-							'installments'		=> $installments,
-							'source_id'			=> $token_id,
-							'metadata'			=> $metadata,
-							'antifraud_details'	=> $antifraud,
-						], $order );
+			'amount'			=> fullculqi_format_total($order->get_total()),
+			'currency_code'		=> $order->get_currency(),
+			'description'		=> substr(str_pad(implode(', ', $pnames), 5, '_'), 0, 80),
+			'capture'			=> true,
+			'email'				=> $order->get_billing_email(),
+			'installments'		=> $installments,
+			'source_id'			=> $token_id,
+			'metadata'			=> $metadata,
+			'antifraud_details'	=> $antifraud,
+		], $order );
 
 		$provider_payment = FullCulqi_Provider::create_payment($args_payment);
 
 		if( $provider_payment['status'] == 'ok' ) {
 		
-			$note = sprintf(__('Culqi Payment created: %s','letsgo'), $provider_payment['data']->id);
+			$note = sprintf(
+				esc_html__('Culqi Payment created: %s','letsgo'),
+				$provider_payment['data']->id
+			);
+
 			$order->add_order_note($note);
 
-			$log->set_msg_payment('notice', sprintf(__('Culqi Payment created: %s','letsgo'), $provider_payment['data']->id) );
+			update_post_meta( $order->get_id(), 'culqi_charge_id', wc_clean( $provider_payment['data']->id ) );
 
-			$post_id = FullCulqi_Integrator::create_payment($provider_payment['data']);
+			$log->set_msg_payment('notice', sprintf(
+				esc_html__('Culqi Payment created: %s','letsgo'),
+				$provider_payment['data']->id
+			));
 
-			$log->set_msg_payment('notice', sprintf(__('Post Payment created : %s','letsgo'), $post_id) );
+			$post_id = FullCulqi_Integrator::create_payment( $provider_payment['data'] );
+
+			update_post_meta( $order->get_id(), 'culqi_post_id', wc_clean( $post_id ) );
+
+			$log->set_msg_payment('notice', sprintf(
+				esc_html__( 'Post Payment created : %s', 'letsgo' ),
+				$post_id
+			));
 
 
-			if( $method_array['status_success'] == 'wc-completed')
-				$order->payment_complete();
-			else
-				$order->update_status($method_array['status_success']);
+			if( apply_filters( 'fullculqi/checkout/change_status', true, $log, $order ) ) {
+				
+				if( $method_array['status_success'] == 'wc-completed')
+					$order->payment_complete();
+				else
+					$order->update_status($method_array['status_success']);
+			}
 
-			$provider_payment = apply_filters('fullculqi/checkout/simple_success', $provider_payment, $log, $order);
+			do_action('fullculqi/checkout/simple_success', $order, $log, $provider_payment );
 		
 		} else {
 
-			$log->set_msg_payment('error', sprintf(__('Culqi Payment error : %s','letsgo'), $provider_payment['msg']) );
+			$log->set_msg_payment('error', sprintf(
+				esc_html__('Culqi Payment error : %s','letsgo'),
+				$provider_payment['msg']
+			));
 
-			$provider_payment = apply_filters('fullculqi/checkout/simple_error', $provider_payment, $log, $order);
+			do_action('fullculqi/checkout/simple_error', $order, $log, $provider_payment );
 		}
 		
 		return $provider_payment;
@@ -142,13 +162,13 @@ class FullCulqi_Checkout {
 
 		if( $provider_order['status'] == 'ok' ) {
 		
-			$log->set_msg_payment('notice', sprintf(__('Culqi Multipayment created: %s','letsgo'), $provider_order['data']->id) );
+			$log->set_msg_payment('notice', sprintf(esc_html__('Culqi Multipayment created: %s','letsgo'), $provider_order['data']->id) );
 
 			$provider_order = apply_filters('fullculqi/checkout/order_success', $provider_order, $log, $order);
 		
 		} else {
 
-			$log->set_msg_payment('error', sprintf(__('Culqi Multipayment error : %s','letsgo'), $provider_order['msg']) );
+			$log->set_msg_payment('error', sprintf(esc_html__('Culqi Multipayment error : %s','letsgo'), $provider_order['msg']) );
 
 			$provider_order = apply_filters('fullculqi/checkout/order_error', $provider_order, $log, $order);
 		}
@@ -159,12 +179,12 @@ class FullCulqi_Checkout {
 
 	static function process_order($order, $cip_code, $log ) {
 		
-		$log->set_msg_payment('notice', __('This order is a Multipayment', 'letsgo') );
-		$log->set_msg_payment('notice', sprintf(__('Culqi Multipayment CIP: %s','letsgo'), $cip_code) );
+		$log->set_msg_payment('notice', esc_html__('This order is a Multipayment', 'letsgo') );
+		$log->set_msg_payment('notice', sprintf(esc_html__('Culqi Multipayment CIP: %s','letsgo'), $cip_code) );
 
-		$order->update_status( 'pending', __('Culqi Method: Multipayment', 'letsgo') );
+		$order->update_status( 'pending', esc_html__('Culqi Method: Multipayment', 'letsgo') );
 
-		$note = sprintf(__('Culqi Multipayment CIP: %s','letsgo'), $cip_code);
+		$note = sprintf(esc_html__('Culqi Multipayment CIP: %s','letsgo'), $cip_code);
 		$order->add_order_note($note);
 
 		update_post_meta($order->get_id(), 'culqi_cip', $cip_code);
@@ -174,5 +194,45 @@ class FullCulqi_Checkout {
 		$provider_order = apply_filters('fullculqi/checkout/order_process', $provider_order, $log, $order);
 
 		return $provider_order;
+	}
+
+
+	static function create_refund( $order, $amount = 0.00, $reason = '', $log ) {
+
+		$culqi_charge_id	= get_post_meta( $order->get_id(), 'culqi_charge_id', true );
+		$culqi_post_id		= get_post_meta( $order->get_id(), 'culqi_post_id', true );
+
+		$args = apply_filters( 'fullculqi/checkout/refund_args', [
+			'amount'	=> round( $amount*100, 0 ),
+			'charge_id'	=> $culqi_charge_id,
+			'reason'	=> 'solicitud_comprador',
+		], $order );
+
+
+		$provider_refund = FullCulqi_Provider::refund_payment( $args );
+
+		if( $provider_refund['status'] == 'ok' ) {
+		
+			$log->set_msg_payment( 'notice', sprintf(
+				esc_html__( 'Culqi Refund created: %s', 'letsgo' ),
+				$provider_refund['data']->id)
+			);
+
+			$provider_refund = apply_filters( 'fullculqi/checkout/refund_success',
+				$provider_refund, $log, $order
+			);
+		
+		} else {
+
+			$log->set_msg_payment( 'error', sprintf(
+				esc_html__( 'Culqi Refund error : %s', 'letsgo' ), $provider_refund['msg']
+			));
+
+			$provider_refund = apply_filters('fullculqi/checkout/refund_error',
+				$provider_refund, $log, $order
+			);
+		}
+		
+		return $provider_refund;
 	}
 }

@@ -20,7 +20,6 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		$this->instructions		= $this->get_option( 'instructions', $this->description );
 		$this->msg_fail			= $this->get_option( 'msg_fail' );
 		$this->time_modal		= $this->get_option( 'time_modal', 0 );
-		$this->settings			= fullculqi_get_settings();
 
 		$this->supports = apply_filters('fullculqi/method/supports',
 								[ 'products', 'refunds', 'pre-orders' ]
@@ -76,8 +75,11 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 				$multi_order = get_post_meta($order_id, 'culqi_order', true);
 
 				if( !$multi_order ) {
+
+					// Init Log
 					$log = new FullCulqi_Logs();
-					$log->set_settings_payment($order_id);
+					$log->set_settings_payment( $order->get_id() );
+
 					$multi_order = FullCulqi_Checkout::create_order($order, $this->multi_duration, $pnames, $log);
 
 					update_post_meta($order_id, 'culqi_order', $multi_order);
@@ -283,6 +285,70 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 					'result'   => 'success',
 					'redirect' => $order->get_checkout_payment_url(true),
 				], $order, $this);
+	}
+
+
+	/**
+	 * Can the order be refunded via Culqi?
+	 *
+	 * @param  WC_Order $order Order object.
+	 * @return bool
+	 */
+	public function can_refund_order( $order ) {
+
+		$settings = fullculqi_get_settings();
+
+		$has_api_creds = ! empty( $settings['public_key'] ) && ! empty( $settings['secret_key'] );
+
+		return $order && $has_api_creds;
+	}
+
+	/**
+	 * Process a refund if supported.
+	 *
+	 * @param  int    $order_id Order ID.
+	 * @param  float  $amount Refund amount.
+	 * @param  string $reason Refund reason.
+	 * @return bool|WP_Error
+	 */
+	public function process_refund( $order_id, $amount = null, $reason = '' ) {
+		$order = wc_get_order( $order_id );
+
+		if ( ! $this->can_refund_order( $order ) ) {
+			return new WP_Error( 'error', esc_html__( 'Refund failed.', 'letsgo' ) );
+		}
+		
+		// Init Log
+		$log = new FullCulqi_Logs();
+		$log->set_settings_payment( $order->get_id() );
+
+		$provider_refund = FullCulqi_Checkout::create_refund( $order, $amount, $reason, $log );
+
+		if( count( $provider_refund ) == 0 ) {
+			$message = esc_html__('Culqi Provider Payment error : There was not set any refund','letsgo');
+			$log->set_msg_payment( 'error', $message );
+
+			return new WP_Error( 'error', $message );
+		}
+
+		$data = $provider_refund['data'];
+
+		$culqi_post_id	= get_post_meta( $order_id, 'culqi_post_id', true );
+		update_post_meta( $culqi_post_id, 'culqi_data', $data );
+		update_post_meta( $culqi_post_id, 'culqi_status', 'refunded' );
+
+		// Save Refund
+		$basic = get_post_meta( $culqi_post_id, 'culqi_basic', true );
+		$refunds = (array)get_post_meta( $culqi_post_id, 'culqi_ids_refunded', true );
+		
+		$refunds[ $data->id ] = number_format( $data->amount / 100, 2, '.', '' );
+		
+		$basic['culqi_amount_refunded'] = array_sum( $refunds );
+
+		update_post_meta( $culqi_post_id, 'culqi_basic', $basic );
+		update_post_meta( $culqi_post_id, 'culqi_ids_refunded', $refunds );
+
+		return true;
 	}
 
 

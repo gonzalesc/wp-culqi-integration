@@ -185,7 +185,7 @@ if( !function_exists('fullculqi_get_language') ) {
 if( !function_exists('fullculqi_format_total') ) {
 	function fullculqi_format_total($total) {
 		$total_points = number_format($total, 2, '.', '');
-		$total_raw = intval(floatval($total_points) * 100);
+		$total_raw = $total_points * 100;
 		
 		return apply_filters('fullculqi/global/format_total', $total_raw, $total);
 	}
@@ -232,5 +232,21 @@ if( !function_exists('fullculqi_get_template') ) {
 		include $located;
 
 		do_action( 'fullculqi/template/after', $located, $args );
+	}
+}
+
+
+if( ! function_exists('fullculqi_get_status') ) {
+
+	function fullculqi_get_status() {
+
+		$statuses = [
+			'authorized'	=> esc_html__( 'Authorized', 'fullculqi' ),
+			'captured'		=> esc_html__( 'Captured', 'fullculqi' ),
+			'expired'		=> esc_html__( 'Expired', 'fullculqi' ),
+			'refunded'		=> esc_html__( 'Refunded', 'fullculqi' ),
+		];
+
+		return apply_filters( 'fullculqi/global/status', $statuses );
 	}
 }

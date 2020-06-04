@@ -84,5 +84,43 @@ class FullCulqi_Provider {
 
 		return $output;
 	}
+
+
+	static public function capture_payment( $charge_id ) {
+		global $culqi;
+
+		try {
+			$capture = $culqi->Charges->capture( $charge_id );
+
+			if( isset($capture->object) && $capture->object != 'error' )
+				$output = [ 'status' => 'ok', 'data' => $capture ];
+			else
+				$output = [ 'status' => 'error', 'msg' => $capture->merchant_message ];
+			
+		} catch(Exception $e) {
+			$output = [ 'status' => 'error', 'msg' => $e->getMessage() ];
+		}
+
+		return $output;
+	}
+
+
+	static public function refund_payment( $args ) {
+		global $culqi;
+
+		try {
+			$refund = $culqi->Refunds->create( $args );
+
+			if( isset($refund->object) && $refund->object != 'error' )
+				$output = [ 'status' => 'ok', 'data' => $refund ];
+			else
+				$output = [ 'status' => 'error', 'msg' => $refund->merchant_message ];
+			
+		} catch(Exception $e) {
+			$output = [ 'status' => 'error', 'msg' => $e->getMessage() ];
+		}
+
+		return $output;
+	}
 }
 ?>

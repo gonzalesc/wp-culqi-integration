@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Culqi Integration\n"
-"POT-Creation-Date: 2020-02-07 18:35-0300\n"
-"PO-Revision-Date: 2020-02-07 18:35-0300\n"
+"POT-Creation-Date: 2020-06-03 08:29-0300\n"
+"PO-Revision-Date: 2020-06-03 08:32-0300\n"
 "Last-Translator: \n"
 "Language-Team: Letsgodev\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.3\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: __;_e;esc_html__;esc_html_e\n"
@@ -49,20 +49,24 @@ msgid "Email"
 msgstr "Email"
 
 #: admin/class-fullculqi-payments.php:27
-#: admin/layouts/metaboxes/metabox_payment_basic.php:14
+#: admin/layouts/metaboxes/metabox_payment_basic.php:15
 msgid "Currency"
 msgstr "Moneda"
 
 #: admin/class-fullculqi-payments.php:28
-#: admin/layouts/metaboxes/metabox_payment_basic.php:15
+#: admin/layouts/metaboxes/metabox_payment_basic.php:16
 msgid "Amount"
 msgstr "Monto"
 
-#: admin/class-fullculqi-payments.php:29
+#: admin/class-fullculqi-payments.php:29 includes/functions.php:247
 msgid "Refunded"
 msgstr "Reembolsado"
 
-#: admin/class-fullculqi-payments.php:32
+#: admin/class-fullculqi-payments.php:30
+msgid "Status"
+msgstr "Estado"
+
+#: admin/class-fullculqi-payments.php:33
 msgid "Order"
 msgstr "Pedido"
 
@@ -205,7 +209,7 @@ msgid ""
 "payment."
 msgstr ""
 "Su ecommerce podrá vender productos o servicios usando los pagos recurrentes "
-"de Culqi"
+"de Culqi."
 
 #: admin/layouts/addons_options.php:59
 msgid "Culqi Payment Buttons"
@@ -217,7 +221,7 @@ msgid ""
 "a ecommerce installed."
 msgstr ""
 "Podrás usar los botones de pago en cualquier lugar de tu website sin tener "
-"un ecommerce instalado"
+"un ecommerce instalado."
 
 #: admin/layouts/metaboxes/metabox_order_log.php:10
 msgid "Date/Hour"
@@ -244,43 +248,51 @@ msgstr "Pago via Culqi. Pagado en %s. IP del cliente: %s"
 msgid "Payment Data"
 msgstr "Día del pago"
 
-#: admin/layouts/metaboxes/metabox_payment_basic.php:16
+#: admin/layouts/metaboxes/metabox_payment_basic.php:14
+msgid "Capture Date"
+msgstr "Fecha de Captura"
+
+#: admin/layouts/metaboxes/metabox_payment_basic.php:17
 msgid "Refund"
 msgstr "Reembolso"
 
-#: admin/layouts/metaboxes/metabox_payment_basic.php:17
+#: admin/layouts/metaboxes/metabox_payment_basic.php:18
 msgid "Card Brand"
 msgstr "Marca de Tarjeta"
 
-#: admin/layouts/metaboxes/metabox_payment_basic.php:18
+#: admin/layouts/metaboxes/metabox_payment_basic.php:19
 msgid "Card Type"
 msgstr "Tipo de Tarjeta"
 
-#: admin/layouts/metaboxes/metabox_payment_basic.php:19
+#: admin/layouts/metaboxes/metabox_payment_basic.php:20
 msgid "Card Number"
 msgstr "Número de la tarjeta"
 
-#: admin/layouts/metaboxes/metabox_payment_basic.php:23
+#: admin/layouts/metaboxes/metabox_payment_basic.php:34
+msgid "Refund payment"
+msgstr "Reembolsar pago"
+
+#: admin/layouts/metaboxes/metabox_payment_basic.php:41
 msgid "Customer"
 msgstr "Cliente"
 
-#: admin/layouts/metaboxes/metabox_payment_basic.php:25
+#: admin/layouts/metaboxes/metabox_payment_basic.php:43
 msgid "First Name"
 msgstr "Primer Nombre"
 
-#: admin/layouts/metaboxes/metabox_payment_basic.php:26
+#: admin/layouts/metaboxes/metabox_payment_basic.php:44
 msgid "Last Name"
 msgstr "Segundo Nombre"
 
-#: admin/layouts/metaboxes/metabox_payment_basic.php:27
+#: admin/layouts/metaboxes/metabox_payment_basic.php:45
 msgid "City"
 msgstr "Ciudad"
 
-#: admin/layouts/metaboxes/metabox_payment_basic.php:28
+#: admin/layouts/metaboxes/metabox_payment_basic.php:46
 msgid "Country"
 msgstr "País"
 
-#: admin/layouts/metaboxes/metabox_payment_basic.php:29
+#: admin/layouts/metaboxes/metabox_payment_basic.php:47
 msgid "Phone"
 msgstr "Teléfono"
 
@@ -323,11 +335,11 @@ msgstr "Sincronizar con Culqi"
 msgid "Not now"
 msgstr "No ahora"
 
-#: includes/class-fullculqi-ajax.php:14 includes/class-fullculqi-ajax.php:25
+#: includes/class-fullculqi-ajax.php:15 includes/class-fullculqi-ajax.php:26
 msgid "Busted!"
 msgstr "Te atrapé!"
 
-#: includes/class-fullculqi-ajax.php:48
+#: includes/class-fullculqi-ajax.php:49
 #, php-format
 msgid "%s is not a Fullculqi CPT"
 msgstr "%s no es un tipo de post de este plugin"
@@ -336,45 +348,55 @@ msgstr "%s no es un tipo de post de este plugin"
 msgid "This order is a simple payment"
 msgstr "Este pedido es un simple pago"
 
-#: includes/class-fullculqi-checkout.php:72
-#: includes/class-fullculqi-checkout.php:75
+#: includes/class-fullculqi-checkout.php:80
+#: includes/class-fullculqi-checkout.php:89
 #, php-format
 msgid "Culqi Payment created: %s"
 msgstr "Pago Culqi creado: %s"
 
-#: includes/class-fullculqi-checkout.php:79
+#: includes/class-fullculqi-checkout.php:98
 #, php-format
 msgid "Post Payment created : %s"
 msgstr "Pago creado : %s"
 
-#: includes/class-fullculqi-checkout.php:91
+#: includes/class-fullculqi-checkout.php:116
 #, php-format
 msgid "Culqi Payment error : %s"
 msgstr "Culqi pago error : %s"
 
-#: includes/class-fullculqi-checkout.php:138
+#: includes/class-fullculqi-checkout.php:165
 #, php-format
 msgid "Culqi Multipayment created: %s"
 msgstr "Multipago Culqi creado: %s"
 
-#: includes/class-fullculqi-checkout.php:144
+#: includes/class-fullculqi-checkout.php:171
 #, php-format
 msgid "Culqi Multipayment error : %s"
 msgstr "Culqi Multipago error : %s"
 
-#: includes/class-fullculqi-checkout.php:155
+#: includes/class-fullculqi-checkout.php:182
 msgid "This order is a Multipayment"
 msgstr "Este pedido es un Multipago"
 
-#: includes/class-fullculqi-checkout.php:156
-#: includes/class-fullculqi-checkout.php:160
+#: includes/class-fullculqi-checkout.php:183
+#: includes/class-fullculqi-checkout.php:187
 #, php-format
 msgid "Culqi Multipayment CIP: %s"
 msgstr "Culqi Multipago CIP : %s"
 
-#: includes/class-fullculqi-checkout.php:158
+#: includes/class-fullculqi-checkout.php:185
 msgid "Culqi Method: Multipayment"
 msgstr "Culqi Método: Multipago"
+
+#: includes/class-fullculqi-checkout.php:217
+#, php-format
+msgid "Culqi Refund created: %s"
+msgstr "Reembolso Culqi creado: %s"
+
+#: includes/class-fullculqi-checkout.php:228
+#, php-format
+msgid "Culqi Refund error : %s"
+msgstr "Reembolso Culqi error : %s"
 
 #: includes/class-fullculqi-cpt.php:14
 msgid "Culqi Payments"
@@ -425,27 +447,31 @@ msgstr ""
 "Permite pagos via tarjeta de crédito. Este método de pago decidirá si es un "
 "pago simple o una suscripción u otro"
 
-#: includes/class-fullculqi-method.php:112
+#: includes/class-fullculqi-method.php:117
+msgid "Loading. Please wait."
+msgstr "Cargando. Espere por favor."
+
+#: includes/class-fullculqi-method.php:120
 msgid "There was some problem in the purchase process. Try again please"
 msgstr "Hubo un problema en el proceso de pago. Intenta otra vez por favor"
 
-#: includes/class-fullculqi-method.php:126
+#: includes/class-fullculqi-method.php:134
 msgid "BASIC SETTING"
 msgstr "CONFIGURACION BÁSICA"
 
-#: includes/class-fullculqi-method.php:131
+#: includes/class-fullculqi-method.php:139
 msgid "Enable/Disable"
 msgstr "Habilitar/Deshabilitar"
 
-#: includes/class-fullculqi-method.php:133
+#: includes/class-fullculqi-method.php:141
 msgid "Enable Culqi"
 msgstr "Habilitar Culqi"
 
-#: includes/class-fullculqi-method.php:137
+#: includes/class-fullculqi-method.php:145
 msgid "Installments"
 msgstr "Cuotas"
 
-#: includes/class-fullculqi-method.php:138
+#: includes/class-fullculqi-method.php:146
 msgid ""
 "If checked, a selection field will appear in the modal with the available "
 "installments."
@@ -453,24 +479,24 @@ msgstr ""
 "Si está marcado, aparecerá un campo de selección en el modal con las cuotas "
 "disponibles."
 
-#: includes/class-fullculqi-method.php:141
+#: includes/class-fullculqi-method.php:149
 msgid "Enable Installments"
 msgstr "Habilitar cuotas"
 
-#: includes/class-fullculqi-method.php:146
+#: includes/class-fullculqi-method.php:154
 msgid "Title"
 msgstr "Título"
 
-#: includes/class-fullculqi-method.php:148
+#: includes/class-fullculqi-method.php:156
 msgid "This controls the title which the user sees during checkout."
 msgstr ""
 "Esto controla el título que el usuario mira durante el proceso de pago."
 
-#: includes/class-fullculqi-method.php:152
+#: includes/class-fullculqi-method.php:160
 msgid "Description"
 msgstr "Descripción"
 
-#: includes/class-fullculqi-method.php:153
+#: includes/class-fullculqi-method.php:161
 msgid ""
 "Brief description of the payment gateway. This message will be seen by the "
 "buyer"
@@ -478,34 +504,35 @@ msgstr ""
 "Breve descripción de la pasarela de pago. Este mensaje será visto por el "
 "comprador"
 
-#: includes/class-fullculqi-method.php:155
+#: includes/class-fullculqi-method.php:163
 msgid ""
 "Payment gateway Culqi accepts VISA, Mastercard, Diners, American Express"
 msgstr ""
+"Payment gateway Culqi accepts VISA, Mastercard, Diners, American Express"
 
-#: includes/class-fullculqi-method.php:161
+#: includes/class-fullculqi-method.php:169
 msgid "MULTIPAYMENT SETTING"
 msgstr "CONFIGURACIÓN MULTIPAGO"
 
-#: includes/class-fullculqi-method.php:167
+#: includes/class-fullculqi-method.php:175
 msgid "Enable"
 msgstr "Habilitar"
 
-#: includes/class-fullculqi-method.php:168
+#: includes/class-fullculqi-method.php:176
 msgid "If checked several tabs will appear in the modal with other payments"
 msgstr ""
 "Si está marcado, aparecerán pestañas en el modal de Culqi con otras formas "
 "de pago"
 
-#: includes/class-fullculqi-method.php:171
+#: includes/class-fullculqi-method.php:179
 msgid "Enable Multipayment"
 msgstr "Habilitar Multipago"
 
-#: includes/class-fullculqi-method.php:176
+#: includes/class-fullculqi-method.php:184
 msgid "Duration"
 msgstr "Duración"
 
-#: includes/class-fullculqi-method.php:177
+#: includes/class-fullculqi-method.php:185
 msgid ""
 "If enable Multipayment option, you must choose the order duration. This is "
 "the time you give the customer to make the payment."
@@ -513,81 +540,81 @@ msgstr ""
 "Si habilitas la opción de Multipago, debes elegir la duración del pedido. "
 "Este es el tiempo que tu le brindas al cliente para hacer el pago."
 
-#: includes/class-fullculqi-method.php:181
+#: includes/class-fullculqi-method.php:189
 msgid "1 Hour"
 msgstr "1 Hora"
 
-#: includes/class-fullculqi-method.php:182
+#: includes/class-fullculqi-method.php:190
 msgid "2 Hours"
 msgstr "2 Horas"
 
-#: includes/class-fullculqi-method.php:183
+#: includes/class-fullculqi-method.php:191
 msgid "4 Hours"
 msgstr "4 Horas"
 
-#: includes/class-fullculqi-method.php:184
+#: includes/class-fullculqi-method.php:192
 msgid "8 Hours"
 msgstr "8 Horas"
 
-#: includes/class-fullculqi-method.php:185
+#: includes/class-fullculqi-method.php:193
 msgid "12 Hours"
 msgstr "12 Horas"
 
-#: includes/class-fullculqi-method.php:186
+#: includes/class-fullculqi-method.php:194
 msgid "1 Day"
 msgstr "1 Día"
 
-#: includes/class-fullculqi-method.php:187
+#: includes/class-fullculqi-method.php:195
 msgid "2 Days"
 msgstr "2 Días"
 
-#: includes/class-fullculqi-method.php:188
+#: includes/class-fullculqi-method.php:196
 msgid "4 Days"
 msgstr "4 Días"
 
-#: includes/class-fullculqi-method.php:189
+#: includes/class-fullculqi-method.php:197
 msgid "7 Days"
 msgstr "7 Días"
 
-#: includes/class-fullculqi-method.php:190
+#: includes/class-fullculqi-method.php:198
 msgid "15 Days"
 msgstr "15 Días"
 
-#: includes/class-fullculqi-method.php:196
+#: includes/class-fullculqi-method.php:204
 msgid "Webhook URL"
 msgstr "URL del Webhook"
 
-#: includes/class-fullculqi-method.php:198
+#: includes/class-fullculqi-method.php:206
 msgid ""
 "If you have enabled the multipayment, so you need configure the webhooks "
 "usign this URL"
 msgstr ""
 "Si habilitas Multipago, necesitas configurar el Webhook usando esta URL"
 
-#: includes/class-fullculqi-method.php:204
+#: includes/class-fullculqi-method.php:212
 msgid "ADDITIONAL SETTING"
 msgstr "CONFIGURACION ADICIONAL"
 
-#: includes/class-fullculqi-method.php:209
+#: includes/class-fullculqi-method.php:217
 msgid "Success Status"
 msgstr "Estado satisfactorio"
 
-#: includes/class-fullculqi-method.php:212
+#: includes/class-fullculqi-method.php:220
 msgid "If the purchase is success, apply this status to the order"
 msgstr "Si la compra es satisfactoria, aplica este estado al pedido"
 
-#: includes/class-fullculqi-method.php:218
+#: includes/class-fullculqi-method.php:226
 msgid "Failed Message"
 msgstr "Mensaje de fallido"
 
-#: includes/class-fullculqi-method.php:219
+#: includes/class-fullculqi-method.php:227
 msgid ""
 "This is the message will be shown to the customer if there is a error in the "
 "payment"
 msgstr ""
 "Este es el mensaje que será mostrado al comprador si hay un error en el pago"
 
-#: includes/class-fullculqi-method.php:223 includes/functions.php:59
+#: includes/class-fullculqi-method.php:231 includes/functions.php:59
 msgid ""
 "Im sorry! an error occurred making the payment. A email was sent to shop "
 "manager with your information."
@@ -595,11 +622,11 @@ msgstr ""
 "Lo sentimos! un error ocurrió haciendo el pago. Un emal fue enviado al "
 "administrador de la tienda con tu información."
 
-#: includes/class-fullculqi-method.php:226
+#: includes/class-fullculqi-method.php:234
 msgid "Popup/Modal Time"
 msgstr "Tiempo del Popup/Modal"
 
-#: includes/class-fullculqi-method.php:228
+#: includes/class-fullculqi-method.php:236
 msgid ""
 "If you want the modal window to appear after a while without clicking \"buy"
 "\", put the seconds here. (Warning: may it not work in Safari). If you do "
@@ -609,44 +636,52 @@ msgstr ""
 "\"comprar\", pon los segundos aqui. (Advertencia: puede que eso no funcione "
 "en Safari). Si no lo quieres, déjalo en cero."
 
+#: includes/class-fullculqi-method.php:318
+msgid "Refund failed."
+msgstr "Reembolso fallido."
+
+#: includes/class-fullculqi-method.php:328
+msgid "Culqi Provider Payment error : There was not set any refund"
+msgstr "Culqi Error de Pago : No se estableció ningún reembolso"
+
 #: includes/class-fullculqi-provider.php:13
 msgid "There is not Culqi credentials"
 msgstr "No hay Culqi credenciales"
 
-#: includes/class-fullculqi-wc.php:44
+#: includes/class-fullculqi-wc.php:43
 msgid "Culqi Provider Payment error : There was not set any payment"
 msgstr "Culqi Error de Pago : No se estableció ningún pago"
 
-#: includes/class-fullculqi-wc.php:86
+#: includes/class-fullculqi-wc.php:87
 msgid "Culqi Provider Order error : There was not set any payment"
 msgstr "Culqi Provider Order error : No se estableció ningún pago"
 
-#: includes/class-fullculqi-wc.php:124
+#: includes/class-fullculqi-wc.php:127
 #, php-format
 msgid "The order was paid. The CIP %s was paid"
 msgstr "El pedido fue pagado. El CIP %s fue pagado"
 
-#: includes/class-fullculqi-wc.php:127
+#: includes/class-fullculqi-wc.php:134
 #, php-format
 msgid "The CIP %s was paid"
 msgstr "El CIP %s fue pagado"
 
-#: includes/class-fullculqi-wc.php:138
+#: includes/class-fullculqi-wc.php:148
 #, php-format
 msgid "The CIP %s expired"
 msgstr "El CIP %s expiró"
 
-#: includes/class-fullculqi-wc.php:140
+#: includes/class-fullculqi-wc.php:153
 #, php-format
 msgid "The order was not paid on time. The CIP %s expired"
 msgstr "El pedido no fue pagado a tiempo. El CIP %s expiró"
 
-#: includes/class-fullculqi-wc.php:146
+#: includes/class-fullculqi-wc.php:162
 #, php-format
 msgid "The CIP %s was deleted"
 msgstr "El CIP %s fue borrado"
 
-#: includes/class-fullculqi-wc.php:148
+#: includes/class-fullculqi-wc.php:166
 #, php-format
 msgid "The order was not paid on time. The CIP %s was deleted"
 msgstr "El pedido no fue pagado a tiempo. El CIP %s fue borrado"
@@ -685,6 +720,18 @@ msgstr "Dolares"
 msgid "File %s is not exists"
 msgstr "Fichero %s no existe"
 
+#: includes/functions.php:244
+msgid "Authorized"
+msgstr "Autorizado"
+
+#: includes/functions.php:245
+msgid "Captured"
+msgstr "Capturado"
+
+#: includes/functions.php:246
+msgid "Expired"
+msgstr "Expirado"
+
 #: public/layouts/form-receipt.php:9
 msgid "Pay with Culqi"
 msgstr "Pagar con Culqi"
@@ -692,9 +739,6 @@ msgstr "Pagar con Culqi"
 #: public/layouts/form-receipt.php:10
 msgid "Cancel"
 msgstr "Cancelar"
-
-#~ msgid "Loading. Please wait."
-#~ msgstr "Cargando. Espere por favor."
 
 #~ msgid "Customer ID : %s"
 #~ msgstr "Cliente ID : %s"

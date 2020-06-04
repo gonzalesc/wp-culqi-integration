@@ -15,21 +15,22 @@ class FullCulqi_Payments extends FullCulqi_Entities {
 
 		$settings = fullculqi_get_settings();
 
-		$columns[ 'title' ] = __('ID', 'letsgo');
+		$columns[ 'title' ] = esc_html__('ID', 'letsgo');
 		unset($columns[ 'date' ]);
 
 		foreach($columns as $key_column => $value_column) {	
 			$ok_columns[$key_column] = $value_column;
 
 			if( $key_column == 'title' ) {			
-				$ok_columns['culqi_creation']	= __( 'Creation', 'letsgo' );
-				$ok_columns['culqi_email']		= __( 'Email', 'letsgo' );
-				$ok_columns['culqi_currency']	= __( 'Currency', 'letsgo' );
-				$ok_columns['culqi_amount']		= __( 'Amount', 'letsgo' );
-				$ok_columns['culqi_refunded']	= __( 'Refunded', 'letsgo' );
+				$ok_columns['culqi_creation']	= esc_html__( 'Creation', 'letsgo' );
+				$ok_columns['culqi_email']		= esc_html__( 'Email', 'letsgo' );
+				$ok_columns['culqi_currency']	= esc_html__( 'Currency', 'letsgo' );
+				$ok_columns['culqi_amount']		= esc_html__( 'Amount', 'letsgo' );
+				$ok_columns['culqi_refunded']	= esc_html__( 'Refunded', 'letsgo' );
+				$ok_columns['culqi_status']		= esc_html__( 'Status', 'letsgo' );
 
 				if( $settings['woo_payment'] == 'yes' )
-					$ok_columns['culqi_order_id']	= __( 'Order', 'letsgo' );
+					$ok_columns['culqi_order_id']	= esc_html__( 'Order', 'letsgo' );
 			}
 		}
 		
@@ -42,6 +43,13 @@ class FullCulqi_Payments extends FullCulqi_Entities {
 		$basic 		= get_post_meta($post_id, 'culqi_basic', true);
 		$customer 	= get_post_meta($post_id, 'culqi_customer', true);
 
+		// Temporal
+		if( metadata_exists( 'post', $post_id, 'culqi_status' ) )
+			$status = get_post_meta($post_id, 'culqi_status', true);
+		else
+			$status = 'captured';
+
+
 		switch($column) {
 			case 'culqi_id'			: $value_column = get_post_meta($post_id,'culqi_id', true); break;
 			case 'culqi_creation'	: $value_column = $basic['culqi_creation']; break;
@@ -49,12 +57,22 @@ class FullCulqi_Payments extends FullCulqi_Entities {
 			case 'culqi_currency'	: $value_column = $basic['culqi_currency']; break;
 			case 'culqi_amount'		: $value_column = $basic['culqi_amount']; break;
 			case 'culqi_refunded'	: $value_column = $basic['culqi_amount_refunded']; break;
+			case 'culqi_status'		:
+
+				$statuses = fullculqi_get_status();
+
+				$value_column = sprintf(
+					'<mark class="culqi_status_2 %s"><span>%s</span></mark>',
+					$status, $statuses[$status]
+				);
+
+				break;
 
 			case 'culqi_order_id'	:
-								$order_id = get_post_meta($post_id,'culqi_order_id', true);
-								$order_url = admin_url(sprintf('post.php?post=%d&action=edit', $order_id));
+				$order_id = get_post_meta($post_id,'culqi_order_id', true);
+				$order_url = admin_url(sprintf('post.php?post=%d&action=edit', $order_id));
 
-								$value_column = sprintf('<a target="_blank" href="%s">%s</a>', $order_url, $order_id);
+				$value_column = sprintf('<a target="_blank" href="%s">%s</a>', $order_url, $order_id);
 				break;
 		}
 
@@ -67,24 +85,47 @@ class FullCulqi_Payments extends FullCulqi_Entities {
 		$basic 		= get_post_meta($post->ID, 'culqi_basic', true);
 		$customer 	= get_post_meta($post->ID, 'culqi_customer', true);
 
-		$args = array(
-					'id'			=> get_post_meta($post->ID, 'culqi_id', true),
-					'ip'			=> get_post_meta($post->ID, 'culqi_ip', true),
-					'order_id'		=> get_post_meta($post->ID, 'culqi_order_id', true),
-					'creation'		=> $basic['culqi_creation'],
-					'currency'		=> $basic['culqi_currency'],
-					'amount'		=> $basic['culqi_amount'],
-					'refunded'		=> $basic['culqi_amount_refunded'],
-					'card_brand'	=> $basic['culqi_card_brand'],
-					'card_type'		=> $basic['culqi_card_type'],
-					'card_number'	=> $basic['culqi_card_number'],
-					'email'			=> $customer['culqi_email'],
-					'first_name'	=> $customer['culqi_first_name'],
-					'last_name'		=> $customer['culqi_last_name'],
-					'city'			=> $customer['culqi_city'],
-					'country'		=> $customer['culqi_country'],
-					'phone'			=> $customer['culqi_phone'],
-				);
+		// Temporal
+		if( metadata_exists( 'post', $post->ID, 'culqi_status' ) )
+			$status = get_post_meta($post->ID, 'culqi_status', true);
+		else
+			$status = 'captured';
+
+		// Temporal
+		if( metadata_exists( 'post', $post->ID, 'culqi_capture' ) )
+			$capture = get_post_meta($post->ID, 'culqi_capture', true);
+		else
+			$capture = 1;
+
+		// Temporal
+		if( metadata_exists( 'post', $post->ID, 'culqi_capture_date' ) )
+			$capture_date = get_post_meta($post->ID, 'culqi_capture_date', true);
+		else
+			$capture_date = $basic['culqi_creation'];
+
+		$args = [
+			'post_id'		=> $post->ID,
+			'id'			=> get_post_meta($post->ID, 'culqi_id', true),
+			'ip'			=> get_post_meta($post->ID, 'culqi_ip', true),
+			'order_id'		=> get_post_meta($post->ID, 'culqi_order_id', true),
+			'creation'		=> $basic['culqi_creation'],
+			'currency'		=> $basic['culqi_currency'],
+			'amount'		=> $basic['culqi_amount'],
+			'refunded'		=> $basic['culqi_amount_refunded'],
+			'card_brand'	=> $basic['culqi_card_brand'],
+			'card_type'		=> $basic['culqi_card_type'],
+			'card_number'	=> $basic['culqi_card_number'],
+			'statuses'		=> fullculqi_get_status(),
+			'status'		=> $status,
+			'capture'		=> $capture,
+			'capture_date'	=> $capture_date,
+			'email'			=> $customer['culqi_email'],
+			'first_name'	=> $customer['culqi_first_name'],
+			'last_name'		=> $customer['culqi_last_name'],
+			'city'			=> $customer['culqi_city'],
+			'country'		=> $customer['culqi_country'],
+			'phone'			=> $customer['culqi_phone'],
+		];
 
 		$args = apply_filters('fullculqi/payments/metabox_basic/args', $args, $post);
 		fullculqi_get_template('admin/layouts/metaboxes/metabox_payment_basic.php', $args);
@@ -140,11 +181,11 @@ class FullCulqi_Payments extends FullCulqi_Entities {
 
 				} else { //insert
 
-					$args = array(
-								'post_title'	=> $data->id,
-								'post_type'		=> 'culqi_payments',
-								'post_status'	=> 'publish'
-							);
+					$args = [
+						'post_title'	=> $data->id,
+						'post_type'		=> 'culqi_payments',
+						'post_status'	=> 'publish'
+					];
 
 					$post_id = wp_insert_post($args);
 				}
@@ -163,26 +204,26 @@ class FullCulqi_Payments extends FullCulqi_Entities {
 				else
 					update_post_meta($post_id, 'culqi_order_id', '');
 
-				$basic = array(
-							'culqi_creation'		=> date('Y-m-d H:i:s', $totime),
-							'culqi_amount'			=> $amount,
-							'culqi_amount_refunded'	=> $refund,
-							'culqi_currency'		=> $data->currency_code,
-							'culqi_card_brand'		=> $data->source->iin->card_brand,
-							'culqi_card_type'		=> $data->source->iin->card_type,
-							'culqi_card_number'		=> $data->source->card_number,
-						);
+				$basic = [
+					'culqi_creation'		=> date('Y-m-d H:i:s', $totime),
+					'culqi_amount'			=> $amount,
+					'culqi_amount_refunded'	=> $refund,
+					'culqi_currency'		=> $data->currency_code,
+					'culqi_card_brand'		=> $data->source->iin->card_brand,
+					'culqi_card_type'		=> $data->source->iin->card_type,
+					'culqi_card_number'		=> $data->source->card_number,
+				];
 
 				update_post_meta($post_id, 'culqi_basic', array_map('esc_html', $basic));
 
-				$customer = array(
-							'culqi_email'		=> $data->email,
-							'culqi_first_name'	=> $data->antifraud_details->first_name,
-							'culqi_last_name'	=> $data->antifraud_details->last_name,
-							'culqi_city'		=> $data->antifraud_details->address_city,
-							'culqi_country'		=> $data->antifraud_details->country_code,
-							'culqi_phone'		=> $data->antifraud_details->phone,
-						);
+				$customer = [
+					'culqi_email'		=> $data->email,
+					'culqi_first_name'	=> $data->antifraud_details->first_name,
+					'culqi_last_name'	=> $data->antifraud_details->last_name,
+					'culqi_city'		=> $data->antifraud_details->address_city,
+					'culqi_country'		=> $data->antifraud_details->country_code,
+					'culqi_phone'		=> $data->antifraud_details->phone,
+				];
 
 				update_post_meta($post_id, 'culqi_customer', array_map('esc_html', $customer));
 			}

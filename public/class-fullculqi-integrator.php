@@ -1,16 +1,16 @@
 <?php
 class FullCulqi_Integrator {
 
-	static function create_payment($payment) {
+	static function create_payment( $payment ) {
 
 		if( !isset($payment->id) )
 			return;
 
-		$args = array(
-					'post_title'	=> $payment->id,
-					'post_type'		=> 'culqi_payments',
-					'post_status'	=> 'publish'
-				);
+		$args = apply_filters( 'fullculqi/integrator/payment_args', [
+			'post_title'	=> $payment->id,
+			'post_type'		=> 'culqi_payments',
+			'post_status'	=> 'publish'
+		], $payment );
 
 		$post_id = wp_insert_post($args);
 		
@@ -20,7 +20,12 @@ class FullCulqi_Integrator {
 		$refund = round($payment->amount_refunded/100, 2);
 
 		update_post_meta($post_id, 'culqi_id', $payment->id);
+		update_post_meta($post_id, 'culqi_capture', $payment->capture);
+		update_post_meta($post_id, 'culqi_capture_date', $payment->capture_date);
 		update_post_meta($post_id, 'culqi_data', $payment);
+
+		$status = $payment->capture ? 'captured' : 'authorized';
+		update_post_meta( $post_id, 'culqi_status', $status );
 		
 		// IP Client
 		if( isset($payment->source->client->ip) )
@@ -53,15 +58,15 @@ class FullCulqi_Integrator {
 			$culqi_card_number = $payment->source->source->card_number;
 
 
-		$basic = array(
-					'culqi_creation'		=> date('Y-m-d H:i:s', $totime),
-					'culqi_amount'			=> $amount,
-					'culqi_amount_refunded'	=> $refund,
-					'culqi_currency'		=> $payment->currency_code,
-					'culqi_card_brand'		=> $culqi_card_brand,
-					'culqi_card_type'		=> $culqi_card_type,
-					'culqi_card_number'		=> $culqi_card_number,
-				);
+		$basic = [
+			'culqi_creation'		=> date('Y-m-d H:i:s', $totime),
+			'culqi_amount'			=> $amount,
+			'culqi_amount_refunded'	=> $refund,
+			'culqi_currency'		=> $payment->currency_code,
+			'culqi_card_brand'		=> $culqi_card_brand,
+			'culqi_card_type'		=> $culqi_card_type,
+			'culqi_card_number'		=> $culqi_card_number,
+		];
 
 		update_post_meta($post_id, 'culqi_basic', $basic);
 
@@ -103,16 +108,18 @@ class FullCulqi_Integrator {
 			$culqi_phone = $payment->source->antifraud_details->phone;
 
 
-		$customer = array(
-					'culqi_email'		=> $payment->email,
-					'culqi_first_name'	=> $culqi_first_name,
-					'culqi_last_name'	=> $culqi_last_name,
-					'culqi_city'		=> $culqi_address_city,
-					'culqi_country'		=> $culqi_country_code,
-					'culqi_phone'		=> $culqi_phone,
-				);
+		$customer = [
+			'culqi_email'		=> $payment->email,
+			'culqi_first_name'	=> $culqi_first_name,
+			'culqi_last_name'	=> $culqi_last_name,
+			'culqi_city'		=> $culqi_address_city,
+			'culqi_country'		=> $culqi_country_code,
+			'culqi_phone'		=> $culqi_phone,
+		];
 
 		update_post_meta($post_id, 'culqi_customer', $customer);
+
+		do_action( 'fullculqi/integrator/payment', $post_id, $payment );
 
 		return $post_id;
 	}

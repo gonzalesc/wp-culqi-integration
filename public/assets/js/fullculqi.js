@@ -62,8 +62,6 @@ function culqi() {
 
 		if( Culqi.order ) {
 
-			console.log(Culqi.order);
-
 			jQuery.ajax({
 				url 		: fullculqi.url_order,
 				type 		: 'POST',
@@ -100,8 +98,6 @@ function culqi() {
 
 
 		} else if( Culqi.token ) {
-
-			console.log(Culqi.token);
 
 			jQuery.ajax({
 				url 		: fullculqi.url_payment,
