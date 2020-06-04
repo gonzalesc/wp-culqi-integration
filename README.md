@@ -81,6 +81,14 @@ Culqi recomienda que estos campos sean obligatorios:
 
 De todos estos puntos el más importante es el `email`, los otros campos son muy necesarios para un tema de antifraude pero no son obligatorios. Yo recomiendo que tengas todos estos campos en tu checkout. El plugin no validará estos campos.
 
+
+## Rembolso vía Woocommerce ##
+
+Podrás hacer reembolsos usando la API de Culqi con un sólo click, además de reponer el stock si así lo especificas.
+
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2020/06/woo_refund.jpg "Refund")
+
+
 ## Multipagos - Configurar Evento ##
 
 Puedes habilitar Multipagos en la sección de configuración de la pasarela de pago Culqi. Cada vez que se genera una orden de pago, le llegará al cliente un email con el CIP de pago.
