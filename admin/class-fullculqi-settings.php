@@ -227,34 +227,42 @@ class FullCulqi_Settings {
 
 		echo '<label for="fullculqi_logo">
 				<input type="text" id="fullculqi_logo" class="regular-text" name="fullculqi_options[logo_url]" value="'.$settings['logo_url'].'"/>
-				<p class="help">'.__('This logo will appear in the Culqi Modal/Popup','letsgo').'</p>
+				<p class="help">'.esc_html__('This logo will appear in the Culqi Modal/Popup','letsgo').'</p>
 			</label>';
 	}
 
 	public function button_sync_payments() {
 		echo '<label for="fullculqi_sync_payments">
-				'.__('Last','letsgo').' <input type="number" id="fullculqi_sync_payments_records" step="1" id="" value="100" style="width:55px;" /> '.__('records','letsgo').'
-				<button id="fullculqi_sync_payments" class="fullculqi_sync_button" data-action="payments">'.__('Synchronize Now','letsgo').'</button>
+				'.esc_html__('Last','letsgo').' <input type="number" id="fullculqi_sync_payments_records" step="1" id="" value="100" style="width:55px;" /> '.esc_html__('records','letsgo').'
+				<button id="fullculqi_sync_payments" class="fullculqi_sync_button" data-action="payments">'.esc_html__('Synchronize Now','letsgo').'</button>
 				<span id="fullculqi_sync_payments_loading"></span>
 			</label>';
 	}
 
 	public function input_woo_payment() {
 		$settings = fullculqi_get_settings();
+		$disabled = false;
+
+		if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
+			$disabled = true;
+			echo '<div style="color: red;">';
+			esc_html_e( 'You do not have Woocommerce activated', 'letsgo' );
+			echo '</div>';
+		}
 
 		echo '<label for="fullculqi_woo_payment">
-				<input type="checkbox" id="fullculqi_woo_payment" name="fullculqi_options[woo_payment]" value="yes" '.checked($settings['woo_payment'], 'yes', false).' />
-				<p class="help">'.__('If checked, the Culqi payment method will appear in Woocommerce.', 'letsgo').'</p>
+				<input type="checkbox" id="fullculqi_woo_payment" name="fullculqi_options[woo_payment]" value="yes" '.checked($settings['woo_payment'], 'yes', false).' '.disabled($disabled, true, false).' />
+				<p class="help">'.esc_html__('If checked, the Culqi payment method will appear in Woocommerce.', 'letsgo').'</p>
 			</label>';
 
 		if( $settings['woo_payment'] == 'yes' ) {
-			echo '<a href="'.admin_url('admin.php?page=wc-settings&tab=checkout&section=fullculqi').'">'.__('Customize Culqi Payment Gateway','letsgo').'</a>';
+			echo '<a href="'.admin_url('admin.php?page=wc-settings&tab=checkout&section=fullculqi').'">'.esc_html__('Customize Culqi Payment Gateway','letsgo').'</a>';
 		}
 	}
 
 	public function input_delete_all() {
 		echo '<label for="fullculqi_delete_all">
-				<button id="fullculqi_delete_all" class="fullculqi_delete_all button button-secondary button-hero">'.__('Clear all','letsgo').'</button>
+				<button id="fullculqi_delete_all" class="fullculqi_delete_all button button-secondary button-hero">'.esc_html__('Clear all','letsgo').'</button>
 				<div id="fullculqi_delete_all_loading"></div>
 			</label>';
 	}

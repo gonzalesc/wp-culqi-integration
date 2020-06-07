@@ -96,7 +96,7 @@ class FullCulqi {
 
 
 	public function notice_woo() {
-		echo '<div class="error"><p>' . sprintf( esc_html__( 'Woocommerce Culqi Full Integration plugin depends on the last version of %s to work!', 'letsgo' ), '<a href="http://wordpress.org/extend/plugins/woocommerce/">WooCommerce</a>' ) . '</p></div>';
+		echo '<div class="error"><p>' . sprintf( esc_html__( 'Currently you have the Woocommerce option activated on Fullculqi plugin, but %s is not activated.', 'letsgo' ), '<a href="http://wordpress.org/extend/plugins/woocommerce/">WooCommerce</a>' ) . '</p></div>';
 	}
 
 	public function notice_currency() {
@@ -119,7 +119,7 @@ class FullCulqi {
 		if( $settings['woo_payment'] == 'yes' ) {
 			
 			if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
-				add_action( 'admin_notices', [ $this, 'notice_woo'] );
+				//add_action( 'admin_notices', [ $this, 'notice_woo'] );
 				return;
 			}
 

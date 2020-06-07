@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Culqi Integration\n"
-"POT-Creation-Date: 2020-06-03 08:29-0300\n"
-"PO-Revision-Date: 2020-06-03 08:32-0300\n"
+"POT-Creation-Date: 2020-06-05 09:56-0300\n"
+"PO-Revision-Date: 2020-06-05 09:57-0300\n"
 "Last-Translator: \n"
 "Language-Team: Letsgodev\n"
 "Language: es\n"
@@ -161,15 +161,19 @@ msgstr "filas"
 msgid "Synchronize Now"
 msgstr "Sincronizar ahora"
 
-#: admin/class-fullculqi-settings.php:247
+#: admin/class-fullculqi-settings.php:249
+msgid "You do not have Woocommerce activated"
+msgstr "No tienes Woocommerce activado"
+
+#: admin/class-fullculqi-settings.php:255
 msgid "If checked, the Culqi payment method will appear in Woocommerce."
 msgstr "Si marcas la casilla, el método de pago aparecerá en Woocommerce."
 
-#: admin/class-fullculqi-settings.php:251
+#: admin/class-fullculqi-settings.php:259
 msgid "Customize Culqi Payment Gateway"
 msgstr "Personalizar Pasarela de Pago Culqi"
 
-#: admin/class-fullculqi-settings.php:257 admin/layouts/welcome_panel.php:44
+#: admin/class-fullculqi-settings.php:265 admin/layouts/welcome_panel.php:44
 msgid "Clear all"
 msgstr "Limpiar todo"
 
@@ -693,11 +697,11 @@ msgstr "Cheatin&#8217; huh?"
 #: includes/class-fullculqi.php:99
 #, php-format
 msgid ""
-"Woocommerce Culqi Full Integration plugin depends on the last version of %s "
-"to work!"
+"Currently you have the Woocommerce option activated on Fullculqi plugin, but "
+"%s is not activated."
 msgstr ""
-"Plugin Woocommerce Culqi Integración depende de la última versión de %s para "
-"funcionar!"
+"Actualmente tienes la opción de Woocommerce activado en el plugin FullCulqi, "
+"pero %s no está activado."
 
 #: includes/class-fullculqi.php:103
 msgid ""
@@ -739,6 +743,14 @@ msgstr "Pagar con Culqi"
 #: public/layouts/form-receipt.php:10
 msgid "Cancel"
 msgstr "Cancelar"
+
+#, php-format
+#~ msgid ""
+#~ "Woocommerce Culqi Full Integration plugin depends on the last version of "
+#~ "%s to work!"
+#~ msgstr ""
+#~ "Plugin Woocommerce Culqi Integración depende de la última versión de %s "
+#~ "para funcionar!"
 
 #~ msgid "Customer ID : %s"
 #~ msgstr "Cliente ID : %s"

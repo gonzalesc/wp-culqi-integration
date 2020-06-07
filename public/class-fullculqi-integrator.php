@@ -16,8 +16,8 @@ class FullCulqi_Integrator {
 		
 
 		$totime = (int)($payment->creation_date/1000);
-		$amount = round($payment->amount/100, 2);
-		$refund = round($payment->amount_refunded/100, 2);
+		$amount = number_format($payment->amount/100, 2);
+		$refund = number_format($payment->amount_refunded/100, 2);
 
 		update_post_meta($post_id, 'culqi_id', $payment->id);
 		update_post_meta($post_id, 'culqi_capture', $payment->capture);
