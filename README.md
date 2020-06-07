@@ -93,7 +93,7 @@ Podrás hacer reembolsos usando la API de Culqi con un sólo click, además de r
 
 Puedes habilitar Multipagos en la sección de configuración de la pasarela de pago Culqi. Cada vez que se genera una orden de pago, le llegará al cliente un email con el CIP de pago.
 
-![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/webhook_settings.jpg "Multipagos")
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2020/06/webhook_settings.jpg "Multipagos")
 
 
 Cuando el cliente page su código CIP, Culqi avisará al comercio mediante un `evento` el cual debemos configurar: para ello, debemos entrar al panel de Culqi e ir a la sección de `eventos` y al submenu de `webhooks`. Finalmente le damos click al botón `Añadir` que está arriba a la derecha.
