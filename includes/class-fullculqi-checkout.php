@@ -144,19 +144,19 @@ class FullCulqi_Checkout {
 			$client_details['phone_number'] = $billing_phone;
 
 		$args_order = apply_filters('fullculqi/checkout/order_args', [
-						'amount'			=> fullculqi_format_total($order->get_total()),
-						'currency_code'		=> $order->get_currency(),
-						'description'		=> substr(str_pad(implode(', ', $product_names), 5, '_'), 0, 80),
-						'order_number'		=> $order->get_order_number(),
-						'client_details'	=> $client_details,
-						'confirm'			=> false,
-						'expiration_date'	=> time() + ( $duration * HOUR_IN_SECONDS ),
-						'metadata'			=> [
-												'order_id'		=> $order->get_id(),
-												'order_number'	=> $order->get_order_number(),
-												'order_key'		=> $order->get_order_key(),
-											],
-					], $order);
+			'amount'			=> fullculqi_format_total($order->get_total()),
+			'currency_code'		=> $order->get_currency(),
+			'description'		=> substr(str_pad(implode(', ', $product_names), 5, '_'), 0, 80),
+			'order_number'		=> $order->get_order_number(),
+			'client_details'	=> $client_details,
+			'confirm'			=> false,
+			'expiration_date'	=> time() + ( $duration * HOUR_IN_SECONDS ),
+			'metadata'			=> [
+									'order_id'		=> $order->get_id(),
+									'order_number'	=> $order->get_order_number(),
+									'order_key'		=> $order->get_order_key(),
+								],
+		], $order);
 
 		$provider_order = FullCulqi_Provider::create_order($args_order);
 
@@ -182,7 +182,19 @@ class FullCulqi_Checkout {
 		$log->set_msg_payment('notice', esc_html__('This order is a Multipayment', 'letsgo') );
 		$log->set_msg_payment('notice', sprintf(esc_html__('Culqi Multipayment CIP: %s','letsgo'), $cip_code) );
 
-		$order->update_status( 'pending', esc_html__('Culqi Method: Multipayment', 'letsgo') );
+		$note = esc_html__('Culqi Method: Multipayment','letsgo');
+		$order->add_order_note($note);
+
+		if( apply_filters( 'fullculqi/checkout/order_change_status', true, $log, $order ) ) {
+			
+			$method_array = fullculqi_get_woo_settings();
+
+			if( $method_array['multi_status'] == 'wc-completed')
+				$order->payment_complete();
+			else
+				$order->update_status($method_array['multi_status']);
+		}
+
 
 		$note = sprintf(esc_html__('Culqi Multipayment CIP: %s','letsgo'), $cip_code);
 		$order->add_order_note($note);

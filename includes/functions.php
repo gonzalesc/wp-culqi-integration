@@ -34,7 +34,7 @@ if( !function_exists('fullculqi_get_woo_settings') ) {
 		if( $settings['woo_payment'] != 'yes' )
 			return array();
 
-		$method_string = get_option('woocommerce_fullculqi_settings', array());
+		$method_string = get_option('woocommerce_fullculqi_settings', []);
 
 		if( !$method_string )
 			return fullculqi_get_woo_default();
@@ -51,14 +51,15 @@ if( !function_exists('fullculqi_get_woo_default') ) {
 	function fullculqi_get_woo_default() {
 
 		$default = [
-					'enabled'			=> 'yes',
-					'title'				=> __('Culqi Full Integration','letsgo'),
-					'description'		=> '',
-					'status_success'	=> 'wc-processing',
-					'installments'		=> 'no',
-					'msg_fail'			=> __('Im sorry! an error occurred making the payment. A email was sent to shop manager with your information.','letsgo'),
-					'time_modal'		=> 0,
-				];
+			'enabled'			=> 'yes',
+			'title'				=> __('Culqi Full Integration','letsgo'),
+			'description'		=> '',
+			'multi_status'		=> 'wc-pending',
+			'status_success'	=> 'wc-processing',
+			'installments'		=> 'no',
+			'msg_fail'			=> __('Im sorry! an error occurred making the payment. A email was sent to shop manager with your information.','letsgo'),
+			'time_modal'		=> 0,
+		];
 
 		return apply_filters('fullculqi/global/get_woo_default', $default);
 	}

@@ -16,6 +16,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		$this->installments 	= $this->get_option( 'installments', 'no' );
 		$this->multipayment 	= $this->get_option( 'multipayment', 'no' );
 		$this->multi_duration	= $this->get_option( 'multi_duration', 24 );
+		$this->multi_status		= $this->get_option( 'multi_status', 'wc-pending' );
 		$this->description		= $this->get_option( 'description' );
 		$this->instructions		= $this->get_option( 'instructions', $this->description );
 		$this->msg_fail			= $this->get_option( 'msg_fail' );
@@ -198,6 +199,15 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 						'360'	=> esc_html__('15 Days','letsgo'),
 					],
 					'default'		=> '24',
+					'desc_tip'		=> true,
+				],
+				'multi_status' => [
+					'title'			=> esc_html__('Status', 'letsgo'),
+					'description'	=> esc_html__('If the sale is made via multipayments, you must specify the status.','letsgo'),
+					'type'			=> 'select',
+					'class'			=> 'wc-enhanced-select',
+					'options'  => wc_get_order_statuses(),
+					'default'		=> 'wc-pending',
 					'desc_tip'		=> true,
 				],
 				'multi_url' => [
@@ -414,7 +424,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			<td class="forminp">
 				<fieldset>
 					<legend class="screen-reader-text"><span><?php echo wp_kses_post( $data['title'] ); ?></span></legend>
-					<b><?php echo site_url('?wc-api=fullculqi_update_order'); ?></b>
+					<b><?php echo site_url('wc-api/fullculqi_update_order'); ?></b>
 					<?php echo $this->get_description_html( $data ); ?>
 				</fieldset>
 			</td>
