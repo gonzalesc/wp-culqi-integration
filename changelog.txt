@@ -1,3 +1,7 @@
+2020-06-07 - version 1.5.1
+* Feature: status on multipayment
+* Feature: add new addon
+
 2020-06-04 - version 1.5.0
 * Feature: refund and status
 
