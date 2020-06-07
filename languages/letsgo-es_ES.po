@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Culqi Integration\n"
-"POT-Creation-Date: 2020-06-05 09:56-0300\n"
-"PO-Revision-Date: 2020-06-05 09:57-0300\n"
+"POT-Creation-Date: 2020-06-07 07:08-0300\n"
+"PO-Revision-Date: 2020-06-07 07:09-0300\n"
 "Last-Translator: \n"
 "Language-Team: Letsgodev\n"
 "Language: es\n"
@@ -194,12 +194,12 @@ msgstr ""
 "página de pago"
 
 #: admin/layouts/addons_options.php:20 admin/layouts/addons_options.php:43
-#: admin/layouts/addons_options.php:66
+#: admin/layouts/addons_options.php:66 admin/layouts/addons_options.php:91
 msgid "Installed"
 msgstr "Instalado"
 
 #: admin/layouts/addons_options.php:23 admin/layouts/addons_options.php:46
-#: admin/layouts/addons_options.php:70
+#: admin/layouts/addons_options.php:70 admin/layouts/addons_options.php:95
 msgid "Download"
 msgstr "Descargar"
 
@@ -226,6 +226,15 @@ msgid ""
 msgstr ""
 "Podrás usar los botones de pago en cualquier lugar de tu website sin tener "
 "un ecommerce instalado."
+
+#: admin/layouts/addons_options.php:84
+msgid "Culqi Deferred Payment"
+msgstr "Culqi Pagos Diferidos"
+
+#: admin/layouts/addons_options.php:85
+msgid ""
+"You can authorize a payment, check its stocks, and then capture the payment."
+msgstr "Puedes autorizar pagos, revisar el stock, y luego capturar el pago."
 
 #: admin/layouts/metaboxes/metabox_order_log.php:10
 msgid "Date/Hour"
