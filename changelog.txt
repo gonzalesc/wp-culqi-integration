@@ -1,3 +1,6 @@
+2020-06-13 - version 1.5.2
+* Fix: we convert amount field in string because json_decode modify the precision of decimals
+
 2020-06-07 - version 1.5.1
 * Feature: status on multipayment
 * Feature: add new addon
