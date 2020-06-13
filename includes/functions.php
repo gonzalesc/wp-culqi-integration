@@ -186,7 +186,7 @@ if( !function_exists('fullculqi_get_language') ) {
 if( !function_exists('fullculqi_format_total') ) {
 	function fullculqi_format_total($total) {
 		$total_points = number_format($total, 2, '.', '');
-		$total_raw = $total_points * 100;
+		$total_raw = strval( $total_points * 100 );
 		
 		return apply_filters('fullculqi/global/format_total', $total_raw, $total);
 	}
