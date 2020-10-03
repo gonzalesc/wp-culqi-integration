@@ -2,9 +2,10 @@
 class FullCulqi_Provider {
 
 	/**
-	* Payments List
-	* @return ARRAY $output 
-	*/
+	 * Payment List
+	 * @param  integer $records [description]
+	 * @return [type]           [description]
+	 */
 	static public function list_payments( $records = 100 ) {
 		global $culqi;
 
@@ -29,6 +30,11 @@ class FullCulqi_Provider {
 	}
 
 
+	/**
+	 * Create Payment
+	 * @param  [type] $args [description]
+	 * @return [type]       [description]
+	 */
 	static public function create_payment( $args ) {
 		global $culqi;
 
@@ -47,7 +53,11 @@ class FullCulqi_Provider {
 		return $output;
 	}
 
-
+	/**
+	 * Create Order
+	 * @param  [type] $args [description]
+	 * @return [type]       [description]
+	 */
 	static public function create_order($args) {
 		global $culqi;
 
@@ -66,7 +76,11 @@ class FullCulqi_Provider {
 		return $output;
 	}
 
-
+	/**
+	 * Create Token
+	 * @param  [type] $args [description]
+	 * @return [type]       [description]
+	 */
 	static public function create_token($args) {
 		global $culqi_token;
 
@@ -85,7 +99,11 @@ class FullCulqi_Provider {
 		return $output;
 	}
 
-
+	/**
+	 * Capture Payment
+	 * @param  [type] $charge_id [description]
+	 * @return [type]            [description]
+	 */
 	static public function capture_payment( $charge_id ) {
 		global $culqi;
 
@@ -104,7 +122,11 @@ class FullCulqi_Provider {
 		return $output;
 	}
 
-
+	/**
+	 * Refund Payment
+	 * @param  [type] $args [description]
+	 * @return [type]       [description]
+	 */
 	static public function refund_payment( $args ) {
 		global $culqi;
 

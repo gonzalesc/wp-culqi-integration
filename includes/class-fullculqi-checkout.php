@@ -1,12 +1,19 @@
 <?php
 class FullCulqi_Checkout {
 
+	/**
+	 * Simple
+	 * @param  [type] $order       [description]
+	 * @param  [type] $culqi_token [description]
+	 * @param  [type] $log         [description]
+	 * @return [type]              [description]
+	 */
 	static public function simple($order, $culqi_token, $log) {
 
 		$pnames = $provider_payment = [];
 		$method_array = fullculqi_get_woo_settings();
 
-		extract($culqi_token);
+		extract( $culqi_token );
 
 		$log->set_msg_payment( 'notice', esc_html__( 'This order is a simple payment', 'letsgo' ) );
 
@@ -32,24 +39,24 @@ class FullCulqi_Checkout {
 		$billing_city 			= $order->get_billing_city();
 		$billing_country 		= $order->get_billing_country();
 
-		if( !empty( $billing_first_name ) )
+		if( ! empty( $billing_first_name ) )
 			$antifraud['first_name'] = $billing_first_name;
 
-		if( !empty( $billing_last_name ) )
+		if( ! empty( $billing_last_name ) )
 			$antifraud['last_name'] = $billing_last_name;
 
-		if( !empty( $billing_address_1 ) )
+		if( ! empty( $billing_address_1 ) )
 			$antifraud['address'] = $billing_address_1;
 
-		if( !empty( $billing_city ) )
+		if( ! empty( $billing_city ) )
 			$antifraud['address_city'] = $billing_city;
 
-		if( !empty( $billing_country ) )
+		if( ! empty( $billing_country ) )
 			$antifraud['country_code'] = $billing_country;
-		elseif( !empty($country_code) )
+		elseif( ! empty($country_code) )
 			$antifraud['country_code'] = $country_code;
 
-		if( !empty( $billing_phone ) )
+		if( ! empty( $billing_phone ) )
 			$antifraud['phone_number'] = $billing_phone;
 		
 
@@ -104,8 +111,15 @@ class FullCulqi_Checkout {
 				
 				if( $method_array['status_success'] == 'wc-completed')
 					$order->payment_complete();
-				else
-					$order->update_status($method_array['status_success']);
+				else {
+					$order->update_status(
+						$method_array['status_success'],
+						sprintf(
+							esc_html__( 'Status changed by FullCulqi (to %s)', 'letsgo' ),
+							$method_array['status_success']
+						)
+					);
+				}
 			}
 
 			do_action('fullculqi/checkout/simple_success', $order, $log, $provider_payment );
@@ -124,6 +138,14 @@ class FullCulqi_Checkout {
 	}
 
 
+	/**
+	 * Create Order
+	 * @param  [type] $order         [description]
+	 * @param  [type] $duration      [description]
+	 * @param  [type] $product_names [description]
+	 * @param  [type] $log           [description]
+	 * @return [type]                [description]
+	 */
 	static public function create_order($order, $duration, $product_names, $log) {
 
 		// Antifraud Customer Data
@@ -177,6 +199,13 @@ class FullCulqi_Checkout {
 	}
 
 
+	/**
+	 * Proccess Order
+	 * @param  [type] $order    [description]
+	 * @param  [type] $cip_code [description]
+	 * @param  [type] $log      [description]
+	 * @return [type]           [description]
+	 */
 	static function process_order($order, $cip_code, $log ) {
 		
 		$log->set_msg_payment('notice', esc_html__('This order is a Multipayment', 'letsgo') );
@@ -209,6 +238,14 @@ class FullCulqi_Checkout {
 	}
 
 
+	/**
+	 * Create Refund
+	 * @param  [type] $order  [description]
+	 * @param  float  $amount [description]
+	 * @param  string $reason [description]
+	 * @param  [type] $log    [description]
+	 * @return [type]         [description]
+	 */
 	static function create_refund( $order, $amount = 0.00, $reason = '', $log ) {
 
 		$culqi_charge_id	= get_post_meta( $order->get_id(), 'culqi_charge_id', true );
