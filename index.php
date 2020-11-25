@@ -23,15 +23,15 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 
-define('FULLCULQI_PLUGIN_DIR' , plugin_dir_path(__FILE__));
-define('FULLCULQI_PLUGIN_URL' , plugin_dir_url(__FILE__));
-define('FULLCULQI_PLUGIN_BASE' , plugin_basename( __FILE__ ));
+define( 'FULLCULQI_DIR' , plugin_dir_path(__FILE__) );
+define( 'FULLCULQI_URL' , plugin_dir_url(__FILE__) );
+define( 'FULLCULQI_BASE' , plugin_basename( __FILE__ ) );
 
 /**
  * The core plugin class that is used to define internationalization,
  * dashboard-specific hooks, and public-facing site hooks.
  */
-require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi.php';
+require_once FULLCULQI_DIR . 'includes/class-fullculqi.php';
 
 
 /**
@@ -39,7 +39,7 @@ require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi.php';
  * This action is documented in includes/class-fullculqi-activator.php
  */
 function fullculqi_activate() {
-	require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi-activator.php';
+	require_once FULLCULQI_DIR . 'includes/class-fullculqi-activator.php';
 	fullculqi_Activator::activate();
 }
 
@@ -48,7 +48,7 @@ function fullculqi_activate() {
  * This action is documented in includes/class-fullculqi-deactivator.php
  */
 //function culqi_deactivate() {
-//	require_once FULLCULQI_PLUGIN_DIR . 'includes/class-fullculqi-deactivator.php';
+//	require_once FULLCULQI_DIR . 'includes/class-fullculqi-deactivator.php';
 //	fullculqi_Deactivator::deactivate();
 //}
 
@@ -73,5 +73,5 @@ function fullculqi() {
 	return FullCulqi::instance();
 }
 
-$GLOBALS['fullculqi'] = fullculqi();
+$fullculqi = fullculqi();
 ?>

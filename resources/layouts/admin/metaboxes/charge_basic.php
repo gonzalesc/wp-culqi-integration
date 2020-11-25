@@ -1,0 +1,91 @@
+<div class="culqi_charges_box">
+	<h2 class="culqi_charges_h2">
+		<?php printf( esc_html__( 'Culqi ID : %s','fullculqi'), $id ); ?>
+	</h2>
+	<p class="culqi_charges_subh2">
+		<?php printf( esc_html__( 'Charge via FullCulqi. Paid on %s. Customer IP: %s', 'fullculqi' ), $creation_date, $ip ); ?>
+	</p>
+
+	<div class="culqi_data_column_container">
+		<div class="culqi_data_column">
+			<h3 class="culqi_charges_h3">
+				<?php esc_html_e( 'Charge Data', 'fullculqi' ); ?>
+			</h3>
+			<ul>
+				<li>
+					<b><?php esc_html_e( 'Creation Date', 'fullculqi' ); ?> : </b>
+					<?php echo $creation_date; ?>
+				</li>
+				<li>
+					<b><?php esc_html_e( 'Capture Date', 'fullculqi' ); ?> : </b>
+					<?php echo $capture_date; ?>
+				</li>
+				<li>
+					<b><?php esc_html_e( 'Currency', 'fullculqi' ); ?> : </b>
+					<?php echo $currency; ?>
+				</li>
+				<li>
+					<b><?php esc_html_e( 'Amount', 'fullculqi' ); ?> : </b>
+					<?php echo $amount; ?>
+				</li>
+				<li>
+					<b><?php esc_html_e( 'Refund', 'fullculqi' ); ?> : </b>
+					<?php echo $refunded; ?>
+				</li>
+				<?php if( ! empty( $order_id ) ) : ?>
+					<li>
+						<b><?php esc_html_e( 'WC Order ID', 'fullculqi' ); ?> : </b>
+						<a target="_blank" href="<?php echo get_edit_post_link( $order_id ); ?>">
+							<?php echo $order_id; ?>
+						</a>
+					</li>
+				<?php endif; ?>
+			</ul>
+			<?php
+				printf(
+					'<mark class="culqi_status_2 %s"><span>%s</span></mark>',
+					$status, $statuses[$status]
+				);
+
+				if( $status == 'captured' || $status == 'authorized' ) {
+					echo '&nbsp';
+
+					printf(
+						'<a href="%s" class="fullculqi_refund_link">%s</a>',
+						wp_nonce_url( admin_url( 'admin-ajax.php?action=fullculqi_refund&post_id=' . $post_id ), 'fullculqi-wpnonce' ),
+						esc_html__( 'Refund Charge', 'fullculqi' )
+					);
+				}
+			?>
+			<?php do_action( 'fullculqi/layout_basic/status' ); ?>
+		</div>
+		<div class="culqi_data_column">
+			<h3 class="culqi_charges_h3">
+				<?php esc_html_e( 'Customer', 'fullculqi' ); ?>
+			</h3>
+			<ul>
+				<li>
+					<b><?php esc_html_e( 'First Name', 'fullculqi' ); ?> : </b>
+					<?php echo $first_name; ?>
+				</li>
+				<li>
+					<b><?php esc_html_e( 'Last Name', 'fullculqi' ); ?> : </b>
+					<?php echo $last_name; ?>
+				</li>
+				<li>
+					<b><?php esc_html_e( 'City', 'fullculqi' ); ?> : </b>
+					<?php echo $city; ?>
+				</li>
+				<li>
+					<b><?php esc_html_e( 'Country', 'fullculqi' ); ?> : </b>
+					<?php echo $country; ?>
+				</li>
+				<li>
+					<b><?php esc_html_e( 'Phone', 'fullculqi' ); ?> : </b>
+					<?php echo $phone; ?>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>

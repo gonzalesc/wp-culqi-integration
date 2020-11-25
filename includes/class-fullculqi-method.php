@@ -1,17 +1,23 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
+/**
+ * Method Payment Class
+ * @since  1.0.0
+ * @package Includes / Method Payment
+ */
 class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 
+	/**
+	 * Construct
+	 */
 	public function __construct() {
 
 		$this->id 					= 'fullculqi';
-		$this->method_title			= esc_html__('Culqi Full Integration','letsgo');
-		$this->method_description 	= esc_html__( 'Allows payments by Card Credit. This payment method will decide if it is a simple payment or subscription or other', 'letsgo' );
-		$this->icon 				= FULLCULQI_PLUGIN_URL . 'public/assets/images/cards.png';
+		$this->method_title			= esc_html__( 'Culqi Full Integration', 'fullculqi' );
+		$this->method_description 	= esc_html__( 'Culqi is the simplest way to accept payments in any online store or mobile application. Its function is to allow a store to accept payments by credit or debit card, of any of the brands', 'fullculqi' );
+		$this->icon 				= FULLCULQI_URL . 'resources/assets/images/cards.png';
 		
 		// Define user set variables
-		$this->has_fields		= apply_filters('fullculqi/method/has_fields', false);
+		$this->has_fields		= apply_filters( 'fullculqi/method/has_fields', false );
 		$this->title			= $this->get_option( 'title' );
 		$this->installments 	= $this->get_option( 'installments', 'no' );
 		$this->multipayment 	= $this->get_option( 'multipayment', 'no' );
@@ -23,29 +29,36 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		$this->time_modal		= $this->get_option( 'time_modal', 0 );
 
 		$this->supports = apply_filters('fullculqi/method/supports',
-								[ 'products', 'refunds', 'pre-orders' ]
-							);
+			[ 'products', 'refunds', 'pre-orders' ]
+		);
 
 		// Load the settings.
 		$this->init_form_fields();
 		$this->init_settings();
 
 		// Actions
-		add_action('woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'process_admin_options' ] );
-		add_action('woocommerce_receipt_' . $this->id, [ $this, 'receipt_page' ] );
-		add_action('woocommerce_thankyou_' . $this->id, [ $this, 'thankyou_page' ] );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'process_admin_options' ] );
+		add_action( 'woocommerce_receipt_' . $this->id, [ $this, 'receipt_page' ] );
+		add_action( 'woocommerce_thankyou_' . $this->id, [ $this, 'thankyou_page' ] );
 
-		// JS and CSS
+		// Script JS && CSS
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 	}
 
 
-	function enqueue_scripts() {
+	/**
+	 * Script JS && CSS
+	 * @return [type] [description]
+	 */
+	public function enqueue_scripts() {
+		
+		// Check if it is /checkout/pay page
 		if( is_checkout_pay_page() ) {
 
 			global $wp;
 
-			if( !isset($wp->query_vars['order-pay']) ) return;
+			if( ! isset( $wp->query_vars['order-pay'] ) )
+				return;
 
 			$pnames = [];
 			$order_id = $wp->query_vars['order-pay'];
@@ -53,254 +66,271 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 
 			$settings = fullculqi_get_settings();
 
-			foreach ($order->get_items() as $item ) {
-				$product = $item->get_product();
-
-				if( $product && method_exists($product, 'get_name' ) )
-					$pnames[] = $product->get_name();
-			}
-
-			// If empty
-			if( count($pnames) == 0 )
-				$pnames[0] = 'Product';
-
 
 			// Disabled from thirds
-			$this->multipayment = apply_filters('fullculqi/method/disabled_multipayments', false, $order, 'order') ? 'no' : $this->multipayment;
+			$this->multipayment = apply_filters( 'fullculqi/method/disabled_multipayments', false, $order, 'order') ? 'no' : $this->multipayment;
 
-			$this->installments = apply_filters('fullculqi/method/disabled_installments', false, $order, 'order') ? 'no' : $this->installments;
+			$this->installments = apply_filters( 'fullculqi/method/disabled_installments', false, $order, 'order') ? 'no' : $this->installments;
 			
 
+			// Check if there is multipayment
 			if( $this->multipayment == 'yes' ) {
 
-				$multi_order = get_post_meta($order_id, 'culqi_order', true);
+				$culqi_order_id = get_post_meta( $order_id, 'culqi_order', true );
 
-				if( !$multi_order ) {
+				if( empty( $culqi_order ) ) {
 
-					// Init Log
-					$log = new FullCulqi_Logs();
-					$log->set_settings_payment( $order->get_id() );
-
-					$multi_order = FullCulqi_Checkout::create_order($order, $this->multi_duration, $pnames, $log);
-
-					update_post_meta($order_id, 'culqi_order', $multi_order);
+					$culqi_order_id = FullCulqi_Orders::create( $order );
+					$culqi_order_id = ! empty( $culqi_order_id ) ? $culqi_order_id : '';
 				}
 			}
+
+			// Description
+			$pnames = [];
+
+			foreach( $order->get_items() as $item ) {
+				$product = $item->get_product();
+				$pnames[] = $product->get_name();
+			}
+
+			$desc = count( $pnames ) == 0 ? 'Product' : implode( ', ', $pnames );
 			
+			$js_library		= 'https://checkout.culqi.com/js/v3';
+			$js_checkout	= FULLCULQI_URL . 'resources/assets/js/wc-checkout.js';
+			$js_waitme		= FULLCULQI_URL . 'resources/assets/js/waitMe.min.js';
+			$css_waitme		= FULLCULQI_URL . 'resources/assets/css/waitMe.min.css';
 
-			$js_checkout	= 'https://checkout.culqi.com/js/v3';
-			$js_fullculqi	= FULLCULQI_PLUGIN_URL . 'public/assets/js/fullculqi.js';
-			$js_waitme		= FULLCULQI_PLUGIN_URL . 'public/assets/js/waitMe.min.js';
-			$css_waitme		= FULLCULQI_PLUGIN_URL . 'public/assets/css/waitMe.min.css';
-
-			wp_enqueue_script('fullcheckout-js', $js_checkout, [ 'jquery' ], false, true);
-			wp_enqueue_script('fullculqi-js', $js_fullculqi, [ 'jquery', 'fullcheckout-js' ], false, true);
-			wp_enqueue_script('waitme-js', $js_waitme, [ 'jquery' ], false, true);
-			wp_enqueue_style('waitme-css', $css_waitme );
-
-			wp_localize_script( 'fullculqi-js', 'fullculqi',
-				apply_filters('fullculqi/method/localize',
-				[
-					'url_payment'	=> site_url('wc-api/fullculqi_create_payment/'),
-					'url_order'		=> site_url('wc-api/fullculqi_create_order/'),
-					'url_success'	=> $order->get_checkout_order_received_url(),
-					'public_key'	=> sanitize_text_field($settings['public_key']),
-					'installments'	=> sanitize_title($this->installments),
-					'multipayment'	=> sanitize_title($this->multipayment),
-					'multi_order'	=> $this->multipayment == 'yes' ? $multi_order : '',
-					'lang'			=> fullculqi_get_language(),
-					'time_modal'	=> absint($this->time_modal*1000),
-					'order_id'		=> absint($order_id),
-					'commerce'		=> sanitize_text_field($settings['commerce']),
-					'url_logo'		=> esc_url($settings['logo_url']),
-					'currency'		=> get_woocommerce_currency(),
-					'description'	=> substr(str_pad(implode(', ', $pnames), 5, '_'), 0, 80),
-					'loading_text'	=> esc_html__('Loading. Please wait.','letsgo'),
-					'total'			=> fullculqi_format_total($order->get_total()),
-					'msg_fail'		=> sanitize_text_field($this->msg_fail),
-					'msg_error'		=> esc_html__('There was some problem in the purchase process. Try again please','letsgo'),
-					'wpnonce'		=> wp_create_nonce('fullculqi'),
-				], $this)
+			wp_enqueue_script( 'culqi-library-js', $js_library, [ 'jquery' ], false, true );
+			wp_enqueue_script(
+				'fullculqi-js', $js_checkout, [ 'jquery', 'culqi-library-js' ], false, true
 			);
-		}
 
-		do_action('fullculqi/method/enqueue_scripts' );
+			// Waitme
+			wp_enqueue_script( 'waitme-js', $js_waitme, [ 'jquery' ], false, true );
+			wp_enqueue_style( 'waitme-css', $css_waitme );
+
+			wp_localize_script( 'fullculqi-js', 'fullculqi_vars',
+				apply_filters('fullculqi/method/localize', [
+					'url_culqi'		=> site_url( 'fullculqi-api/actions/' ),
+					'url_success'	=> $order->get_checkout_order_received_url(),
+					'public_key'	=> sanitize_text_field( $settings['public_key'] ),
+					'installments'	=> sanitize_title( $this->installments ),
+					'multipayment'	=> sanitize_title( $this->multipayment ),
+					'multi_order'	=> $this->multipayment == 'yes' ? $culqi_order_id : '',
+					'lang'			=> fullculqi_language(),
+					'time_modal'	=> absint( $this->time_modal*1000 ),
+					'order_id'		=> absint( $order_id ),
+					'commerce'		=> sanitize_text_field( $settings['commerce'] ),
+					'url_logo'		=> esc_url( $settings['logo_url'] ),
+					'currency'		=> get_woocommerce_currency(),
+					'description'	=> substr( str_pad( $desc, 5, '_' ), 0, 80 ),
+					'loading_text'	=> esc_html__( 'Loading. Please wait.', 'fullculqi' ),
+					'total'			=> fullculqi_format_total( $order->get_total() ),
+					'msg_fail'		=> sanitize_text_field( $this->msg_fail ),
+					'msg_error'		=> esc_html__( 'There was some problem in the purchase process. Try again please', 'fullculqi' ),
+					'wpnonce'		=> wp_create_nonce( 'fullculqi' ),
+				], $order )
+			);
+
+			do_action( 'fullculqi/method/enqueue_scripts', $order );
+		}
 	}
 	
 
-	function init_form_fields() {
+	/**
+	 * Fields Form
+	 * @return mixed
+	 */
+	public function init_form_fields() {
 
-		$this->form_fields = apply_filters('fullculqi/method/form_fields', [
-				'basic_section' => [
-					'title' => esc_html__('BASIC SETTING','letsgo'),
-					'type'  => 'title'
-				],
+		$this->form_fields = apply_filters( 'fullculqi/method/form_fields', [
+			'basic_section' => [
+				'title' => esc_html__( 'BASIC SETTING', 'fullculqi' ),
+				'type'  => 'title'
+			],
+			'enabled' => [
+				'title'		=> esc_html__( 'Enable/Disable', 'fullculqi' ),
+				'type'		=> 'checkbox',
+				'label'		=> esc_html__( 'Enable Culqi', 'fullculqi' ),
+				'default'	=> 'no',
+			],
+			'installments' => [
+				'title'			=> esc_html__( 'Installments', 'fullculqi' ),
+				'description'	=> esc_html__( 'If checked, a selection field will appear in the modal with the available installments.', 'fullculqi' ),
+				'class'			=> '',
+				'type'			=> 'checkbox',
+				'label'			=> esc_html__( 'Enable Installments', 'fullculqi' ),
+				'default'		=> 'no',
+				'desc_tip'		=> true,
+			],
+			'title' => [
+				'title'			=> esc_html__( 'Title', 'fullculqi' ),
+				'type'			=> 'text',
+				'description'	=> esc_html__( 'This controls the title which the user sees during checkout.', 'fullculqi' ),
+				'desc_tip'		=> true,
+			],
+			'description' => [
+				'title'			=> esc_html__( 'Description', 'fullculqi' ),
+				'description'	=> esc_html__( 'Brief description of the payment gateway. This message will be seen by the buyer', 'fullculqi' ),
+				'class'			=> '',
+				'default'		=> esc_html__( 'Payment gateway Culqi accepts VISA, Mastercard, Diners, American Express', 'fullculqi' ),
+				'type'			=> 'textarea',
+				'desc_tip'		=> true,
+			],
+			'multi_section' => [
+				'title'			=> esc_html__( 'MULTIPAYMENT SETTING', 'fullculqi' ),
+				'type'			=> 'title',
+				'description'	=> apply_filters( 'fullculqi/method/multi_html', '' ),
+			],
 
-				'enabled' => [
-					'title'		=> esc_html__( 'Enable/Disable', 'letsgo' ),
-					'type'		=> 'checkbox',
-					'label'		=> esc_html__( 'Enable Culqi', 'letsgo' ),
-					'default'	=> 'yes',
+			'multipayment' => [
+				'title'			=> esc_html__('Enable', 'fullculqi'),
+				'description'	=> esc_html__('If checked several tabs will appear in the modal with other payments','fullculqi'),
+				'class'			=> '',
+				'type'			=> 'checkbox',
+				'label'			=> esc_html__('Enable Multipayment', 'fullculqi'),
+				'default'		=> 'no',
+				'desc_tip'		=> true,
+			],
+			'multi_duration' => [
+				'title'			=> esc_html__( 'Duration', 'fullculqi' ),
+				'description'	=> esc_html__( 'If enable Multipayment option, you must choose the order duration. This is the time you give the customer to make the payment.', 'fullculqi' ),
+				'class'			=> '',
+				'type'			=> 'select',
+				'options'		=> [
+					'1'		=> esc_html__( '1 Hour', 'fullculqi' ),
+					'2'		=> esc_html__( '2 Hours', 'fullculqi' ),
+					'4'		=> esc_html__( '4 Hours', 'fullculqi' ),
+					'8'		=> esc_html__( '8 Hours', 'fullculqi' ),
+					'12'	=> esc_html__( '12 Hours', 'fullculqi' ),
+					'24'	=> esc_html__( '1 Day', 'fullculqi' ),
+					'48'	=> esc_html__( '2 Days', 'fullculqi' ),
+					'96'	=> esc_html__( '4 Days', 'fullculqi' ),
+					'168'	=> esc_html__( '7 Days', 'fullculqi' ),
+					'360'	=> esc_html__( '15 Days', 'fullculqi' ),
 				],
-				'installments' => [
-					'title'			=> esc_html__('Installments', 'letsgo'),
-					'description'	=> esc_html__('If checked, a selection field will appear in the modal with the available installments.','letsgo'),
-					'class'			=> '',
-					'type'			=> 'checkbox',
-					'label'			=> esc_html__('Enable Installments', 'letsgo'),
-					'default'		=> 'no',
-					'desc_tip'		=> true,
-				],
-				'title' => [
-					'title'			=> esc_html__( 'Title', 'letsgo' ),
-					'type'			=> 'text',
-					'description'	=> esc_html__( 'This controls the title which the user sees during checkout.', 'letsgo' ),
-					'desc_tip'		=> true,
-				],
-				'description' => [
-					'title'			=> esc_html__('Description', 'letsgo'),
-					'description'	=> esc_html__('Brief description of the payment gateway. This message will be seen by the buyer','letsgo'),
-					'class'			=> '',
-					'default'		=> esc_html__('Payment gateway Culqi accepts VISA, Mastercard, Diners, American Express','letsgo'),
-					'type'			=> 'textarea',
-					'desc_tip'		=> true,
-				],
+				'default'		=> '24',
+				'desc_tip'		=> true,
+			],
+			'multi_status' => [
+				'title'			=> esc_html__( 'Status', 'fullculqi' ),
+				'description'	=> esc_html__( 'If the sale is made via multipayments, you must specify the status.', 'fullculqi' ),
+				'type'			=> 'select',
+				'class'			=> 'wc-enhanced-select',
+				'options'		=> wc_get_order_statuses(),
+				'default'		=> 'wc-pending',
+				'desc_tip'		=> true,
+			],
+			'multi_url' => [
+				'title'			=> esc_html__( 'Webhook URL', 'fullculqi' ),
+				'type'			=> 'multiurl',
+				'description'	=> esc_html__( 'If you have enabled the multipayment, so you need configure the webhooks usign this URL', 'fullculqi' ),
+				'desc_tip'		=> true,
+				'default'		=> 'yes',
+			],
 
-				'multi_section' => [
-					'title'			=> esc_html__('MULTIPAYMENT SETTING','letsgo'),
-					'type'			=> 'title',
-					'description'	=> apply_filters('fullculqi/method/multi_html',''),
-				],
+			'additional_section' => [
+				'title' => esc_html__( 'ADDITIONAL SETTING', 'fullculqi' ),
+				'type'  => 'title'
+			],
 
-				'multipayment' => [
-					'title'			=> esc_html__('Enable', 'letsgo'),
-					'description'	=> esc_html__('If checked several tabs will appear in the modal with other payments','letsgo'),
-					'class'			=> '',
-					'type'			=> 'checkbox',
-					'label'			=> esc_html__('Enable Multipayment', 'letsgo'),
-					'default'		=> 'no',
-					'desc_tip'		=> true,
-				],
-				'multi_duration' => [
-					'title'			=> esc_html__('Duration', 'letsgo'),
-					'description'	=> esc_html__('If enable Multipayment option, you must choose the order duration. This is the time you give the customer to make the payment.','letsgo'),
-					'class'			=> '',
-					'type'			=> 'select',
-					'options'		=> [
-						'1'		=> esc_html__('1 Hour','letsgo'),
-						'2'		=> esc_html__('2 Hours','letsgo'),
-						'4'		=> esc_html__('4 Hours','letsgo'),
-						'8'		=> esc_html__('8 Hours','letsgo'),
-						'12'	=> esc_html__('12 Hours','letsgo'),
-						'24'	=> esc_html__('1 Day','letsgo'),
-						'48'	=> esc_html__('2 Days','letsgo'),
-						'96'	=> esc_html__('4 Days','letsgo'),
-						'168'	=> esc_html__('7 Days','letsgo'),
-						'360'	=> esc_html__('15 Days','letsgo'),
-					],
-					'default'		=> '24',
-					'desc_tip'		=> true,
-				],
-				'multi_status' => [
-					'title'			=> esc_html__('Status', 'letsgo'),
-					'description'	=> esc_html__('If the sale is made via multipayments, you must specify the status.','letsgo'),
-					'type'			=> 'select',
-					'class'			=> 'wc-enhanced-select',
-					'options'  => wc_get_order_statuses(),
-					'default'		=> 'wc-pending',
-					'desc_tip'		=> true,
-				],
-				'multi_url' => [
-					'title' => esc_html__('Webhook URL','letsgo'),
-					'type' => 'multiurl',
-					'description' => esc_html__('If you have enabled the multipayment, so you need configure the webhooks usign this URL','letsgo'),
-					'desc_tip' => true,
-					'default' => 'yes',
-				],
-
-				'additional_section' => [
-					'title' => esc_html__('ADDITIONAL SETTING','letsgo'),
-					'type'  => 'title'
-				],
-
-				'status_success' => [
-					'title' => esc_html__('Success Status','letsgo'),
-					'type' => 'select',
-					'class'       => 'wc-enhanced-select',
-					'description' => esc_html__('If the purchase is success, apply this status to the order','letsgo'),
-					'default' => 'wc-processing',
-					'desc_tip' => true,
-					'options'  => wc_get_order_statuses(),
-				],
-				'msg_fail' => [
-					'title'			=> esc_html__('Failed Message', 'letsgo'),
-					'description'	=> esc_html__('This is the message will be shown to the customer if there is a error in the payment','letsgo'),
-					'class'			=> '',
-					'type'			=> 'textarea',
-					'desc_tip'		=> false,
-					'default'		=> esc_html__('Im sorry! an error occurred making the payment. A email was sent to shop manager with your information.','letsgo'),
-				],
-				'time_modal' => [
-					'title'			=> esc_html__('Popup/Modal Time','letsgo'),
-					'type'			=> 'text',
-					'description'	=> esc_html__('If you want the modal window to appear after a while without clicking "buy", put the seconds here. (Warning: may it not work in Safari). If you do not want to, leave it at zero.','letsgo'),
-					'default'		=> '0',
-					'placeholder'	=> '0',
-					'desc_tip'		=> false,
-				],
-			]
-		);
+			'status_success' => [
+				'title'			=> esc_html__( 'Success Status', 'fullculqi' ),
+				'type'			=> 'select',
+				'class'			=> 'wc-enhanced-select',
+				'description'	=> esc_html__( 'If the purchase is success, apply this status to the order', 'fullculqi' ),
+				'default'		=> 'wc-processing',
+				'desc_tip'		=> true,
+				'options'		=> wc_get_order_statuses(),
+			],
+			'msg_fail' => [
+				'title'			=> esc_html__( 'Failed Message', 'fullculqi' ),
+				'description'	=> esc_html__( 'This is the message will be shown to the customer if there is a error in the payment', 'fullculqi' ),
+				'class'			=> '',
+				'type'			=> 'textarea',
+				'desc_tip'		=> false,
+				'default'		=> esc_html__( 'Im sorry! an error occurred making the payment. A email was sent to shop manager with your information.', 'fullculqi' ),
+			],
+			'time_modal' => [
+				'title'			=> esc_html__( 'Popup/Modal Time', 'fullculqi' ),
+				'type'			=> 'text',
+				'description'	=> esc_html__( 'If you want the modal window to appear after a while without clicking "buy", put the seconds here. (Warning: may it not work in Safari). If you do not want to, leave it at zero.', 'fullculqi' ),
+				'default'		=> '0',
+				'placeholder'	=> '0',
+				'desc_tip'		=> false,
+			],
+		] );
 	}
 
-
-	function payment_fields() {
+	/**
+	 * Payment fields ( credit card form )
+	 * @return mixed
+	 */
+	public function payment_fields() {
 		if ( $this->description ) {
 			echo wpautop( wptexturize( $this->description ) ); // @codingStandardsIgnoreLine.
 		}
 
-		do_action('fullculqi/method/payment_fields', $this);
+		do_action( 'fullculqi/method/payment_fields', $this );
 	}
 
-
-	function thankyou_page( $order_id ) {
+	/**
+	 * Thanks You Page
+	 * @param  integer $order_id
+	 * @return mixed
+	 */
+	public function thankyou_page( $order_id = 0 ) {
 
 		$order = new WC_Order( $order_id );
 	}
 
-	function receipt_page( $order_id ) {
+	/**
+	 * Payment Receipt Page
+	 * @param  integer $order_id
+	 * @return mixed
+	 */
+	public function receipt_page( $order_id = 0 ) {
 
 		$order = new WC_Order( $order_id );	
 
-		$args = [
+		$args = apply_filters( 'fullculqi/receipt_page/args', [
 			'src_image'		=> $this->icon,
 			'url_cancel'	=> esc_url( $order->get_cancel_order_url() ),
 			'order_id'		=> $order_id,
-		];
+			'class_button'	=> [ 'button', 'alt' ],
+		], $order );
 
 		do_action('fullculqi/form-receipt/before', $order);
 
-		wc_get_template('public/layouts/form-receipt.php', $args, false, FULLCULQI_PLUGIN_DIR );
+		wc_get_template(
+			'resources/layouts/checkout-receipt.php', $args, false, FULLCULQI_DIR
+		);
 
 		do_action('fullculqi/form-receipt/after', $order);
 	}
 
 
-	function process_payment( $order_id ) {
+	/**
+	 * Process Payment
+	 * 
+	 * @param  integer $order_id
+	 * @return mixed
+	 */
+	public function process_payment( $order_id = 0 ) {
 		$order = new WC_Order( $order_id );
 
-		// Mark as on-hold (we're awaiting the cheque)
-		//$order->update_status( 'pending', esc_html__('Order pending confirmation','letsgo'));
+		$output = [
+			'result'   => 'success',
+			'redirect' => $order->get_checkout_payment_url( true ),
+		];
 
-		return apply_filters('fullculqi/method/redirect', [
-					'result'   => 'success',
-					'redirect' => $order->get_checkout_payment_url(true),
-				], $order, $this);
+		return apply_filters( 'fullculqi/method/redirect', $output, $order, $this );
 	}
 
 
 	/**
 	 * Can the order be refunded via Culqi?
-	 *
+	 * 
 	 * @param  WC_Order $order Order object.
 	 * @return bool
 	 */
@@ -321,53 +351,40 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 	 * @param  string $reason Refund reason.
 	 * @return bool|WP_Error
 	 */
-	public function process_refund( $order_id, $amount = null, $reason = '' ) {
+	public function process_refund( $order_id = 0, $amount = null, $reason = '' ) {
 		$order = wc_get_order( $order_id );
 
 		if ( ! $this->can_refund_order( $order ) ) {
-			return new WP_Error( 'error', esc_html__( 'Refund failed.', 'letsgo' ) );
+			return new WP_Error( 'error', esc_html__( 'Refund failed.', 'fullculqi' ) );
 		}
 		
-		// Init Log
-		$log = new FullCulqi_Logs();
-		$log->set_settings_payment( $order->get_id() );
+		$refund = FullCulqi_Refunds::create( $order, $amount, $reason );
 
-		$provider_refund = FullCulqi_Checkout::create_refund( $order, $amount, $reason, $log );
-
-		if( count( $provider_refund ) == 0 ) {
-			$message = esc_html__('Culqi Provider Payment error : There was not set any refund','letsgo');
-			$log->set_msg_payment( 'error', $message );
+		if( ! $refund ) {
+			$message = esc_html__( 'Culqi Provider Payment error : There was not set any refund','fullculqi' );
 
 			return new WP_Error( 'error', $message );
 		}
 
-		$data = $provider_refund['data'];
-
-		$culqi_post_id	= get_post_meta( $order_id, 'culqi_post_id', true );
-		update_post_meta( $culqi_post_id, 'culqi_data', $data );
-		update_post_meta( $culqi_post_id, 'culqi_status', 'refunded' );
-
-		// Save Refund
-		$basic = get_post_meta( $culqi_post_id, 'culqi_basic', true );
-		$refunds = (array)get_post_meta( $culqi_post_id, 'culqi_ids_refunded', true );
-		
-		$refunds[ $data->id ] = number_format( $data->amount / 100, 2, '.', '' );
-		
-		$basic['culqi_amount_refunded'] = array_sum( $refunds );
-
-		update_post_meta( $culqi_post_id, 'culqi_basic', $basic );
-		update_post_meta( $culqi_post_id, 'culqi_ids_refunded', $refunds );
-
 		return true;
 	}
 
-
-	function validate_fields() {
-		return apply_filters('fullculqi/method/validate', true, $this);
+	/**
+	 * Validate Fields
+	 * @return bool
+	 */
+	public function validate_fields() {
+		return apply_filters( 'fullculqi/method/validate', true, $this );
 	}
 
 
-	function generate_radio_html( $key, $data ) {
+	/**
+	 * Create new field to settings
+	 * @param  string $key
+	 * @param  array  $data
+	 * @return mixed
+	 */
+	public function generate_radio_html( $key = '', $data = [] ) {
 
 		$field_key = $this->get_field_key( $key );
 		$defaults  = [
@@ -382,6 +399,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			'custom_attributes' => [],
 			'options'           => [],
 		];
+
 		$data = wp_parse_args( $data, $defaults );
 		ob_start();
 		?>
@@ -409,7 +427,13 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		return ob_get_clean();
 	}
 
-	function generate_multiurl_html($key, $data) {
+	/**
+	 * MultiUrl Field
+	 * @param  string $key
+	 * @param  array  $data
+	 * @return mixed
+	 */
+	public function generate_multiurl_html( $key = '', $data = [] ) {
 
 		$field_key = $this->get_field_key( $key );
 

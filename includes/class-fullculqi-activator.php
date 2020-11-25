@@ -16,26 +16,39 @@ class fullculqi_Activator {
 			set_transient( 'fullculqi_activator', true, 30 );
 		}
 
+		// Permissions
+		self::set_capabilities();
+
+		// Refresh Permalinks
+		flush_rewrite_rules();
+	}
+
+
+	/**
+	 * Set Permission to Admin
+	 */
+	public static function set_capabilities() {
 		$administrator = get_role( 'administrator' );
 	
-		$admin_caps = array(
-				//'delete_payments',
-				//'delete_others_payments',
-				//'delete_private_payments',
-				//'delete_published_payments',
-				'edit_payments',
-				//'edit_others_payments',
-				//'edit_private_payments',
-				'edit_published_payments',
-				'publish_payments',
-				//'read_private_payments',
-			);
-
-		$admin_caps = apply_filters('fullculqi/capabilities', $admin_caps);
+		$admin_caps = apply_filters( 'fullculqi/charges/set_capabilities', [
+			//'delete_charges',
+			//'delete_others_charges',
+			//'delete_private_charges',
+			//'delete_published_charges',
+			'edit_charges',
+			//'edit_others_charges',
+			//'edit_private_charges',
+			'edit_published_charges',
+			'publish_charges',
+			//'read_private_charges',
+			
+			'edit_orders',
+			'edit_published_orders',
+			'publish_orders',
+		] );
 	
-		foreach( $admin_caps as $cap ) {
+		foreach( $admin_caps as $cap )
 			$administrator->add_cap( $cap );
-		}
 	}
 }
 ?>

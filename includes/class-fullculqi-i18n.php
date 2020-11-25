@@ -1,10 +1,23 @@
 <?php
+/**
+ * i18n Class
+ * @since  1.0.0
+ * @package Includes / i18n
+ */
 class FullCulqi_i18n {
 
 	/**
 	 * The domain specified for this plugin.
 	 */
-	private $domain;
+	private $domain = 'fullculqi';
+
+	/**
+	 * Construct
+	 * Define the locale for this plugin for internationalization.
+	 */
+	public function __construct() {
+		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain' ] );
+	}
 
 	/**
 	 * Load the plugin text domain for translation.
@@ -14,15 +27,10 @@ class FullCulqi_i18n {
 		load_plugin_textdomain(
 			$this->domain,
 			false,
-			dirname(FULLCULQI_PLUGIN_BASE) . '/languages/'
+			dirname( FULLCULQI_BASE) . 'languages/'
 		);
 
 	}
-
-	/**
-	 * Set the domain equal to that of the specified domain.
-	 */
-	public function set_domain( $domain ) {
-		$this->domain = $domain;
-	}
 }
+
+new FullCulqi_i18n();
