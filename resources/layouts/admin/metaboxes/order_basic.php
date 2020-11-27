@@ -13,12 +13,16 @@
 			</h3>
 			<ul>
 				<li>
-					<b><?php esc_html_e( 'Creation', 'fullculqi' ); ?> : </b>
+					<b><?php esc_html_e( 'Creation Date', 'fullculqi' ); ?> : </b>
 					<?php echo $creation; ?>
 				</li>
 				<li>
-					<b><?php esc_html_e( 'Expiration', 'fullculqi' ); ?> : </b>
+					<b><?php esc_html_e( 'Expiration Date', 'fullculqi' ); ?> : </b>
 					<?php echo $expiration; ?>
+				</li>
+				<li>
+					<b><?php esc_html_e( 'Last Status Date', 'fullculqi' ); ?> : </b>
+					<?php echo $status_date; ?>
 				</li>
 				<li>
 					<b><?php esc_html_e( 'Currency', 'fullculqi' ); ?> : </b>
@@ -27,6 +31,10 @@
 				<li>
 					<b><?php esc_html_e( 'Amount', 'fullculqi' ); ?> : </b>
 					<?php echo $amount; ?>
+				</li>
+				<li>
+					<b><?php esc_html_e( 'CIP Code', 'fullculqi' ); ?> : </b>
+					<?php echo $cip; ?>
 				</li>
 			</ul>
 			<?php

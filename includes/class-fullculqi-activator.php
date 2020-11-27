@@ -5,6 +5,10 @@
  */
 class fullculqi_Activator {
 	
+	/**
+	 * Activate
+	 * @return mixed
+	 */
 	static public function activate() {
 
 		$settings = fullculqi_get_settings();
@@ -33,18 +37,22 @@ class fullculqi_Activator {
 		$admin_caps = apply_filters( 'fullculqi/charges/set_capabilities', [
 			//'delete_charges',
 			//'delete_others_charges',
-			//'delete_private_charges',
 			//'delete_published_charges',
+			
+			'edit_others_charges',
 			'edit_charges',
-			//'edit_others_charges',
-			//'edit_private_charges',
 			'edit_published_charges',
 			'publish_charges',
-			//'read_private_charges',
-			
+
+			'edit_others_orders',
 			'edit_orders',
 			'edit_published_orders',
 			'publish_orders',
+
+			'edit_others_customers',
+			'edit_customers',
+			'edit_published_customers',
+			'publish_customers',
 		] );
 	
 		foreach( $admin_caps as $cap )

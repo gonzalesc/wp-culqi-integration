@@ -14,7 +14,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		$this->id 					= 'fullculqi';
 		$this->method_title			= esc_html__( 'Culqi Full Integration', 'fullculqi' );
 		$this->method_description 	= esc_html__( 'Culqi is the simplest way to accept payments in any online store or mobile application. Its function is to allow a store to accept payments by credit or debit card, of any of the brands', 'fullculqi' );
-		$this->icon 				= FULLCULQI_URL . 'resources/assets/images/cards.png';
+		$this->icon 				= FULLCULQI_WC_URL . 'assets/images/cards.png';
 		
 		// Define user set variables
 		$this->has_fields		= apply_filters( 'fullculqi/method/has_fields', false );
@@ -64,8 +64,13 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			$order_id = $wp->query_vars['order-pay'];
 			$order = new WC_Order( $order_id );
 
-			$settings = fullculqi_get_settings();
+			if( ! $order )
+				return;
 
+			// Log
+			$log = new FullCulqi_Logs( $order->get_id() );
+
+			$settings = fullculqi_get_settings();
 
 			// Disabled from thirds
 			$this->multipayment = apply_filters( 'fullculqi/method/disabled_multipayments', false, $order, 'order') ? 'no' : $this->multipayment;
@@ -76,12 +81,81 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			// Check if there is multipayment
 			if( $this->multipayment == 'yes' ) {
 
-				$culqi_order_id = get_post_meta( $order_id, 'culqi_order', true );
+				$culqi_order_id = get_post_meta( $order_id, 'culqi_order_id', true );
 
-				if( empty( $culqi_order ) ) {
+				if( empty( $culqi_order_id ) ) {
 
-					$culqi_order_id = FullCulqi_Orders::create( $order );
-					$culqi_order_id = ! empty( $culqi_order_id ) ? $culqi_order_id : '';
+
+					// Antifraud Customer Data
+					$client_details = [ 'email' => $order->get_billing_email() ];
+
+					$billing_first_name 	= $order->get_billing_first_name();
+					$billing_last_name 		= $order->get_billing_last_name();
+					$billing_phone 			= $order->get_billing_phone();
+
+					if( ! empty( $billing_first_name ) )
+						$client_details['first_name'] = $billing_first_name;
+
+					if( ! empty( $billing_last_name ) )
+						$client_details['last_name'] = $billing_last_name;
+
+					if( ! empty( $billing_phone ) )
+						$client_details['phone_number'] = $billing_phone;
+
+
+					// Description
+					$pnames = [];
+
+					foreach( $order->get_items() as $item ) {
+						$product = $item->get_product();
+						$pnames[] = $product->get_name();
+					}
+
+					$desc = count( $pnames ) == 0 ? 'Product' : implode(', ', $pnames);
+
+					$args_order = apply_filters( 'fullculqi/orders/create/args', [
+						'amount'			=> fullculqi_format_total( $order->get_total() ),
+						'currency_code'		=> $order->get_currency(),
+						'description'		=> substr( str_pad( $desc, 5, '_' ), 0, 80 ),
+						'order_number'		=> $order->get_order_number(),
+						'client_details'	=> $client_details,
+						'confirm'			=> false,
+						'expiration_date'	=> time() + ( $this->multi_duration * HOUR_IN_SECONDS ),
+						'metadata'			=> [
+							'order_id'			=> $order->get_id(),
+							'order_number'		=> $order->get_order_number(),
+							'order_key'			=> $order->get_order_key(),
+							'customer_email'	=> $order->get_billing_email(),
+							'customer_first'	=> $order->get_billing_first_name(),
+							'customer_last'		=> $order->get_billing_last_name(),
+							'customer_city'		=> $order->get_billing_city(),
+							'customer_country'	=> $order->get_billing_country(),
+							'customer_phone'	=> $order->get_billing_phone(),
+						],
+					], $order);
+
+					$culqi_order = FullCulqi_Orders::create( $args_order );
+
+					if( $culqi_order['status'] == 'ok' ) {
+						$culqi_order_id = $culqi_order['data']['culqi_order_id'];
+
+						// Save meta order
+						update_post_meta( $order->get_id(), 'culqi_order_id', $culqi_order_id );
+
+						// Log
+						$notice = sprintf(
+							esc_html__( 'Culqi Multipayment Created : %s', 'fullculqi' ),
+							$culqi_order_id
+						);
+						$log->set_notice( $notice );
+
+					} else {
+						$error = sprintf(
+							esc_html__( 'Culqi Multipayment Error: %s', 'fullculqi' ),
+							$culqi_order['data']
+						);
+						$log->set_notice( $error );
+					}
 				}
 			}
 
@@ -96,9 +170,9 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			$desc = count( $pnames ) == 0 ? 'Product' : implode( ', ', $pnames );
 			
 			$js_library		= 'https://checkout.culqi.com/js/v3';
-			$js_checkout	= FULLCULQI_URL . 'resources/assets/js/wc-checkout.js';
-			$js_waitme		= FULLCULQI_URL . 'resources/assets/js/waitMe.min.js';
-			$css_waitme		= FULLCULQI_URL . 'resources/assets/css/waitMe.min.css';
+			$js_checkout	= FULLCULQI_WC_URL . 'assets/js/wc-checkout.js';
+			$js_waitme		= FULLCULQI_WC_URL . 'assets/js/waitMe.min.js';
+			$css_waitme		= FULLCULQI_WC_URL . 'assets/css/waitMe.min.css';
 
 			wp_enqueue_script( 'culqi-library-js', $js_library, [ 'jquery' ], false, true );
 			wp_enqueue_script(
@@ -111,7 +185,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 
 			wp_localize_script( 'fullculqi-js', 'fullculqi_vars',
 				apply_filters('fullculqi/method/localize', [
-					'url_culqi'		=> site_url( 'fullculqi-api/actions/' ),
+					'url_culqi'		=> site_url( 'fullculqi-api/wc-actions/' ),
 					'url_success'	=> $order->get_checkout_order_received_url(),
 					'public_key'	=> sanitize_text_field( $settings['public_key'] ),
 					'installments'	=> sanitize_title( $this->installments ),
@@ -303,7 +377,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		do_action('fullculqi/form-receipt/before', $order);
 
 		wc_get_template(
-			'resources/layouts/checkout-receipt.php', $args, false, FULLCULQI_DIR
+			'layouts/checkout-receipt.php', $args, false, FULLCULQI_WC_DIR
 		);
 
 		do_action('fullculqi/form-receipt/after', $order);
@@ -355,13 +429,14 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		$order = wc_get_order( $order_id );
 
 		if ( ! $this->can_refund_order( $order ) ) {
-			return new WP_Error( 'error', esc_html__( 'Refund failed.', 'fullculqi' ) );
+			$message = esc_html__( 'The refund cannot be made from FullCulqi', 'fullculqi' );
+			return new WP_Error( 'error', $message );
 		}
 		
 		$refund = FullCulqi_Refunds::create( $order, $amount, $reason );
 
 		if( ! $refund ) {
-			$message = esc_html__( 'Culqi Provider Payment error : There was not set any refund','fullculqi' );
+			$message = esc_html__( 'Culqi Refund Error : please see the error log','fullculqi' );
 
 			return new WP_Error( 'error', $message );
 		}

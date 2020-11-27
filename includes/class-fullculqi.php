@@ -90,14 +90,13 @@ class FullCulqi {
 		require_once FULLCULQI_DIR . 'includes/functions.php';
 		require_once FULLCULQI_DIR . 'includes/class-fullculqi-i18n.php';
 		require_once FULLCULQI_DIR . 'includes/class-fullculqi-cpt.php';
-		require_once FULLCULQI_DIR . 'includes/class-fullculqi-define.php';
 		require_once FULLCULQI_DIR . 'includes/class-fullculqi-logs.php';
 		require_once FULLCULQI_DIR . 'includes/class-fullculqi-ajax.php';
 
 		// Endpoint
 		require_once FULLCULQI_DIR . 'includes/class-fullculqi-endpoints.php';
 		require_once FULLCULQI_DIR . 'includes/class-fullculqi-webhooks.php';
-		require_once FULLCULQI_DIR . 'includes/class-fullculqi-actions.php';
+		//require_once FULLCULQI_DIR . 'includes/class-fullculqi-actions.php';
 
 		// Syncs
 		require_once FULLCULQI_DIR . 'includes/syncs/class-fullculqi-cards.php';
@@ -105,6 +104,9 @@ class FullCulqi {
 		require_once FULLCULQI_DIR . 'includes/syncs/class-fullculqi-refunds.php';
 		require_once FULLCULQI_DIR . 'includes/syncs/class-fullculqi-orders.php';
 		require_once FULLCULQI_DIR . 'includes/syncs/class-fullculqi-customers.php';
+
+		// 3rd-party
+		require_once FULLCULQI_DIR . 'includes/3rd-party/plugins/woocommerce/class-fullculqi-wc.php';
 		
 		if( is_admin() ) {
 			require_once FULLCULQI_DIR . 'includes/admin/class-fullculqi-settings.php';
@@ -115,9 +117,6 @@ class FullCulqi {
 			require_once FULLCULQI_DIR . 'includes/admin/metaboxes/class-fullculqi-orders.php';
 			require_once FULLCULQI_DIR . 'includes/admin/metaboxes/class-fullculqi-charges.php';
 			require_once FULLCULQI_DIR . 'includes/admin/metaboxes/class-fullculqi-customers.php';
-
-			// Metaboxes WC
-			require_once FULLCULQI_DIR . 'includes/admin/metaboxes/class-fullculqi-wc-orders.php';
 		}
 	}
 

@@ -34,29 +34,33 @@ class FullCulqi_Refunds {
 		try {
 			$refunds = $culqi->Refunds->create( $args );
 		} catch(Exception $e) {
-			$log->set_error( $e->getMessage() );
+			$error = sprintf(
+				esc_html__( 'Culqi Refund Error: %s', 'fullculqi' ), $e->getMessage()
+			);
+			$log->set_error( $error );
 			return false;
 		}
 
 
 		if( ! isset( $refunds->object ) || $refunds->object == 'error' ) {
-			$log->set_error( $refund->merchant_message );
+			$error = sprintf(
+				esc_html__( 'Culqi Refund Error: %s', 'fullculqi' ), $refund->merchant_message
+			);
+			$log->set_error( $error );
 			return false;
 		}
 
 		// Logs
-		$log->set_notice( sprintf(
-			esc_html__( 'Culqi Refund created: %s', 'fullculqi' ),
-			$refunds->id
-		) );
-
+		$notice = sprintf( esc_html__( 'Culqi Refund created: %s', 'fullculqi' ), $refunds->id );
+		$log->set_notice( $notice );
 
 		update_post_meta( $culqi_post_id, 'culqi_data', $refunds );
 		update_post_meta( $culqi_post_id, 'culqi_status', 'refunded' );
 
 		// Save Refund
 		$basic = get_post_meta( $culqi_post_id, 'culqi_basic', true );
-		$refunds_ids = (array)get_post_meta( $culqi_post_id, 'culqi_ids_refunded', true );
+		$refunds_ids = get_post_meta( $culqi_post_id, 'culqi_ids_refunded', true );
+		$refunds_ids = ! empty( $refunds_ids ) ? $refunds_ids : [];
 		
 		$refunds_ids[ $refunds->id ] = number_format( $refunds->amount / 100, 2, '.', '' );
 		

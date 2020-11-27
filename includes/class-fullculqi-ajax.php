@@ -8,8 +8,8 @@ class FullCulqi_Ajax {
 
 	public function __construct() {
 
-		add_action( 'wp_ajax_fullculqi_get_payments', [ $this, 'get_payments' ] );
-		add_action( 'wp_ajax_fullculqi_refund', [ $this, 'refund_payment' ] );
+		// Create a refund
+		add_action( 'wp_ajax_create_culqi_refund', [ $this, 'create_refund' ] );
 
 		// Delete All Charges
 		add_action( 'wp_ajax_delete_culqi_charges', [ $this, 'delete_charges' ] );
@@ -45,7 +45,6 @@ class FullCulqi_Ajax {
 			wp_send_json_error( $result['data'] );
 	}
 
-
 	/**
 	 * Sync Charges from Admin
 	 * @return json
@@ -62,9 +61,6 @@ class FullCulqi_Ajax {
 		else
 			wp_send_json_error( $result['data'] );
 	}
-
-
-	
 
 	/**
 	 * Delete all the charges posts
@@ -115,6 +111,37 @@ class FullCulqi_Ajax {
 		$result = FullCulqi_Customers::delete_wpposts();
 		
 		if( $result )
+			wp_send_json_success();
+		else
+			wp_send_json_error();
+	}
+
+
+	/**
+	 * Create Refund from CPT
+	 * @return mixed
+	 */
+	public function create_refund() {
+
+		// Run a security check.
+		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
+
+		// Check if the post exists
+		if( ! isset( $_POST['post_id'] ) || empty( $_POST['post_id'] ) )
+			wp_send_json_error();
+
+		// Charge Post ID
+		$post_id = absint( $_POST['post_id'] );
+
+		// Meta Basic from Charges
+		$charge_basic = get_post_meta( $post_id, 'culqi_basic', true );
+		$amount = floatval( $charge_basic['culqi_amount'] ) - floatval( $charge_basic['culqi_amount_refunded'] );
+
+		// Meta Order ID
+		$order_id = get_post_meta( $post_id, 'culqi_order_id', true );
+		$order = wc_get_order( $order_id );
+
+		if( $order && FullCulqi_Refunds::create( $order, $amount ) )
 			wp_send_json_success();
 		else
 			wp_send_json_error();

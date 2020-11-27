@@ -6,38 +6,30 @@
  */
 class FullCulqi_Cards {
 
-
-	public static function create( $customer_id = '', $post_data = [] ) {
-
-		$token_id 	= sanitize_text_field( $post_data['token_id'] );
-		$order = wc_get_order( absint( $post_data['order_id'] ) );
-
-		if( ! $order )
-			return false;
-
+	/**
+	 * Create Card
+	 * @param  array  $args
+	 * @return array
+	 */
+	public static function create( $args = [] ) {
 		global $culqi;
 
-		// Log
-		$log = new FullCulqi_Logs( $order->get_id() );
+		$args = apply_filters( 'fullculqi/cards/create/args', $args );
 
-		$args = apply_filters( 'fullculqi/cards/create/args', [
-			'customer_id'	=> $customer_id,
-			'token_id'		=> $token_id,
-		], $order );
-
-		
 		try {
 			$card = $culqi->Cards->create( $args );
 		} catch(Exception $e) {
-			$log->set_error( $e->getMessage() );
-			return false;
+			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
 
 		if( ! isset( $card->object ) || $card->object == 'error' )
-			$log->set_error( $card->merchant_message );
+			return [ 'status' => 'error', 'data' => $customer->merchant_message ];
 
-		do_action( 'fullculqi/cards/create', $order, $card );
+		do_action( 'fullculqi/cards/create', $card );
 
-		return apply_filters( 'fullculqi/cards/create/success', $card->id, $order );
+		return apply_filters( 'fullculqi/cards/create/success', [
+			'status'	=> 'ok',
+			'data'		=> [ 'culqi_card_id' => $card->id ]
+		] );
 	}
 }

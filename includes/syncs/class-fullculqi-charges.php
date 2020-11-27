@@ -72,137 +72,31 @@ class FullCulqi_Charges {
 	 * @param  array  $post_data
 	 * @return bool
 	 */
-	public static function create( $post_data = [] ) {
-
-		$token_id		= sanitize_text_field( $post_data['token_id'] );
-		$country_code	= sanitize_text_field( $post_data['country_code'] );
-		$installments	= sanitize_text_field( $post_data['installments'] );
-
-		$order = wc_get_order( absint( $post_data['order_id'] ) );
-
-		if( ! $order )
-			return false;
-
+	public static function create( $args = [] ) {
 		global $culqi;
 
-		// Log
-		$log = new FullCulqi_Logs( $order->get_id() );
-
-		// Description
-		$pnames = [];
-
-		foreach( $order->get_items() as $item ) {
-			$product = $item->get_product();
-			$pnames[] = $product->get_name();
-		}
-
-		$desc = count( $pnames ) == 0 ? 'Product' : implode(', ', $pnames);
-		
-
-		// Antifraud Customer Data
-		$antifraud = [ 'email' => $order->get_billing_email() ];
-
-		$billing_first_name 	= $order->get_billing_first_name();
-		$billing_last_name 		= $order->get_billing_last_name();
-		$billing_address_1 		= $order->get_billing_address_1();
-		$billing_phone 			= $order->get_billing_phone();
-		$billing_city 			= $order->get_billing_city();
-		$billing_country 		= $order->get_billing_country();
-
-		if( ! empty( $billing_first_name ) )
-			$antifraud['first_name'] = $billing_first_name;
-
-		if( ! empty( $billing_last_name ) )
-			$antifraud['last_name'] = $billing_last_name;
-
-		if( ! empty( $billing_address_1 ) )
-			$antifraud['address'] = $billing_address_1;
-
-		if( ! empty( $billing_city ) )
-			$antifraud['address_city'] = $billing_city;
-
-		if( ! empty( $billing_country ) )
-			$antifraud['country_code'] = $billing_country;
-		elseif( ! empty($country_code) )
-			$antifraud['country_code'] = $country_code;
-
-		if( ! empty( $billing_phone ) )
-			$antifraud['phone_number'] = $billing_phone;
-		
-
-		// Metadata Order
-		$metadata = [
-			'order_id'		=> $order->get_id(),
-			'order_number'	=> $order->get_order_number(),
-			'order_key'		=> $order->get_order_key(),
-		];
-
-		//$args_payment = apply_filters('fullculqi/checkout/simple_args', [
-		$args = apply_filters('fullculqi/charges/create/args', [
-			'amount'			=> fullculqi_format_total( $order->get_total() ),
-			'currency_code'		=> $order->get_currency(),
-			'description'		=> substr( str_pad( $desc, 5, '_' ), 0, 80 ),
-			'capture'			=> true,
-			'email'				=> $order->get_billing_email(),
-			'installments'		=> $installments,
-			'source_id'			=> $token_id,
-			'metadata'			=> $metadata,
-			'antifraud_details'	=> $antifraud,
-		], $order );
-
+		$args = apply_filters( 'fullculqi/charges/create/args', $args );
 
 		try {
 			$charge = $culqi->Charges->create( $args );
 		} catch(Exception $e) {
-			$log->set_error( $e->getMessage() );
-			return false;
+			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
 
 		// Check request from Culqi
 		if( ! isset( $charge->object ) || $charge->object == 'error' ) {
-			$log->set_error( $charge->merchant_message );
-			return false;
+			return [ 'status' => 'error', 'data' => $charge->merchant_message ];
 		}
-
-		// Meta value
-		update_post_meta( $order->get_id(), 'culqi_charge_id', $charge->id );
-
-		// Log
-		$notice = sprintf(
-			esc_html__( 'Culqi Charge created: %s', 'fullculqi' ),
-			$charge->id
-		);
-
-		$order->add_order_note( $notice );
-		$log->set_notice( $notice );
 
 		// Create wppost
 		$post_id = self::create_wppost( $charge );
 
-		// Log
-		$notice = sprintf( esc_html__( 'Post Charge Created: %s', 'fullculqi' ), $post_id );
-		$log->set_notice( $notice );
-
-		// Update PostID in WC-Order
-		update_post_meta( $order->get_id(), 'post_charge_id', $post_id );
-
-		// Settings WC
-		$method = get_option( 'woocommerce_fullculqi_settings', [] );
-			
-		if( $method['status_success'] == 'wc-completed')
-			$order->payment_complete();
-		else {
-			$order->update_status( $method['status_success'],
-				sprintf(
-					esc_html__( 'Status changed by FullCulqi (to %s)', 'fullculqi' ),
-					$method['status_success']
-				)
-			);
-		}
-
-		do_action( 'fullculqi/charges/create', $order, $charge );
+		do_action( 'fullculqi/charges/create', $post_id, $charge );
 		
-		return apply_filters( 'fullculqi/charges/create/success', $charge->id, $order );
+		return apply_filters( 'fullculqi/charges/create/success', [
+			'status'	=> 'ok',
+			'data'		=> [ 'culqi_charge_id' => $charge->id, 'post_charge_id' => $post_id ]
+		] );
 	}
 
 
@@ -225,39 +119,57 @@ class FullCulqi_Charges {
 			$post_id = wp_insert_post( $args );
 		}
 
-		$creation = intval( $charge->creation_date/1000 );
-		$capture = intval( $charge->capture_date/1000 );
+		$creation_date = intval( $charge->creation_date/1000 );
+		$capture_date = intval( $charge->capture_date/1000 );
 
 		$amount = round( $charge->amount/100, 2 );
 		$refund = round( $charge->amount_refunded/100, 2 );
 
 		update_post_meta( $post_id, 'culqi_id', $charge->id );
-		update_post_meta($post_id, 'culqi_capture', $charge->capture);
-		update_post_meta($post_id, 'culqi_capture_date', $capture);
+		update_post_meta( $post_id, 'culqi_capture', $charge->capture );
+		update_post_meta( $post_id, 'culqi_capture_date', date( 'Y-m-d H:i:s', $capture_date ) );
 		update_post_meta( $post_id, 'culqi_data', $charge );
+		
 		update_post_meta( $post_id, 'culqi_ip', $charge->source->client->ip );
+
+		// Customer
+		$post_customer_id = $culqi_customer_id = false;
+
+		// If it use customer process
+		if( isset( $charge->source->object ) && $charge->source->object == 'card' ) {
+			$culqi_customer_id = $charge->source->customer_id;
+		}
+
 
 		// Status
 		$status = $charge->capture ? 'captured' : 'authorized';
 		update_post_meta( $post_id, 'culqi_status', $status );
 
-		// WC Order
-		if( isset( $charge->metadata->order_id ) )
-			update_post_meta( $post_id, 'culqi_order_id', esc_html( $charge->metadata->order_id ) );
+		// Meta Values
+		if( isset( $charge->metadata ) && ! empty( $charge->metadata ) ) {
+			$post_customer_id = isset( $charge->metadata->post_customer ) ? $charge->metadata->post_customer : false;
+
+			update_post_meta( $post_id, 'culqi_metadata', $charge->metadata );
+		}
 
 		$basic = [
-			'culqi_creation'		=> date( 'Y-m-d H:i:s', $creation ),
+			'culqi_creation'		=> date( 'Y-m-d H:i:s', $creation_date ),
 			'culqi_amount'			=> $amount,
 			'culqi_amount_refunded'	=> $refund,
 			'culqi_currency'		=> $charge->currency_code,
+		];
+
+		/*
 			'culqi_card_brand'		=> $charge->source->iin->card_brand,
 			'culqi_card_type'		=> $charge->source->iin->card_type,
 			'culqi_card_number'		=> $charge->source->card_number,
-		];
+		 */
 
 		update_post_meta( $post_id, 'culqi_basic', array_map( 'esc_html', $basic ) );
 
 		$customer = [
+			'culqi_id'			=> $culqi_customer_id,
+			'post_id'			=> $post_customer_id,
 			'culqi_email'		=> $charge->email,
 			'culqi_first_name'	=> $charge->antifraud_details->first_name,
 			'culqi_last_name'	=> $charge->antifraud_details->last_name,

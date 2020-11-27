@@ -31,9 +31,6 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 				$newCols['culqi_amount']	= esc_html__( 'Amount', 'fullculqi' );
 				$newCols['culqi_refunded']	= esc_html__( 'Refunded', 'fullculqi' );
 				$newCols['culqi_status']	= esc_html__( 'Status', 'fullculqi' );
-
-				if( class_exists( 'WooCommerce' ) )
-					$newCols['culqi_order_id']	= esc_html__( 'Order', 'fullculqi' );
 			}
 		}
 		
@@ -57,12 +54,24 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 		else
 			$status = 'captured';
 
+		$value = '';
 
 		switch( $col ) {
 			case 'culqi_id'			: $value = get_post_meta( $post_id, 'culqi_id', true );
 				break;
 			case 'culqi_creation'	: $value = $basic['culqi_creation']; break;
-			case 'culqi_email'		: $value = $customer['culqi_email']; break;
+			case 'culqi_email'		:
+				
+				if( ! empty( $customer['post_id'] ) ) {
+					$value = sprintf(
+						'<a target="_blank" href="%s">%s</a>',
+						get_edit_post_link( $customer['post_id'] ), $customer['culqi_email']
+					);
+				} else 
+					$value = $customer['culqi_email'];
+
+				break;
+
 			case 'culqi_currency'	: $value = $basic['culqi_currency']; break;
 			case 'culqi_amount'		: $value = $basic['culqi_amount']; break;
 			case 'culqi_refunded'	: $value = $basic['culqi_amount_refunded']; break;
@@ -74,18 +83,6 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 					'<mark class="culqi_status_2 %s"><span>%s</span></mark>',
 					$status, $statuses[$status]
 				);
-
-				break;
-
-			case 'culqi_order_id'	:
-				$value = '';
-				$order_id = get_post_meta( $post_id, 'culqi_order_id', true );
-
-				if( ! empty( $order_id ) )
-					$value = sprintf(
-						'<a target="_blank" href="%s">%s</a>',
-						get_edit_post_link( $order_id ), $order_id
-					);
 
 				break;
 		}

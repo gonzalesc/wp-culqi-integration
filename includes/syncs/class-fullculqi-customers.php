@@ -77,9 +77,14 @@ class FullCulqi_Customers {
 
 		// Check in the WP_USERS
 		$culqi_customer_id = get_user_meta( $wpuser_id, 'culqi_id', true );
+		$post_customer_id = get_user_meta( $wpuser_id, 'culqi_post_id', true );
 
-		if( ! empty( $culqi_customer_id ) )
-			return $culqi_customer_id;
+		if( ! empty( $culqi_customer_id ) && ! empty( $post_customer_id ) ) {
+			return [
+				'culqi_id'	=> $culqi_customer_id,
+				'post_id'	=> $post_customer_id
+			];
+		}
 
 		global $wpdb;
 
@@ -99,7 +104,10 @@ class FullCulqi_Customers {
 		if( empty( $culqi_customer_id ) )
 			return false;
 
-		return $culqi_customer_id;
+		return [
+			'culqi_id'	=> $culqi_customer_id,
+			'post_id'	=> $post_id
+		];
 	}
 
 
@@ -110,74 +118,20 @@ class FullCulqi_Customers {
 	 * @param  array   $post_data
 	 * @return mixed
 	 */
-	public static function create( $wpuser_id = 0, $post_data = [] ) {
-
-		$country_code = sanitize_text_field( $post_data['country_code'] );
-
-		$order = wc_get_order( absint( $post_data['order_id'] ) );
-
-		if( ! $order )
-			return false;
-
+	public static function create( $wpuser_id = 0, $args = [] ) {
 		global $culqi;
 
-		// Log
-		$log = new FullCulqi_Logs( $order->get_id() );
-
-
-		$args = [
-			'email'		=> $order->get_billing_email(),
-			'metadata'	=> [ 'user_id' => $wpuser_id ],
-		];
-
-		$billing_first_name 	= $order->get_billing_first_name();
-		$billing_last_name 		= $order->get_billing_last_name();
-		$billing_phone 			= $order->get_billing_phone();
-		$billing_address_1 		= $order->get_billing_address_1();
-		$billing_city 			= $order->get_billing_city();
-		$billing_country 		= $order->get_billing_country();
-
-
-		if( ! empty( $billing_first_name ) )
-			$args['first_name'] = $billing_first_name;
-
-		if( ! empty( $billing_last_name ) )
-			$args['last_name'] = $billing_last_name;
-
-		if( ! empty( $billing_phone ) )
-			$args['phone_number'] = $billing_phone;
-
-		if( ! empty( $billing_address_1 ) )
-			$args['address'] = $billing_address_1;
-
-		if( ! empty( $billing_city ) )
-			$args['address_city'] = $billing_city;
-
-		if( ! empty( $billing_country ) )
-			$args['country_code'] = $billing_country;
-		else
-			$args['country_code'] = $country_code;
-
-
-		$args_customer = apply_filters( 'fullculqi/customers/create/args', $args, $order );
+		$args_customer = apply_filters( 'fullculqi/customers/create/args', $args );
 
 		try {
 			$customer = $culqi->Customers->create( $args_customer );
 		} catch( Exception $e ) {
-			$log->set_error( $e->getMessage() );
-			return false;
+			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
 
 		if( ! isset( $customer->object ) || $customer->object == 'error' ) {
-			$log->set_error( $customer->merchant_message );
-			return false;
+			return [ 'status' => 'error', 'data' => $customer->merchant_message ];
 		}
-
-		$notice = sprintf( esc_html__( 'Culqi Customer Created: %s', 'fullculqi' ), $customer->id );
-		$log->set_notice( $notice );
-
-		// Update meta culqi id in wc order
-		update_post_meta( $order->get_id(), 'culqi_customer_id', $customer->id );
 
 		// Update meta culqi id in user meta
 		update_user_meta( $wpuser_id, 'culqi_id', $customer->id );
@@ -185,38 +139,12 @@ class FullCulqi_Customers {
 		// Create Order Post
 		$post_id = self::create_wppost( $customer );
 
-		// Log
-		$notice = sprintf( esc_html__( 'Post Customer Created: %s', 'fullculqi' ), $post_id );
-		$log->set_notice( $notice );
+		do_action( 'fullculqi/customers/create', $post_id, $customer );
 
-		// Update meta post in wc order
-		update_post_meta( $order->get_id(), 'post_customer_id', $post_id );
-
-		do_action( 'fullculqi/customers/create', $order, $customer );
-
-		return apply_filters( 'fullculqi/customers/create/success', $customer->id, $order );
-	}
-
-
-	/**
-	 * Get or Create Customer
-	 * @param  integer $wpuser_id
-	 * @param  array   $post_data
-	 * @return mixed
-	 */
-	public static function get_or_create( $wpuser_id = 0, $post_data = [] ) {
-
-		$culqi_customer_id = self::get( $wpuser_id );
-
-		if( ! empty( $culqi_customer_id ) )
-			return $culqi_customer_id;
-
-		$culqi_customer = self::create( $wpuser_id, $post_data );
-
-		if( $culqi_customer['status'] == 'ok' )
-			return $culqi_customer['data'];
-
-		return false;
+		return apply_filters( 'fullculqi/customers/create/success', [
+			'status'	=> 'ok',
+			'data'		=> [ 'culqi_customer_id' => $customer->id, 'post_customer_id' => $post_id ]
+		] );
 	}
 
 

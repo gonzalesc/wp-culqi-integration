@@ -49,7 +49,7 @@ class FullCulqi_Actions {
 			break;
 		}
 		
-		$return = apply_filters('fullculqi/actions', $return, $post_data );
+		$return = apply_filters( 'fullculqi/actions', $return, $post_data );
 
 		if( ! empty( $return ) )
 			wp_send_json_success();

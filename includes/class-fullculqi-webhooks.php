@@ -35,7 +35,7 @@ class FullCulqi_Webhooks {
 			case 'order.status.changed' : FullCulqi_Orders::update( $data ); break;
 		}
 
-		do_action( 'fullculqi/webhooks/to_receive', $culqi_order, $order, $log );
+		do_action( 'fullculqi/webhooks/to_receive', $input, $data );
 	}
 }
 

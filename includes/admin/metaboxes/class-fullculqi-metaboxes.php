@@ -43,30 +43,31 @@ abstract class FullCulqi_Metaboxes {
 			);
 
 
+			// Loading Gif
+			$img_loading = sprintf(
+				'<img src="%s" style="width: auto;" />',
+				admin_url( 'images/spinner.gif' )
+			);
+
+			// Success Icon
+			$img_success = sprintf(
+				'<img src="%s" style="width: auto;" />',
+				admin_url( 'images/yes.png' )
+			);
+
+			// Failure Icon
+			$img_failure = sprintf(
+				'<img src="%s" style="width: auto;" />',
+				admin_url('images/no.png')
+			);
+
+
 			if( $pagenow == 'edit.php' && $_GET['post_type'] == $this->post_type ) {
 
 				wp_enqueue_script(
 					'fullculqi-js',
 					FULLCULQI_URL . 'resources/assets/js/admin-metaboxes.js',
 					[ 'jquery' ], false, true
-				);
-
-				// Loading Gif
-				$img_loading = sprintf(
-					'<img src="%s" style="width: auto;" />',
-					admin_url( 'images/spinner.gif' )
-				);
-
-				// Success Icon
-				$img_success = sprintf(
-					'<img src="%s" style="width: auto;" />',
-					admin_url( 'images/yes.png' )
-				);
-
-				// Failure Icon
-				$img_failure = sprintf(
-					'<img src="%s" style="width: auto;" />',
-					admin_url('images/no.png')
 				);
 
 				wp_localize_script( 'fullculqi-js', 'fullculqi_vars',
@@ -82,6 +83,32 @@ abstract class FullCulqi_Metaboxes {
 						'sync_loading'		=> esc_html__( 'Synchronizing. It may take several minutes.', 'fullculqi' ),
 						'sync_success'		=> esc_html__( 'Complete synchronization.', 'fullculqi' ),
 						'nonce'				=> wp_create_nonce( 'fullculqi-wpnonce' ),
+					] )
+				);
+			}
+
+			
+			$allowed_pages = [ 'post-new.php', 'post.php' ];
+
+			if( in_array( $pagenow, $allowed_pages ) && get_post_type() == 'culqi_charges' ) {
+
+				wp_enqueue_script(
+					'fullculqi-js',
+					FULLCULQI_URL . 'resources/assets/js/admin-charges.js',
+					[ 'jquery' ], false, true
+				);
+
+				wp_localize_script( 'fullculqi-charges-js', 'fullculqi_charges',
+					apply_filters('fullculqi/metaboxes/charges/localize', [
+						'url_ajax'			=> admin_url( 'admin-ajax.php' ),
+						'img_loading'		=> $img_loading,
+						'img_success'		=> $img_success,
+						'img_failure'		=> $img_failure,
+						'refund_confirm'	=> esc_html__( 'Do you want to start the refund?', 'fullculqi' ),
+						'refund_loading'	=> esc_html__( 'Processing the refund.', 'fullculqi' ),
+						'refund_success'	=> esc_html__( 'Refund completed.', 'fullculqi' ),
+						'refund_failure'	=> esc_html__( 'Refund Error.', 'fullculqi' ),
+						'wpnonce'			=> wp_create_nonce( 'fullculqi-wpnonce' ),
 					] )
 				);
 			}

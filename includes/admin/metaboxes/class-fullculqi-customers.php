@@ -60,7 +60,7 @@ class FullCulqi_Metaboxes_Customers extends FullCulqi_Metaboxes {
 	 * Add Metaboxes
 	 * @return mixed
 	 */
-	public function metabox() {
+	public function metaboxes( $post ) {
 
 		// Basic Metaboxes
 		add_meta_box(
@@ -81,15 +81,15 @@ class FullCulqi_Metaboxes_Customers extends FullCulqi_Metaboxes {
 				[ $this, 'metabox_cards' ],
 				$this->post_type, 'normal', 'high'
 			);
-
-			// Source Metaboxes
-			add_meta_box(
-				'culqi_customers_source',
-				esc_html__( 'Source', 'fullculqi' ),
-				[ $this, 'metabox_source' ],
-				$this->post_type, 'normal', 'high'
-			);
 		}
+
+		// Source Metaboxes
+		add_meta_box(
+			'culqi_customers_source',
+			esc_html__( 'Source', 'fullculqi' ),
+			[ $this, 'metabox_source' ],
+			$this->post_type, 'normal', 'high'
+		);
 	}
 
 

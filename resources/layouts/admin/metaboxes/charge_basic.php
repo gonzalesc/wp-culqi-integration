@@ -51,10 +51,13 @@
 					echo '&nbsp';
 
 					printf(
-						'<a href="%s" class="fullculqi_refund_link">%s</a>',
-						wp_nonce_url( admin_url( 'admin-ajax.php?action=fullculqi_refund&post_id=' . $post_id ), 'fullculqi-wpnonce' ),
-						esc_html__( 'Refund Charge', 'fullculqi' )
+						'<a href="" id="culqi_refunds" class="fullculqi_refund_link" data-post="%d">%s</a>',
+						$post_id, esc_html__( 'Refund Charge', 'fullculqi' )
 					);
+
+					echo '&nbsp';
+
+					echo '<span id="culqi_refunds_notify"></span>';
 				}
 			?>
 			<?php do_action( 'fullculqi/layout_basic/status' ); ?>
