@@ -2,7 +2,7 @@
 /**
  * Method Payment Class
  * @since  1.0.0
- * @package Includes / Method Payment
+ * @packkage Includes / Method Payment
  */
 class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 
@@ -432,14 +432,41 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			$message = esc_html__( 'The refund cannot be made from FullCulqi', 'fullculqi' );
 			return new WP_Error( 'error', $message );
 		}
+
+		// Logs
+		$log = new FullCulqi_Logs( $order->get_id() );
+
+		$culqi_charges_id = get_post_meta( $order->get_id(), 'culqi_charge_id', true );
+		$post_charge_id = get_post_meta( $order->get_id(), 'post_charge_id', true );
+
+		$args = [
+			'amount'	=> round( $amount*100, 0 ),
+			'charge_id'	=> $culqi_charges_id,
+			'reason'	=> 'solicitud_comprador',
+			'metadata'	=> [
+				'post_id'	=> $post_charge_id,
+				'order_id'	=> $order->get_id(),
+			],
+		];
 		
-		$refund = FullCulqi_Refunds::create( $order, $amount, $reason );
+		$refund = FullCulqi_Refunds::create( $args, $post_charge_id );
 
-		if( ! $refund ) {
-			$message = esc_html__( 'Culqi Refund Error : please see the error log','fullculqi' );
+		if( $refund['status'] == 'error' ) {
+			$error = sprintf(
+				esc_html__( 'Culqi Refund Error : %s','fullculqi' ), $refund['data']
+			);
 
-			return new WP_Error( 'error', $message );
+			$log->set_error( $error );
+
+			return new WP_Error( 'error', $error );
 		}
+
+		$notice = sprintf(
+			esc_html__( 'Culqi Refund created: %s', 'fullculqi' ),
+			$refund['data']['culqi_refund_id']
+		);
+		$order->add_order_note( $notice );
+		$log->set_notice( $notice );
 
 		return true;
 	}

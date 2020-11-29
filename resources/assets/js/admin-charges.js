@@ -52,7 +52,7 @@
 			$( '#culqi_refunds' ).on( 'click', function(e) {
 				e.preventDefault();
 
-				if( ! confirm( fullculqi_charges.refund_confirm ) )
+				if( ! confirm( fullculqi_charges_vars.refund_confirm ) )
 					return;
 
 				const post_id = $(this).data('post');
@@ -67,29 +67,29 @@
 		applyRefund: function( post_id = 0 ) {
 			
 			// Loading
-			$( '#culqi_refunds_notify' ).html( fullculqi_charges.img_loading + ' ' + fullculqi_charges.refund_loading );
+			$( '#culqi_refunds_notify' ).html( fullculqi_charges_vars.img_loading + ' ' + fullculqi_charges_vars.refund_loading );
 
 			$.ajax({
-				url 		: fullculqi_charges.url_ajax,
+				url 		: fullculqi_charges_vars.url_ajax,
 				type 		: 'POST',
 				dataType	: 'json',
 				data 		: {
 					action: 'create_culqi_refund',
 					post_id: post_id,
-					wpnonce : fullculqi_vars.nonce
+					wpnonce : fullculqi_charges_vars.nonce
 				},
 				success: function( response ) {
 
-					$( document.body ).trigger( 'fullculqi.refunds.success', [ fullculqi_charges, response] );
+					$( document.body ).trigger( 'fullculqi.refunds.success', [ fullculqi_charges_vars, response] );
 					
 					if( response.success ) {
 
-						$( '#culqi_refunds_notify' ).html( fullculqi_charges.img_success + ' ' + fullculqi_charges.refund_success );
+						$( '#culqi_refunds_notify' ).html( fullculqi_charges_vars.img_success + ' ' + fullculqi_charges_vars.refund_success );
 						location.reload();
 					
 					} else {
 						
-						$('#culqi_refunds_notify' ).html( fullculqi_charges.img_failure + ' ' + fullculqi_charges.refund_failure );
+						$('#culqi_refunds_notify' ).html( fullculqi_charges_vars.img_failure + ' ' + response.data );
 					}			
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -98,9 +98,9 @@
 					console.log(textStatus);
 					console.log(errorThrown);
 					
-					$('#culqi_refunds_notify' ).html( fullculqi_charges.img_failure + ' ' + fullculqi_charges.refund_failure );
+					$('#culqi_refunds_notify' ).html( fullculqi_charges_vars.img_failure + ' ' + fullculqi_charges_vars.refund_failure );
 
-					$( document.body ).trigger('fullculqi.refunds.error', [ fullculqi_charges, jqXHR, textStatus, errorThrown ] );
+					$( document.body ).trigger('fullculqi.refunds.error', [ fullculqi_charges_vars, jqXHR, textStatus, errorThrown ] );
 				}
 			});
 		}

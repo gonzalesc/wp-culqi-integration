@@ -90,15 +90,15 @@ abstract class FullCulqi_Metaboxes {
 			
 			$allowed_pages = [ 'post-new.php', 'post.php' ];
 
-			if( in_array( $pagenow, $allowed_pages ) && get_post_type() == 'culqi_charges' ) {
+			if( in_array( $pagenow, $allowed_pages ) && $this->post_type == 'culqi_charges' ) {
 
 				wp_enqueue_script(
-					'fullculqi-js',
+					'fullculqi-charges-js',
 					FULLCULQI_URL . 'resources/assets/js/admin-charges.js',
 					[ 'jquery' ], false, true
 				);
 
-				wp_localize_script( 'fullculqi-charges-js', 'fullculqi_charges',
+				wp_localize_script( 'fullculqi-charges-js', 'fullculqi_charges_vars',
 					apply_filters('fullculqi/metaboxes/charges/localize', [
 						'url_ajax'			=> admin_url( 'admin-ajax.php' ),
 						'img_loading'		=> $img_loading,
@@ -108,7 +108,7 @@ abstract class FullCulqi_Metaboxes {
 						'refund_loading'	=> esc_html__( 'Processing the refund.', 'fullculqi' ),
 						'refund_success'	=> esc_html__( 'Refund completed.', 'fullculqi' ),
 						'refund_failure'	=> esc_html__( 'Refund Error.', 'fullculqi' ),
-						'wpnonce'			=> wp_create_nonce( 'fullculqi-wpnonce' ),
+						'nonce'				=> wp_create_nonce( 'fullculqi-wpnonce' ),
 					] )
 				);
 			}

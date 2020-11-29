@@ -24,7 +24,6 @@ class FullCulqi_Charges {
 		if( isset( $charges->object ) && $charges->object == 'error' )
 			return [ 'status' => 'error', 'data' => $charges->merchant_message ];
 
-
 		global $wpdb;
 
 		$query = 'SELECT
@@ -130,7 +129,7 @@ class FullCulqi_Charges {
 		update_post_meta( $post_id, 'culqi_capture_date', date( 'Y-m-d H:i:s', $capture_date ) );
 		update_post_meta( $post_id, 'culqi_data', $charge );
 		
-		update_post_meta( $post_id, 'culqi_ip', $charge->source->client->ip );
+		
 
 		// Customer
 		$post_customer_id = $culqi_customer_id = false;
@@ -138,6 +137,10 @@ class FullCulqi_Charges {
 		// If it use customer process
 		if( isset( $charge->source->object ) && $charge->source->object == 'card' ) {
 			$culqi_customer_id = $charge->source->customer_id;
+
+			update_post_meta( $post_id, 'culqi_ip', $charge->source->source->client->ip );
+		} else {
+			update_post_meta( $post_id, 'culqi_ip', $charge->source->client->ip );
 		}
 
 

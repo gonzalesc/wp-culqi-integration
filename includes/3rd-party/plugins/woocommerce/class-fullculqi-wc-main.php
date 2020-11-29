@@ -17,6 +17,9 @@ class FullCulqi_WC {
 
 		// Actions
 		add_action( 'fullculqi/api/wc-actions', [ $this, 'actions' ] );
+
+		// Update Order
+		add_action( 'fullculqi/orders/update', [ $this, 'update' ] );
 	}
 
 
@@ -455,6 +458,83 @@ class FullCulqi_WC {
 		return true;
 	}
 
+
+	/**
+	 * Update Order
+	 * @param  OBJECT $culqi_order
+	 * @return mixed
+	 */
+	public function update( $culqi_order ) {
+
+		if( ! isset( $culqi_order->metadata->order_id ) )
+			return;
+
+		$order_id = absint( $culqi_order->metadata->order_id );
+		
+		$order = new WC_Order( $order_id );
+
+		if( ! $order )
+			return;
+
+		// Log
+		$log = new FullCulqi_Logs( $order->get_id() );
+
+		// Payment Settings
+		$method = get_option( 'woocommerce_fullculqi_settings', [] );
+
+
+		switch( $culqi_order->state ) {
+			case 'paid' :
+
+				$notice = sprintf(
+					esc_html__( 'The CIP %s was paid', 'fullculqi' ),
+					$cip_code
+				);
+
+				$order->add_order_note( $notice );
+				$log->set_notice( $notice );
+
+				// Status
+				if( $method['status_success'] == 'wc-completed')
+					$order->payment_complete();
+				else {
+					$order->update_status( $method_array['status_success'],
+						sprintf(
+							esc_html__( 'Status changed by FullCulqi (to %s)', 'fullculqi' ),
+							$method['status_success']
+						)
+					);
+				}
+
+				break;
+
+			case 'expired' :
+
+				$error = sprintf(
+					esc_html__( 'The CIP %s expired', 'fullculqi' ),
+					$cip_code
+				);
+
+				$log->set_error( $error );
+				$order->update_status( 'cancelled', $error );
+
+				break;
+
+			case 'deleted' :
+
+				$error = sprintf(
+					esc_html__( 'The CIP %s was deleted', 'fullculqi' ),
+					$cip_code
+				);
+				
+				$log->set_error( $error );
+				$order->update_status( 'cancelled', $error );
+
+				break;
+		}
+
+		return true;
+	}
 
 	/**
 	 * Notice Currency

@@ -131,20 +131,38 @@ class FullCulqi_Ajax {
 			wp_send_json_error();
 
 		// Charge Post ID
-		$post_id = absint( $_POST['post_id'] );
+		$post_charge_id = absint( $_POST['post_id'] );
 
-		// Meta Basic from Charges
-		$charge_basic = get_post_meta( $post_id, 'culqi_basic', true );
-		$amount = floatval( $charge_basic['culqi_amount'] ) - floatval( $charge_basic['culqi_amount_refunded'] );
+		// 3rd-party
+		$refund = apply_filters( 'fullculqi/ajax/refund/process', false, $post_charge_id );
 
-		// Meta Order ID
-		$order_id = get_post_meta( $post_id, 'culqi_order_id', true );
-		$order = wc_get_order( $order_id );
+		if( empty( $refund ) ) {
 
-		if( $order && FullCulqi_Refunds::create( $order, $amount ) )
+			// Meta Basic from Charges
+			$charge_basic = get_post_meta( $post_charge_id, 'culqi_basic', true );
+			$amount = floatval( $charge_basic['culqi_amount'] ) - floatval( $charge_basic['culqi_amount_refunded'] );
+
+			// Culqi Charge ID
+			$culqi_charge_id = get_post_meta( $post_charge_id, 'culqi_id', true );
+
+			$args = [
+				'amount'	=> round( $amount*100, 0 ),
+				'charge_id'	=> $culqi_charge_id,
+				'reason'	=> 'solicitud_comprador',
+				'metadata'	=> [
+					'post_id'	=> $post_charge_id,
+				],
+			];
+
+			$refund = FullCulqi_Refunds::create( $args, $post_charge_id );
+		}
+
+		do_action( 'fullculqi/ajax/refund/create', $refund );
+
+		if( $refund['status'] == 'ok' )
 			wp_send_json_success();
 		else
-			wp_send_json_error();
+			wp_send_json_error( $refund['data'] );
 	}
 }
 

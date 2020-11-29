@@ -233,6 +233,19 @@ class FullCulqi_Customers {
 
 		$wpdb->query( $query );
 
+		// Usermeta
+		$query = sprintf(
+			'DELETE
+				*
+			FROM
+				%s
+			WHERE
+				meta_key IN ("culqi_id", "culqi_post_id")',
+			$wpdb->usermeta
+		);
+
+		$wpdb->query( $query );
+
 		do_action( 'fullculqi/customers/delete' );
 
 		return true;

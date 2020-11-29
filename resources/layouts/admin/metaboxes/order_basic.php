@@ -36,6 +36,7 @@
 					<b><?php esc_html_e( 'CIP Code', 'fullculqi' ); ?> : </b>
 					<?php echo $cip; ?>
 				</li>
+				<?php do_action( 'fullculqi/orders/basic/print_data', $post_id ); ?>
 			</ul>
 			<?php
 				printf(

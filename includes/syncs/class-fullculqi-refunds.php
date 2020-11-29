@@ -8,68 +8,49 @@ class FullCulqi_Refunds {
 
 	/**
 	 * Create Refund
-	 * @param  WP_POST $order
+	 * @param  string $charge_id
+	 * @param  integer $post_id
 	 * @param  float  $amount
-	 * @param  string $reason
 	 * @return bool
 	 */
-	public static function create( $order, $amount = 0.00, $reason = '' ) {
+	public static function create( $args = [], $post_id = 0 ) {
 
 		global $culqi;
 
-		// Logs
-		$log = new FullCulqi_Logs( $order->get_id() );
-
-		// Meta
-		$culqi_charge_id	= get_post_meta( $order->get_id(), 'culqi_charge_id', true );
-		$culqi_post_id		= get_post_meta( $order->get_id(), 'post_charge_id', true );
-
-		$args = apply_filters( 'fullculqi/refunds/create/args', [
-			'amount'	=> round( $amount*100, 0 ),
-			'charge_id'	=> $culqi_charge_id,
-			'reason'	=> 'solicitud_comprador',
-		], $order );
-
+		$args = apply_filters( 'fullculqi/refunds/create/args', $args, $post_id );
 
 		try {
 			$refunds = $culqi->Refunds->create( $args );
 		} catch(Exception $e) {
-			$error = sprintf(
-				esc_html__( 'Culqi Refund Error: %s', 'fullculqi' ), $e->getMessage()
-			);
-			$log->set_error( $error );
-			return false;
+			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
 
 
 		if( ! isset( $refunds->object ) || $refunds->object == 'error' ) {
-			$error = sprintf(
-				esc_html__( 'Culqi Refund Error: %s', 'fullculqi' ), $refund->merchant_message
-			);
-			$log->set_error( $error );
-			return false;
+			return [ 'status' => 'error', 'data' => $refund->merchant_message ];
 		}
 
-		// Logs
-		$notice = sprintf( esc_html__( 'Culqi Refund created: %s', 'fullculqi' ), $refunds->id );
-		$log->set_notice( $notice );
-
-		update_post_meta( $culqi_post_id, 'culqi_data', $refunds );
-		update_post_meta( $culqi_post_id, 'culqi_status', 'refunded' );
+		update_post_meta( $post_id, 'culqi_data', $refunds );
+		update_post_meta( $post_id, 'culqi_status', 'refunded' );
 
 		// Save Refund
-		$basic = get_post_meta( $culqi_post_id, 'culqi_basic', true );
-		$refunds_ids = get_post_meta( $culqi_post_id, 'culqi_ids_refunded', true );
+		$basic = get_post_meta( $post_id, 'culqi_basic', true );
+		$refunds_ids = get_post_meta( $post_id, 'culqi_ids_refunded', true );
 		$refunds_ids = ! empty( $refunds_ids ) ? $refunds_ids : [];
 		
 		$refunds_ids[ $refunds->id ] = number_format( $refunds->amount / 100, 2, '.', '' );
 		
 		$basic['culqi_amount_refunded'] = array_sum( $refunds_ids );
 
-		update_post_meta( $culqi_post_id, 'culqi_basic', $basic );
-		update_post_meta( $culqi_post_id, 'culqi_ids_refunded', $refunds_ids );
+		update_post_meta( $post_id, 'culqi_basic', $basic );
+		update_post_meta( $post_id, 'culqi_ids_refunded', $refunds_ids );
 
-		return true;
+		do_action( 'fullculqi/refunds/create', $post_id, $refunds );
+
+		return apply_filters( 'fullculqi/refunds/create/success', [
+			'status' => 'ok',
+			'data' => [ 'culqi_refund_id' => $refunds->id, 'post_charge_id' => $post_id ]
+		] );
 	}
 
 }

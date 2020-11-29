@@ -144,82 +144,18 @@ class FullCulqi_Orders {
 	 */
 	public static function update( $culqi_order ) {
 		
-		if( ! isset( $culqi_order->metadata->order_id ) ||
-			! isset( $culqi_order->payment_code )
-		) return;
-
-		$order_id = absint( $culqi_order->metadata->order_id );
-		$cip_code = esc_html( $culqi_order->payment_code );
-		
-		$order = new WC_Order( $order_id );
-
-		if( ! $order )
+		if( ! isset( $culqi_order->payment_code ) )
 			return;
 
-		$post_id = get_post_meta( $order_id, 'post_order_id', true );
-
-		// Log
-		$log = new FullCulqi_Logs( $order->get_id() );
-
-		// Payment Settings
-		$method = get_option( 'woocommerce_fullculqi_settings', [] );
-
-		switch( $culqi_order->state ) {
-			case 'paid' :
-
-				$notice = sprintf(
-					esc_html__( 'The CIP %s was paid', 'fullculqi' ),
-					$cip_code
-				);
-
-				$order->add_order_note( $notice );
-				$log->set_notice( $notice );
-
-				// Status
-				if( $method['status_success'] == 'wc-completed')
-					$order->payment_complete();
-				else {
-					$order->update_status( $method_array['status_success'],
-						sprintf(
-							esc_html__( 'Status changed by FullCulqi (to %s)', 'fullculqi' ),
-							$method['status_success']
-						)
-					);
-				}
-
-				break;
-
-			case 'expired' :
-
-				$error = sprintf(
-					esc_html__( 'The CIP %s expired', 'fullculqi' ),
-					$cip_code
-				);
-
-				$log->set_error( $error );
-				$order->update_status( 'cancelled', $error );
-
-				break;
-
-			case 'deleted' :
-
-				$error = sprintf(
-					esc_html__( 'The CIP %s was deleted', 'fullculqi' ),
-					$cip_code
-				);
-				
-				$log->set_error( $error );
-				$order->update_status( 'cancelled', $error );
-
-				break;
-		}
+		$cip_code = trim( $culqi_order->payment_code );
+		$post_id = get_post_from_meta( 'culqi_cip', $cip_code );
 
 		// Post status
 		update_post_meta( $post_id, 'culqi_data', $culqi_order );
 		update_post_meta( $post_id, 'culqi_status', $culqi_order->state );
 		update_post_meta( $post_id, 'culqi_status_date', date('Y-m-d H:i:s') );
 
-		do_action( 'fullculqi/orders/update', $culqi_order, $order );
+		do_action( 'fullculqi/orders/update', $culqi_order );
 	}
 
 

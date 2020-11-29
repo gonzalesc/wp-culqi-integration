@@ -64,7 +64,6 @@ function fullculqi_format_price( $amount = 0, $currency = 'PEN' ) {
 	return apply_filters('fullculqi/format_price', $output, $amount, $currency );
 }
 
-
 /**
  * CPTs from Culqi
  * @return mixed
@@ -115,8 +114,6 @@ function fullculqi_format_total( $total = 0 ) {
 	return apply_filters( 'fullculqi/format_total', $total_raw, $total );
 }
 
-
-
 /**
  * Check if it has posts
  * @return mixed
@@ -134,7 +131,6 @@ function fullculqi_have_posts() {
 
 	return false;
 }
-
 
 /**
  * Print Layout
@@ -198,4 +194,29 @@ function fullculqi_multipayments_statuses() {
 	];
 
 	return apply_filters( 'fullculqi/multipayments/statuses', $statuses );
+}
+
+
+/**
+ * Get PostID from Meta values
+ * @param  string $meta_key
+ * @param  string $meta_value
+ * @return integer
+ */
+function get_post_from_meta( $meta_key = '', $meta_value = '' ) {
+
+	if( empty( $meta_key ) || empty( $meta_value ) )
+		return false;
+
+	global $wpdb;
+
+	$query = 'SELECT post_id FROM '. $wpdb->postmeta .' WHERE meta_key=%s && meta_value=%s LIMIT 1';
+	$query = $wpdb->prepare( $query, $meta_key, $meta_value );
+
+	$post_id = $wpdb->get_var( $query );
+
+	if( empty( $post_id ) )
+		return false;
+
+	return $post_id;
 }
