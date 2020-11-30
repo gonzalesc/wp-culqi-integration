@@ -203,7 +203,7 @@ function fullculqi_multipayments_statuses() {
  * @param  string $meta_value
  * @return integer
  */
-function get_post_from_meta( $meta_key = '', $meta_value = '' ) {
+function fullculqi_getPostFromMeta( $meta_key = '', $meta_value = '' ) {
 
 	if( empty( $meta_key ) || empty( $meta_value ) )
 		return false;
@@ -219,4 +219,19 @@ function get_post_from_meta( $meta_key = '', $meta_value = '' ) {
 		return false;
 
 	return $post_id;
+}
+
+
+function fullculqi_convertToDate( $unixTime = '' ) {
+	if( empty( $unixTime ) )
+		return false;
+
+	$date = intval( $unixTime/1000 );
+
+	if( date( 'Y', $date ) > 2000 )
+		return date( 'Y-m-d H:i:s', $date );
+
+	$date = intval( $unixTime );
+
+	return date( 'Y-m-d H:i:s', $date );
 }

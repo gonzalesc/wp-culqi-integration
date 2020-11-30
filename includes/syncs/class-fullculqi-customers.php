@@ -21,7 +21,7 @@ class FullCulqi_Customers {
 			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
 
-		if( ! isset( $customers->data ) || empty( $customers->data ) )
+		if( isset( $customers->object ) && $customers->object == 'error' )
 			return [ 'status' => 'error', 'data' => $customers->merchant_message ];
 
 
@@ -168,7 +168,6 @@ class FullCulqi_Customers {
 			$post_id = wp_insert_post( $args );
 		}
 
-		$creation = intval( $customer->creation_date/1000 );
 		$names = $customer->antifraud_details->first_name . ' ' . $customer->antifraud_details->last_name;
 
 		update_post_meta( $post_id, 'culqi_id', $customer->id );
@@ -176,7 +175,7 @@ class FullCulqi_Customers {
 		update_post_meta( $post_id, 'culqi_email', $customer->email );
 
 		$basic = [
-			'culqi_creation'	=> date('Y-m-d H:i:s', $creation),
+			'culqi_creation'	=> fullculqi_convertToDate( $customer->creation_date ),
 			'culqi_first_name'	=> $customer->antifraud_details->first_name,
 			'culqi_last_name'	=> $customer->antifraud_details->last_name,
 			'culqi_names'		=> $names,

@@ -26,6 +26,9 @@ class FullCulqi_Ajax {
 		// Sync Orders from the admin
 		add_action( 'wp_ajax_sync_culqi_orders', [ $this, 'sync_orders' ] );
 
+		// Sync Customers from the admin
+		add_action( 'wp_ajax_sync_culqi_customers', [ $this, 'sync_customers' ] );
+
 	}
 
 	/**
@@ -55,6 +58,23 @@ class FullCulqi_Ajax {
 		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
 
 		$result = FullCulqi_Orders::sync();
+
+		if( $result['status'] == 'ok' )
+			wp_send_json_success();
+		else
+			wp_send_json_error( $result['data'] );
+	}
+
+
+	/**
+	 * Sync Customer from Admin
+	 * @return json
+	 */
+	public function sync_customers() {
+		// Run a security check.
+		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
+
+		$result = FullCulqi_Customers::sync();
 
 		if( $result['status'] == 'ok' )
 			wp_send_json_success();

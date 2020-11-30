@@ -91,8 +91,12 @@ class FullCulqi_WC {
 	 */
 	public function order( $post_data = [] ) {
 
-		if( ! isset( $post_data['order_id'] ) || ! isset( $post_data['cip_code'] ) )
+		if( ! isset( $post_data['id'] ) ||
+			! isset( $post_data['cip_code'] ) ||
+			! isset( $post_data['order_id'] ) ) {
 			return false;
+		}
+			
 
 		// Settings WC
 		$method = get_option( 'woocommerce_fullculqi_settings', [] );
@@ -106,15 +110,12 @@ class FullCulqi_WC {
 		if( ! $order  )
 			return false;
 
-		// CIP CODE
-		$cip_code = esc_html( $post_data['cip_code'] );
-
 		// Log
 		$this->log = new FullCulqi_Logs( $order->get_id() );
 
 
 		// Culqi Customer ID
-		$post_customer_id = false;
+		$post_customer_id = 0;
 		if( $this->customer( $order ) ) {
 		
 			$culqi_customer_id = get_post_meta( $order->get_id(), 'culqi_customer_id', true );
@@ -123,7 +124,7 @@ class FullCulqi_WC {
 
 
 		$notice = sprintf(
-			esc_html__( 'Culqi Multipayment CIP: %s', 'fullculqi' ), $cip_code
+			esc_html__( 'Culqi Multipayment CIP: %s', 'fullculqi' ), $post_data['cip_code']
 		);
 
 		$this->log->set_notice( $notice );
@@ -136,14 +137,11 @@ class FullCulqi_WC {
 			$order->update_status( $method['multi_status'] );
 
 		// Update CIP CODE in WC Order
-		update_post_meta( $order->get_id(), 'culqi_cip', $cip_code );
-
-		// Get Culqi Order ID
-		$culqi_order_id = get_post_meta( $order->get_id(), 'culqi_order_id', true );
+		update_post_meta( $order->get_id(), 'culqi_cip', $post_data['cip_code'] );
 
 
 		// From Culqi
-		$culqi_order = FullCulqi_Orders::confirm( $culqi_order_id, $post_customer_id );
+		$culqi_order = FullCulqi_Orders::after_confirm( $post_data, $post_customer_id );
 
 		if( $culqi_order['status'] != 'ok' ) {
 

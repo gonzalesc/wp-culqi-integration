@@ -20,6 +20,9 @@ class FullCulqi_WC_Admin {
 		add_action(  'fullculqi/charges/basic/print_data', [ $this, 'basic_print_order' ] );
 		add_action(  'fullculqi/orders/basic/print_data', [ $this, 'basic_print_order' ] );
 
+		// Create WPPost
+		add_action( 'fullculqi/charges/wppost_create', [ $this, 'wppost_create' ], 10, 2 );
+
 		// Ajax Refund
 		//add_action( 'fullculqi/refunds/create/args', [ $this, 'create_refund_args' ], 10, 2 );
 		add_filter( 'fullculqi/ajax/refund/process', [ $this, 'create_refund_process' ], 10, 2 );
@@ -105,6 +108,11 @@ class FullCulqi_WC_Admin {
 	}
 
 
+	/**
+	 * Print WC Order in Metaboxes Basic
+	 * @param  integer $post_id
+	 * @return html
+	 */
 	public function basic_print_order( $post_id = 0 ) {
 
 		if( empty( $post_id ) )
@@ -115,6 +123,24 @@ class FullCulqi_WC_Admin {
 		];
 		
 		fullculqi_get_template( 'layouts/charge_basic.php', $args, FULLCULQI_WC_DIR );
+	}
+
+
+	/**
+	 * WPPost create, we save order ID
+	 * @param  object  $culqi
+	 * @param  integer $post_id
+	 * @return mixed
+	 */
+	public function wppost_create( $culqi, $post_id = 0 ) {
+		if( ! isset( $culqi->metadata->order_id ) || empty( $post_id ) )
+			return;
+
+		$order_id = absint( $culqi->metadata->order_id );
+
+		update_post_meta( $post_id, 'culqi_wc_order_id', $order_id );
+
+		return true;
 	}
 
 

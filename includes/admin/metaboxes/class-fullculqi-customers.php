@@ -84,12 +84,12 @@ class FullCulqi_Metaboxes_Customers extends FullCulqi_Metaboxes {
 		}
 
 		// Source Metaboxes
-		add_meta_box(
+		/*add_meta_box(
 			'culqi_customers_source',
 			esc_html__( 'Source', 'fullculqi' ),
 			[ $this, 'metabox_source' ],
 			$this->post_type, 'normal', 'high'
-		);
+		);*/
 	}
 
 

@@ -180,8 +180,9 @@
 
 					data = {
 						action 		: 'order',
+						id 			: Culqi.order.id,
 						cip_code	: Culqi.order.payment_code,
-						order_id	: fullculqi_vars.order_id,
+						order_id	: Culqi.order.order_number,
 						wpnonce		: fullculqi_vars.wpnonce
 					};
 

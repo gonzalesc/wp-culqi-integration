@@ -82,6 +82,7 @@ abstract class FullCulqi_Metaboxes {
 						'sync_notify'		=> 'notify_' . $this->post_type,
 						'sync_loading'		=> esc_html__( 'Synchronizing. It may take several minutes.', 'fullculqi' ),
 						'sync_success'		=> esc_html__( 'Complete synchronization.', 'fullculqi' ),
+						'sync_failure'		=> esc_html__( 'Error in the synchronization.', 'fullculqi' ),
 						'nonce'				=> wp_create_nonce( 'fullculqi-wpnonce' ),
 					] )
 				);

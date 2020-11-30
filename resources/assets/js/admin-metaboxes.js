@@ -108,7 +108,7 @@
 					console.log(textStatus);
 					console.log(errorThrown);
 					
-					$('#' + fullculqi_vars.sync_notify).html( fullculqi_vars.img_failure + ' ' + response.data );
+					$('#' + fullculqi_vars.sync_notify).html( fullculqi_vars.img_failure + ' ' + fullculqi_vars.sync_failure );
 
 					$( document.body ).trigger('fullculqi.metaboxes..error', [ fullculqi_vars.sync_id, jqXHR, textStatus, errorThrown ] );
 				}

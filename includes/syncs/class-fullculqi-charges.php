@@ -48,7 +48,7 @@ class FullCulqi_Charges {
 			$keys[ $result->culqi_id ] = $result->post_id;
 
 		// Culqi charges
-		foreach( $charges as $charge ) {
+		foreach( $charges->data as $charge ) {
 
 			$post_id = 0;
 
@@ -118,18 +118,13 @@ class FullCulqi_Charges {
 			$post_id = wp_insert_post( $args );
 		}
 
-		$creation_date = intval( $charge->creation_date/1000 );
-		$capture_date = intval( $charge->capture_date/1000 );
-
 		$amount = round( $charge->amount/100, 2 );
 		$refund = round( $charge->amount_refunded/100, 2 );
 
 		update_post_meta( $post_id, 'culqi_id', $charge->id );
 		update_post_meta( $post_id, 'culqi_capture', $charge->capture );
-		update_post_meta( $post_id, 'culqi_capture_date', date( 'Y-m-d H:i:s', $capture_date ) );
+		update_post_meta( $post_id, 'culqi_capture_date', fullculqi_convertToDate( $charge->capture_date ) );
 		update_post_meta( $post_id, 'culqi_data', $charge );
-		
-		
 
 		// Customer
 		$post_customer_id = $culqi_customer_id = false;
@@ -156,7 +151,7 @@ class FullCulqi_Charges {
 		}
 
 		$basic = [
-			'culqi_creation'		=> date( 'Y-m-d H:i:s', $creation_date ),
+			'culqi_creation'		=> fullculqi_convertToDate( $charge->creation_date ),
 			'culqi_amount'			=> $amount,
 			'culqi_amount_refunded'	=> $refund,
 			'culqi_currency'		=> $charge->currency_code,
@@ -183,7 +178,7 @@ class FullCulqi_Charges {
 
 		update_post_meta( $post_id, 'culqi_customer', array_map( 'esc_html', $customer ) );
 
-		do_action( 'fullculqi/charges/wppost', $charge, $post_id );
+		do_action( 'fullculqi/charges/wppost_create', $charge, $post_id );
 
 		return $post_id;
 	}

@@ -21,7 +21,7 @@ class FullCulqi_Orders {
 			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
 
-		if( ! isset( $culqi_orders->data ) || empty( $culqi_orders->data ) )
+		if( isset( $culqi_orders->object ) && $culqi_orders->object == 'error' )
 			return [ 'status' => 'error', 'data' => $culqi_orders->merchant_message ];
 
 
@@ -99,23 +99,29 @@ class FullCulqi_Orders {
 
 	/**
 	 * Create the CIP Code
-	 * @param  string  $culqi_order_id
+	 * @param  array  $post_data
 	 * @param  int  $post_customer_id
 	 * @return mixed
 	 */
-	public static function confirm( $culqi_order_id = '', $post_customer_id = 0 ) {
+	public static function after_confirm( $post_data = [], $post_customer_id = 0 ) {
 
-		if( empty( $culqi_order_id ) ) {
+		if( empty( $post_data ) ) {
 			return [
 				'status' => 'error',
-				'data' => esc_html__( 'Culqi Order ID empty', 'fullculqi' )
+				'data' => esc_html__( 'Culqi Order Data empty', 'fullculqi' )
 			];
 		}
+
+		$culqi_data['metadata'] = [ 'cip_code' => $post_data['cip_code'] ];
+
+		if( ! empty( $post_customer_id ) )
+			$culqi_data['metadata']['post_customer_id'] = $post_customer_id;
+
 
 		global $culqi;
 
 		try {
-			$culqi_order = $culqi->Orders->get( $culqi_order_id );
+			$culqi_order = $culqi->Orders->update( $post_data['id'], $culqi_data );
 		} catch( Exception $e ) {
 			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
@@ -125,8 +131,8 @@ class FullCulqi_Orders {
 			return [ 'status' => 'error', 'data' => $culqi_order->merchant_message ];
 		}
 
-		// Create post
-		$post_id = self::create_wppost( $culqi_order, 0, $post_customer_id );
+		// Update post
+		$post_id = self::create_wppost( $culqi_order );
 
 		do_action( 'fullculqi/orders/confirm', $culqi_order );
 
@@ -148,12 +154,15 @@ class FullCulqi_Orders {
 			return;
 
 		$cip_code = trim( $culqi_order->payment_code );
-		$post_id = get_post_from_meta( 'culqi_cip', $cip_code );
+		$post_id = fullculqi_getPostFromMeta( 'culqi_cip', $cip_code );
+
+		// Update post
+		$post_id = self::create_wppost( $culqi_order, $post_id );
 
 		// Post status
-		update_post_meta( $post_id, 'culqi_data', $culqi_order );
-		update_post_meta( $post_id, 'culqi_status', $culqi_order->state );
-		update_post_meta( $post_id, 'culqi_status_date', date('Y-m-d H:i:s') );
+		//update_post_meta( $post_id, 'culqi_data', $culqi_order );
+		//update_post_meta( $post_id, 'culqi_status', $culqi_order->state );
+		//update_post_meta( $post_id, 'culqi_status_date', date('Y-m-d H:i:s') );
 
 		do_action( 'fullculqi/orders/update', $culqi_order );
 	}
@@ -166,7 +175,7 @@ class FullCulqi_Orders {
 	 * @param  integer $post_customer_id
 	 * @return integer
 	 */
-	public static function create_wppost( $culqi_order, $post_id = 0, $post_customer_id = 0 ) {
+	public static function create_wppost( $culqi_order, $post_id = 0 ) {
 
 		if( empty( $post_id ) ) {
 
@@ -180,21 +189,25 @@ class FullCulqi_Orders {
 			$post_id = wp_insert_post( $args );
 		}
 
-		//$creation = intval( $culqi_order->creation_date/1000 );
-		//$expiration = intval( $culqi_order->expiration_date/1000 );
-		$creation = intval( $culqi_order->creation_date );
-		$expiration = intval( $culqi_order->expiration_date );
 		$amount = round( $culqi_order->amount/100, 2 );
 
 		update_post_meta( $post_id, 'culqi_id', $culqi_order->id );
-		update_post_meta( $post_id, 'culqi_cip', $culqi_order->payment_code );
 		update_post_meta( $post_id, 'culqi_data', $culqi_order );
 		update_post_meta( $post_id, 'culqi_status', $culqi_order->state );
 		update_post_meta( $post_id, 'culqi_status_date', date('Y-m-d H:i:s') );
 
+		// CIP CODE
+		$culqi_cip = '';
+		if( ! empty( $culqi_order->payment_code ) )
+			$culqi_cip = $culqi_order->payment_code;
+		elseif( isset( $culqi_order->metadata->cip_code ) )
+			$culqi_cip = $culqi_order->metadata->cip_code;
+
+		update_post_meta( $post_id, 'culqi_cip', $culqi_cip );
+
 		$basic = [
-			'culqi_creation'		=> date( 'Y-m-d H:i:s', $creation ),
-			'culqi_expiration'		=> date( 'Y-m-d H:i:s', $expiration ),
+			'culqi_creation'		=> fullculqi_convertToDate( $culqi_order->creation_date ),
+			'culqi_expiration'		=> fullculqi_convertToDate( $culqi_order->expiration_date ),
 			'culqi_amount'			=> $amount,
 			'culqi_currency'		=> $culqi_order->currency_code,
 		];
@@ -217,8 +230,8 @@ class FullCulqi_Orders {
 		];
 
 		// Save customer
-		if( ! empty( $post_customer_id ) )
-			$customer[ 'post_id' ] = $post_customer_id;
+		if( isset( $culqi_order->metadata->post_customer_id ) )
+			$customer[ 'post_id' ] = $culqi_order->metadata->post_customer_id;
 
 		if( isset( $culqi_order->metadata->customer_email ) )
 			$customer[ 'culqi_email' ] = $culqi_order->metadata->customer_email;
@@ -240,17 +253,6 @@ class FullCulqi_Orders {
 
 		// Customer
 		update_post_meta( $post_id, 'culqi_customer', $customer );
-
-
-
-
-		// WC Orders
-		/*if( isset( $culqi_order->metadata->order_id ) &&
-			get_post_type( $culqi_order->metadata->order_id ) == 'shop_order'
-		)
-			update_post_meta( $post_id, 'culqi_order_id', $culqi_order->metadata->order_id );
-		else
-			update_post_meta( $post_id, 'culqi_order_id', '' );*/
 
 
 		do_action( 'fullculqi/orders/wppost', $culqi_order, $post_id );
