@@ -234,9 +234,7 @@ class FullCulqi_Customers {
 
 		// Usermeta
 		$query = sprintf(
-			'DELETE
-				*
-			FROM
+			'DELETE FROM
 				%s
 			WHERE
 				meta_key IN ("culqi_id", "culqi_post_id")',

@@ -120,7 +120,6 @@ class FullCulqi {
 		}
 	}
 
-
 	
 	/**
 	 * Plugins Loaded
@@ -142,13 +141,5 @@ class FullCulqi {
 		}
 	}
 
-
-	public function notice_woo() {
-		echo '<div class="error"><p>' . sprintf( esc_html__( 'Currently you have the Woocommerce option activated on Fullculqi plugin, but %s is not activated.', 'letsgo' ), '<a href="http://wordpress.org/extend/plugins/woocommerce/">WooCommerce</a>' ) . '</p></div>';
-	}
-
-	public function notice_currency() {
-		echo '<div class="error"><p>' . esc_html__( 'Woocommerce Culqi Full Integration plugin needs the currency in the commerce be PEN or USD to work!', 'letsgo' ) . '</p></div>';
-	}
 }
 ?>

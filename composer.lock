@@ -4,28 +4,22 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "771d6a9f962e3dc54736ac4cf2f02a5c",
+    "content-hash": "3566df1d4ec52e8fd222ba103f164518",
     "packages": [
         {
-            "name": "culqi/culqi-php",
-            "version": "v1.3.5",
+            "name": "gonzalesc/culqi-php",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/culqi/culqi-php.git",
-                "reference": "8933bc7d86b5080285c4b4c360fcb3183e396f01"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/culqi/culqi-php/zipball/8933bc7d86b5080285c4b4c360fcb3183e396f01",
-                "reference": "8933bc7d86b5080285c4b4c360fcb3183e396f01",
-                "shasum": ""
+                "url": "https://github.com/gonzalesc/culqi-php.git",
+                "reference": "24021e711f8eee6ea51630a25665232e6189f474"
             },
             "require": {
                 "php": ">=5.3.3",
                 "rmccue/requests": ">=1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.4.*"
+                "phpunit/phpunit": "4.4.* || 4.8.*"
             },
             "type": "library",
             "autoload": {
@@ -33,7 +27,6 @@
                     "lib/Culqi/"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -43,7 +36,7 @@
                     "homepage": "https://github.com/culqi/culqi-php/contributors"
                 }
             ],
-            "description": "Cliente Culqi API para PHP",
+            "description": "Culqi API to PHP",
             "homepage": "https://culqi.com",
             "keywords": [
                 "api",
@@ -54,7 +47,7 @@
                 "peru",
                 "php"
             ],
-            "time": "2019-04-12T17:51:37+00:00"
+            "time": "2020-11-30T19:50:48+00:00"
         },
         {
             "name": "rmccue/requests",
@@ -108,10 +101,14 @@
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
-    "prefer-stable": false,
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "gonzalesc/culqi-php": 20
+    },
+    "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=5.3.3"
+    },
     "platform-dev": []
 }

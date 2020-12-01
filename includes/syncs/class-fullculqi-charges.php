@@ -169,12 +169,33 @@ class FullCulqi_Charges {
 			'culqi_id'			=> $culqi_customer_id,
 			'post_id'			=> $post_customer_id,
 			'culqi_email'		=> $charge->email,
-			'culqi_first_name'	=> $charge->antifraud_details->first_name,
-			'culqi_last_name'	=> $charge->antifraud_details->last_name,
-			'culqi_city'		=> $charge->antifraud_details->address_city,
-			'culqi_country'		=> $charge->antifraud_details->country_code,
-			'culqi_phone'		=> $charge->antifraud_details->phone,
+			'culqi_first_name'	=> '',
+			'culqi_last_name'	=> '',
+			'culqi_city'		=> '',
+			'culqi_country'		=> '',
+			'culqi_phone'		=> '',
 		];
+
+		// First Name
+		if( isset( $charge->antifraud_details->first_name ) )
+			$customer[ 'culqi_first_name' ] = $charge->antifraud_details->first_name;
+
+		// Last Name
+		if( isset( $charge->antifraud_details->last_name ) )
+			$customer[ 'culqi_last_name' ] = $charge->antifraud_details->last_name;
+
+		// Address City
+		if( isset( $charge->antifraud_details->address_city ) )
+			$customer[ 'culqi_city' ] = $charge->antifraud_details->address_city;
+
+		// Country Code
+		if( isset( $charge->antifraud_details->country_code ) )
+			$customer[ 'culqi_country' ] = $charge->antifraud_details->country_code;
+
+		// Phone
+		if( isset( $charge->antifraud_details->phone ) )
+			$customer[ 'culqi_phone' ] = $charge->antifraud_details->phone;
+
 
 		update_post_meta( $post_id, 'culqi_customer', array_map( 'esc_html', $customer ) );
 
