@@ -11,12 +11,17 @@ class FullCulqi_Orders {
 	 * @param  integer $records
 	 * @return mixed
 	 */
-	public static function sync( $records = 100 ) {
+	public static function sync( $records = 100, $after_id = '' ) {
 		global $culqi;
+
+		$params = [ 'limit' => $records ];
+
+		if( ! empty( $after_id ) )
+			$params[ 'after' ] = $after_id;
 
 		// Connect to the API Culqi
 		try {
-			$culqi_orders = $culqi->Orders->all( [ 'limit' => $records ] );
+			$culqi_orders = $culqi->Orders->all( $params );
 		} catch(Exception $e) {
 			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
@@ -28,18 +33,18 @@ class FullCulqi_Orders {
 		global $wpdb;
 
 		$query = 'SELECT
-						p.ID AS post_id,
-						m.meta_value AS culqi_id
-					FROM
-						'.$wpdb->posts.' AS p
-					INNER JOIN
-						'.$wpdb->postmeta.' AS m
-					ON
-						p.ID = m.post_id
-					WHERE
-						p.post_type = "culqi_orders" AND
-						m.meta_key = "culqi_id" AND
-						m.meta_value <> ""';
+					p.ID AS post_id,
+					m.meta_value AS culqi_id
+				FROM
+					'.$wpdb->posts.' AS p
+				INNER JOIN
+					'.$wpdb->postmeta.' AS m
+				ON
+					p.ID = m.post_id
+				WHERE
+					p.post_type = "culqi_orders" AND
+					m.meta_key = "culqi_id" AND
+					m.meta_value <> ""';
 
 		$results = $wpdb->get_results( $query );
 		$keys = [];
@@ -64,7 +69,13 @@ class FullCulqi_Orders {
 
 		do_action( 'fullculqi/orders/sync/after', $culqi_orders );
 
-		return [ 'status' => 'ok' ];
+		return [
+			'status'	=> 'ok',
+			'data'		=> [
+				'remaining' => $culqi_orders->paging->remaining_items,
+				'after_id'	=> $culqi_orders->paging->cursors->after,
+			]
+		];
 	}
 
 

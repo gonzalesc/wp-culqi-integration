@@ -11,12 +11,17 @@ class FullCulqi_Customers {
 	 * @param  integer $records
 	 * @return mixed
 	 */
-	public static function sync( $records = 100 ) {
+	public static function sync( $records = 100, $after_id = '' ) {
 		global $culqi;
+
+		$params = [ 'limit' => $records ];
+
+		if( ! empty( $after_id ) )
+			$params[ 'after' ] = $after_id;
 
 		// Connect to the API Culqi
 		try {
-			$customers = $culqi->Customers->all( [ 'limit' => $records ] );
+			$customers = $culqi->Customers->all( $params );
 		} catch(Exception $e) {
 			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
@@ -64,7 +69,13 @@ class FullCulqi_Customers {
 
 		do_action( 'fullculqi/customers/sync/after', $customers );
 
-		return [ 'status' => 'ok' ];
+		return [
+			'status'	=> 'ok',
+			'data'		=> [
+				'remaining' => $customer->paging->remaining_items,
+				'after_id'	=> $customer->paging->cursors->after,
+			]
+		];
 	}
 
 

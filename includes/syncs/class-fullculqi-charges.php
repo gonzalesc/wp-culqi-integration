@@ -11,12 +11,17 @@ class FullCulqi_Charges {
 	 * @param  integer $records
 	 * @return mixed
 	 */
-	public static function sync( $records = 100 ) {
+	public static function sync( $records = 100, $after_id = '' ) {
 		global $culqi;
+
+		$params = [ 'limit' => $records ];
+
+		if( ! empty( $after_id ) )
+			$params[ 'after' ] = $after_id;
 
 		// Connect to the API Culqi
 		try {
-			$charges = $culqi->Charges->all( [ 'limit' => $records ] );
+			$charges = $culqi->Charges->all( $params );
 		} catch(Exception $e) {
 			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
@@ -62,7 +67,13 @@ class FullCulqi_Charges {
 
 		do_action( 'fullculqi/charges/sync/after', $charges );
 
-		return [ 'status' => 'ok' ];
+		return [
+			'status'	=> 'ok',
+			'data'		=> [
+				'remaining' => $charges->paging->remaining_items,
+				'after_id'	=> $charges->paging->cursors->after,
+			]
+		];
 	}
 
 

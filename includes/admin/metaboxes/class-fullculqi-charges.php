@@ -27,7 +27,6 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 			if( $key_column == 'title' ) {			
 				$newCols['culqi_creation']	= esc_html__( 'Creation', 'fullculqi' );
 				$newCols['culqi_email']		= esc_html__( 'Email', 'fullculqi' );
-				$newCols['culqi_currency']	= esc_html__( 'Currency', 'fullculqi' );
 				$newCols['culqi_amount']	= esc_html__( 'Amount', 'fullculqi' );
 				$newCols['culqi_refunded']	= esc_html__( 'Refunded', 'fullculqi' );
 				$newCols['culqi_status']	= esc_html__( 'Status', 'fullculqi' );
@@ -72,9 +71,19 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 
 				break;
 
-			case 'culqi_currency'	: $value = $basic['culqi_currency']; break;
-			case 'culqi_amount'		: $value = $basic['culqi_amount']; break;
-			case 'culqi_refunded'	: $value = $basic['culqi_amount_refunded']; break;
+			//case 'culqi_currency'	: $value = $basic['culqi_currency']; break;
+			case 'culqi_amount'		:
+				$value = fullculqi_format_price(
+					$basic['culqi_amount'], $basic['culqi_currency']
+				); 
+				break;
+
+			case 'culqi_refunded'	:
+				$value = fullculqi_format_price(
+					$basic['culqi_amount_refunded'], $basic['culqi_currency']
+				);
+				break;
+
 			case 'culqi_status'		:
 
 				$statuses = fullculqi_charges_statuses();

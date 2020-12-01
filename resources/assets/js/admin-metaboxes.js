@@ -3,6 +3,12 @@
 	const FullCulqi = {
 
 		/**
+		 * Global variables
+		 * @type Integer
+		 */
+		record: 100,
+
+		/**
 		 * Start the engine.
 		 *
 		 * @since 2.0.0
@@ -45,7 +51,7 @@
 			$title_action.after(
 				'<a href="" id ="' +
 				fullculqi_vars.sync_id +
-				'" class="page-title-action">' +
+				'" class="page-title-action" data-record="100">' +
 				'<span class="dashicons dashicons-update-alt" style="vertical-align:middle"></span> ' +
 				fullculqi_vars.sync_text +
 				'</a>' +
@@ -68,6 +74,8 @@
 				if( ! confirm( fullculqi_vars.sync_confirm ) )
 					return;
 
+				FullCulqi.record = $(this).data('record');
+
 				FullCulqi.syncEntities();
 			} );
 		},
@@ -75,7 +83,8 @@
 		 * Sync Start
 		 * @return mixed
 		 */
-		syncEntities: function() {
+		syncEntities: function( after_id = '' ) {
+
 			// Loading
 			$('#' + fullculqi_vars.sync_notify).html( fullculqi_vars.img_loading + ' ' + fullculqi_vars.sync_loading );
 
@@ -84,8 +93,9 @@
 				type 		: 'POST',
 				dataType	: 'json',
 				data 		: {
-					action: 'sync_' + fullculqi_vars.sync_id,
-					records: '100',
+					action : 'sync_' + fullculqi_vars.sync_id,
+					record : FullCulqi.record,
+					after_id : after_id,
 					wpnonce : fullculqi_vars.nonce
 				},
 				success: function( response ) {
@@ -94,8 +104,13 @@
 					
 					if( response.success ) {
 
-						$('#' + fullculqi_vars.sync_notify).html( fullculqi_vars.img_success + ' ' + fullculqi_vars.sync_success );
-						location.reload();
+						if( parseInt( response.data.remaining, 10 ) == 0 ) {
+							$('#' + fullculqi_vars.sync_notify).html( fullculqi_vars.img_success + ' ' + fullculqi_vars.sync_success );
+							location.reload();
+						} else {
+							$('#' + fullculqi_vars.sync_notify).html( fullculqi_vars.img_success + ' ' + fullculqi_vars.sync_continue );
+							setTimeout(function(){ FullCulqi.syncEntities( response.data.after_id ); }, 700);
+						}
 					
 					} else {
 						

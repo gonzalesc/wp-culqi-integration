@@ -81,7 +81,8 @@ abstract class FullCulqi_Metaboxes {
 						'sync_confirm'		=> esc_html__( 'Do you want to start the sync?', 'fullculqi' ),
 						'sync_notify'		=> 'notify_' . $this->post_type,
 						'sync_loading'		=> esc_html__( 'Synchronizing. It may take several minutes.', 'fullculqi' ),
-						'sync_success'		=> esc_html__( 'Complete synchronization.', 'fullculqi' ),
+						'sync_success'		=> esc_html__( 'Synchronization completed.', 'fullculqi' ),
+						'sync_continue'		=> esc_html__( 'Oh! there are more items. Please wait.', 'fullculqi' ),
 						'sync_failure'		=> esc_html__( 'Error in the synchronization.', 'fullculqi' ),
 						'nonce'				=> wp_create_nonce( 'fullculqi-wpnonce' ),
 					] )

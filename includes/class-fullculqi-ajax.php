@@ -40,10 +40,13 @@ class FullCulqi_Ajax {
 		// Run a security check.
 		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
 
-		$result = FullCulqi_Charges::sync();
+		$record = isset( $_POST['record'] ) ? intval( $_POST['record'] ) : 100;
+		$after_id = isset( $_POST['after_id'] ) ? esc_html( $_POST['after_id'] ) : '';
+
+		$result = FullCulqi_Charges::sync( $record, $after_id );
 
 		if( $result['status'] == 'ok' )
-			wp_send_json_success();
+			wp_send_json_success( $result['data'] );
 		else
 			wp_send_json_error( $result['data'] );
 	}
@@ -57,10 +60,13 @@ class FullCulqi_Ajax {
 		// Run a security check.
 		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
 
-		$result = FullCulqi_Orders::sync();
+		$record = isset( $_POST['record'] ) ? intval( $_POST['record'] ) : 100;
+		$after_id = isset( $_POST['after_id'] ) ? esc_html( $_POST['after_id'] ) : '';
+
+		$result = FullCulqi_Orders::sync( $record, $after_id );
 
 		if( $result['status'] == 'ok' )
-			wp_send_json_success();
+			wp_send_json_success( $result['data'] );
 		else
 			wp_send_json_error( $result['data'] );
 	}
@@ -74,10 +80,13 @@ class FullCulqi_Ajax {
 		// Run a security check.
 		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
 
-		$result = FullCulqi_Customers::sync();
+		$record = isset( $_POST['record'] ) ? intval( $_POST['record'] ) : 100;
+		$after_id = isset( $_POST['after_id'] ) ? esc_html( $_POST['after_id'] ) : '';
+
+		$result = FullCulqi_Customers::sync( $record, $after_id );
 
 		if( $result['status'] == 'ok' )
-			wp_send_json_success();
+			wp_send_json_success( $result['data'] );
 		else
 			wp_send_json_error( $result['data'] );
 	}
