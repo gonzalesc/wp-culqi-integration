@@ -21,11 +21,15 @@ class FullCulqi_WC_Admin {
 		add_action(  'fullculqi/orders/basic/print_data', [ $this, 'basic_print_order' ] );
 
 		// Create WPPost
-		add_action( 'fullculqi/charges/wppost_create', [ $this, 'wppost_create' ], 10, 2 );
+		add_action( 'fullculqi/charges/sync/loop', [ $this, 'link_to_wc_orders' ], 10, 2 );
 
 		// Ajax Refund
 		//add_action( 'fullculqi/refunds/create/args', [ $this, 'create_refund_args' ], 10, 2 );
 		add_filter( 'fullculqi/ajax/refund/process', [ $this, 'create_refund_process' ], 10, 2 );
+
+		// Upgrader to 1.6.0
+		add_action( 'fullculqi/upgrader/2_0_0/charges', [ $this, 'upgrader_charges_2_0_0' ], 10, 1 );
+		add_action( 'fullculqi/upgrader/2_0_0/after', [ $this, 'upgrader_wc_orders_2_0_0' ] );
 	}
 
 	/**
@@ -68,11 +72,11 @@ class FullCulqi_WC_Admin {
 
 	/**
 	 * Charges Column Name
-	 * @param  [type] $newCols [description]
-	 * @param  [type] $cols    [description]
-	 * @return [type]          [description]
+	 * @param  array $newCols]
+	 * @param  [type] $cols
+	 * @return array
 	 */
-	public function column_name( $newCols, $cols ) {
+	public function column_name( $newCols = [], $cols ) {
 
 		if( ! class_exists( 'WooCommerce' ) )
 			return $newCols;
@@ -127,18 +131,39 @@ class FullCulqi_WC_Admin {
 
 
 	/**
-	 * WPPost create, we save order ID
-	 * @param  object  $culqi
+	 * Link Charge to WC Orders
+	 * @param  object  $charge
 	 * @param  integer $post_id
 	 * @return mixed
 	 */
-	public function wppost_create( $culqi, $post_id = 0 ) {
-		if( ! isset( $culqi->metadata->order_id ) || empty( $post_id ) )
+	public function link_to_wc_orders( $charge, $post_id = 0 ) {
+
+		if( empty( $charge ) || empty( $post_id ) )
 			return;
 
-		$order_id = absint( $culqi->metadata->order_id );
+		$order_id = fullculqi_post_from_meta( '_culqi_charge_id', $charge->id );
+		$order = wc_get_order( $order_id );
 
+		if( ! $order )
+			return;
+
+		// WC Order Meta - Customer
+		$culqi_customer_id = get_post_meta( $post_id, 'culqi_customer_id', true );
+
+		if( ! empty( $culqi_customer_id ) ) {
+			$post_customer_id = fullculqi_post_from_meta( 'culqi_id', $culqi_customer_id );
+
+			// WC Order - Charge
+			update_post_meta( $order->get_id(), '_culqi_customer_id', $culqi_customer_id );
+			update_post_meta( $order->get_id(), '_post_customer_id', $post_customer_id );
+		}
+
+		// Update WC Order in Charge CPT
 		update_post_meta( $post_id, 'culqi_wc_order_id', $order_id );
+
+		// WC Order - Charge
+		update_post_meta( $order->get_id(), '_culqi_charge_id', $charge->id );
+		update_post_meta( $order->get_id(), '_post_charge_id', $post_id );
 
 		return true;
 	}
@@ -203,6 +228,76 @@ class FullCulqi_WC_Admin {
 		] );
 
 		return [ 'status' => 'ok' ];
+	}
+
+
+	/**
+	 * Update the new version 2.0.0 to charges
+	 * @param  integer $post_id
+	 * @return mixed
+	 */
+	public function upgrader_charges_2_0_0( $post_id = 0 ) {
+
+		if( empty( $post_id ) )
+			return;
+
+		// Get WC Order ID from Charges
+		$wc_order_id = get_post_meta( $post_id, 'culqi_order_id', true );
+
+		// Update WC Order ID in Charges
+		if( ! empty( $wc_order_id ) )
+			update_post_meta( $post_id, 'culqi_wc_order_id', $wc_order_id );
+
+		// Delete old WC Order ID in Charges
+		if( ! empty( $wc_order_id ) )
+			delete_post_meta( $post_id, 'culqi_order_id', $wc_order_id );
+
+	}
+
+	/**
+	 * Update the new version 2.0.0 to WC Orders
+	 * @return mixed
+	 */
+	public function upgrader_wc_orders_2_0_0() {
+
+		$args = [ 'payment_method' => 'fullculqi' ];
+
+		$orders = wc_get_orders( $args );
+
+		foreach( $orders as $order ) {
+
+			// get the meta values
+			$post_charge_id = get_post_meta( $order->get_id(), 'culqi_post_id', true );
+			$culqi_charge_id = get_post_meta( $order->get_id(), 'culqi_charge_id', true );
+			$culqi_order_id = get_post_meta( $order->get_id(), 'culqi_order', true );
+			$culqi_cip = get_post_meta( $order->get_id(), 'culqi_cip', true );
+
+			// Update/Delete the post charge id
+			if( ! empty( $post_charge_id ) ) {
+				update_post_meta( $order->get_id(), '_post_charge_id', $post_charge_id );
+				delete_post_meta( $order->get_id(), 'culqi_post_id', $post_charge_id );
+			}
+
+			// Update/Delete the culqi charge id
+			if( ! empty( $culqi_charge_id ) ) {
+				update_post_meta( $order->get_id(), '_culqi_charge_id', $culqi_charge_id );
+				delete_post_meta( $order->get_id(), 'culqi_charge_id', $culqi_charge_id );
+			}
+
+			// Update/Delete the culqi order id
+			if( ! empty( $culqi_order_id ) ) {
+				update_post_meta( $order->get_id(), '_culqi_order_id', $culqi_order_id );
+				delete_post_meta( $order->get_id(), 'culqi_order', $culqi_order_id );
+			}
+
+			// Update/Delete the culqi cip
+			if( ! empty( $culqi_cip ) ) {
+				update_post_meta( $order->get_id(), '_culqi_cip', $culqi_cip );
+				delete_post_meta( $order->get_id(), 'culqi_cip', $culqi_cip );
+			}
+				
+		}
+
 	}
 }
 

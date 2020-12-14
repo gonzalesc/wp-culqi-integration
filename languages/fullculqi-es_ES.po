@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Culqi Integration\n"
-"POT-Creation-Date: 2020-11-30 16:55-0300\n"
-"PO-Revision-Date: 2020-11-30 17:57-0300\n"
+"POT-Creation-Date: 2020-12-02 16:14-0300\n"
+"PO-Revision-Date: 2020-12-02 16:14-0300\n"
 "Last-Translator: \n"
 "Language-Team: Letsgodev\n"
 "Language: es\n"
@@ -268,7 +268,7 @@ msgid "15 Days"
 msgstr "15 Días"
 
 #: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-method.php:290
-#: includes/admin/metaboxes/class-fullculqi-charges.php:33
+#: includes/admin/metaboxes/class-fullculqi-charges.php:83
 #: includes/admin/metaboxes/class-fullculqi-orders.php:32
 msgid "Status"
 msgstr "Estado"
@@ -376,7 +376,6 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: includes/3rd-party/plugins/woocommerce/layouts/notice_currency.php:2
-#: includes/class-fullculqi.php:151
 msgid ""
 "Woocommerce Culqi Full Integration plugin needs the currency in the commerce "
 "be PEN or USD to work!"
@@ -385,7 +384,7 @@ msgstr ""
 "ecommerce sea PEN o USD para funcionar!"
 
 #: includes/3rd-party/plugins/woocommerce/layouts/order_log.php:5
-#: includes/admin/metaboxes/class-fullculqi-charges.php:21
+#: includes/admin/metaboxes/class-fullculqi-charges.php:72
 #: includes/admin/metaboxes/class-fullculqi-customers.php:18
 #: includes/admin/metaboxes/class-fullculqi-orders.php:20
 #: resources/layouts/admin/metaboxes/customer_cards.php:12
@@ -477,45 +476,55 @@ msgstr "Bienvenido a Culqi Integración"
 msgid "FullCulqi Integration"
 msgstr "Culqi Integración"
 
-#: includes/admin/metaboxes/class-fullculqi-charges.php:28
+#: includes/admin/metaboxes/class-fullculqi-charges.php:54
+msgid "Do you want to start the refund?"
+msgstr "Quieres iniciar el reembolso?"
+
+#: includes/admin/metaboxes/class-fullculqi-charges.php:55
+msgid "Processing the refund."
+msgstr "Procesando el reembolso."
+
+#: includes/admin/metaboxes/class-fullculqi-charges.php:56
+msgid "Refund completed."
+msgstr "Reembolso completado."
+
+#: includes/admin/metaboxes/class-fullculqi-charges.php:57
+msgid "Refund Error."
+msgstr "Reembolso Error."
+
+#: includes/admin/metaboxes/class-fullculqi-charges.php:79
 #: includes/admin/metaboxes/class-fullculqi-customers.php:25
 #: includes/admin/metaboxes/class-fullculqi-orders.php:28
-#: resources/layouts/admin/metaboxes/customer_basic.php:30
+#: resources/layouts/admin/metaboxes/customer_basic.php:25
 msgid "Creation"
 msgstr "Creación"
 
-#: includes/admin/metaboxes/class-fullculqi-charges.php:29
+#: includes/admin/metaboxes/class-fullculqi-charges.php:80
 #: includes/admin/metaboxes/class-fullculqi-customers.php:26
 #: includes/admin/metaboxes/class-fullculqi-orders.php:30
-#: resources/layouts/admin/metaboxes/customer_basic.php:18
+#: resources/layouts/admin/metaboxes/customer_basic.php:13
 msgid "Email"
 msgstr "Email"
 
-#: includes/admin/metaboxes/class-fullculqi-charges.php:30
-#: resources/layouts/admin/metaboxes/charge_basic.php:24
-#: resources/layouts/admin/metaboxes/order_basic.php:28
-msgid "Currency"
-msgstr "Moneda"
-
-#: includes/admin/metaboxes/class-fullculqi-charges.php:31
+#: includes/admin/metaboxes/class-fullculqi-charges.php:81
 #: includes/admin/metaboxes/class-fullculqi-orders.php:31
 #: resources/layouts/admin/metaboxes/charge_basic.php:28
 #: resources/layouts/admin/metaboxes/order_basic.php:32
 msgid "Amount"
 msgstr "Monto"
 
-#: includes/admin/metaboxes/class-fullculqi-charges.php:32
+#: includes/admin/metaboxes/class-fullculqi-charges.php:82
 #: includes/functions.php:177
 msgid "Refunded"
 msgstr "Reembolsado"
 
-#: includes/admin/metaboxes/class-fullculqi-charges.php:105
+#: includes/admin/metaboxes/class-fullculqi-charges.php:163
 #: includes/admin/metaboxes/class-fullculqi-customers.php:68
 #: includes/admin/metaboxes/class-fullculqi-orders.php:100
 msgid "Basic"
 msgstr "Básico"
 
-#: includes/admin/metaboxes/class-fullculqi-charges.php:114
+#: includes/admin/metaboxes/class-fullculqi-charges.php:172
 #: includes/admin/metaboxes/class-fullculqi-orders.php:109
 msgid "Source"
 msgstr "Fuente"
@@ -526,7 +535,7 @@ msgstr "Nombre"
 
 #: includes/admin/metaboxes/class-fullculqi-customers.php:28
 #: resources/layouts/admin/metaboxes/charge_basic.php:76
-#: resources/layouts/admin/metaboxes/customer_basic.php:46
+#: resources/layouts/admin/metaboxes/customer_basic.php:41
 #: resources/layouts/admin/metaboxes/customer_cards.php:14
 #: resources/layouts/admin/metaboxes/order_basic.php:66
 msgid "Country"
@@ -534,7 +543,7 @@ msgstr "País"
 
 #: includes/admin/metaboxes/class-fullculqi-customers.php:29
 #: resources/layouts/admin/metaboxes/charge_basic.php:80
-#: resources/layouts/admin/metaboxes/customer_basic.php:50
+#: resources/layouts/admin/metaboxes/customer_basic.php:45
 #: resources/layouts/admin/metaboxes/order_basic.php:70
 msgid "Phone"
 msgstr "Teléfono"
@@ -544,41 +553,29 @@ msgstr "Teléfono"
 msgid "Cards"
 msgstr "Tarjetas"
 
-#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:80
+#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:88
 msgid "Sync from Culqi"
 msgstr "Sincronizar desde Culqi"
 
-#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:81
+#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:89
 msgid "Do you want to start the sync?"
 msgstr "Quieres iniciar la sincronización?"
 
-#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:83
+#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:91
 msgid "Synchronizing. It may take several minutes."
 msgstr "Sincronizando. Esto puede tomar varios minutos."
 
-#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:84
-msgid "Complete synchronization."
-msgstr "Sincronización completa."
+#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:92
+msgid "Synchronization completed."
+msgstr "Sincronización completada."
 
-#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:85
+#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:93
+msgid "Oh! there are more items. Please wait."
+msgstr "Oh! Hay más. Por favor espere."
+
+#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:94
 msgid "Error in the synchronization."
 msgstr "Error en la sincronización."
-
-#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:108
-msgid "Do you want to start the refund?"
-msgstr "Quieres iniciar el reembolso?"
-
-#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:109
-msgid "Processing the refund."
-msgstr "Procesando el reembolso."
-
-#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:110
-msgid "Refund completed."
-msgstr "Reembolso completado."
-
-#: includes/admin/metaboxes/class-fullculqi-metaboxes.php:111
-msgid "Refund Error."
-msgstr "Reembolso Error."
 
 #: includes/admin/metaboxes/class-fullculqi-orders.php:27
 #: resources/layouts/admin/metaboxes/order_basic.php:36
@@ -708,15 +705,6 @@ msgstr "No hay Culqi credenciales"
 msgid "Cheatin&#8217; huh?"
 msgstr "Cheatin&#8217; huh?"
 
-#: includes/class-fullculqi.php:147
-#, php-format
-msgid ""
-"Currently you have the Woocommerce option activated on Fullculqi plugin, but "
-"%s is not activated."
-msgstr ""
-"Actualmente tienes la opción de Woocommerce activado en el plugin FullCulqi, "
-"pero %s no está activado."
-
 #: includes/functions.php:43
 msgid "Peruvian Sol"
 msgstr "Sol Peruano"
@@ -758,7 +746,7 @@ msgstr "Pendiente"
 msgid "Created"
 msgstr "Creado"
 
-#: includes/syncs/class-fullculqi-orders.php:111
+#: includes/syncs/class-fullculqi-orders.php:122
 msgid "Culqi Order Data empty"
 msgstr "Culqi Ordenes Información vacía"
 
@@ -849,6 +837,11 @@ msgstr "Fecha de Creación"
 msgid "Capture Date"
 msgstr "Fecha de Captura"
 
+#: resources/layouts/admin/metaboxes/charge_basic.php:24
+#: resources/layouts/admin/metaboxes/order_basic.php:28
+msgid "Currency"
+msgstr "Moneda"
+
 #: resources/layouts/admin/metaboxes/charge_basic.php:32
 msgid "Refund"
 msgstr "Reembolso"
@@ -858,34 +851,34 @@ msgid "Refund Charge"
 msgstr "Reembolsar cargo"
 
 #: resources/layouts/admin/metaboxes/charge_basic.php:64
-#: resources/layouts/admin/metaboxes/customer_basic.php:22
+#: resources/layouts/admin/metaboxes/customer_basic.php:17
 #: resources/layouts/admin/metaboxes/order_basic.php:54
 msgid "First Name"
 msgstr "Primer Nombre"
 
 #: resources/layouts/admin/metaboxes/charge_basic.php:68
-#: resources/layouts/admin/metaboxes/customer_basic.php:26
+#: resources/layouts/admin/metaboxes/customer_basic.php:21
 #: resources/layouts/admin/metaboxes/order_basic.php:58
 msgid "Last Name"
 msgstr "Segundo Nombre"
 
 #: resources/layouts/admin/metaboxes/charge_basic.php:72
-#: resources/layouts/admin/metaboxes/customer_basic.php:42
+#: resources/layouts/admin/metaboxes/customer_basic.php:37
 #: resources/layouts/admin/metaboxes/order_basic.php:62
 msgid "City"
 msgstr "Ciudad"
 
-#: resources/layouts/admin/metaboxes/customer_basic.php:8
+#: resources/layouts/admin/metaboxes/customer_basic.php:3
 #, php-format
 msgid "Customer ID : %s"
 msgstr "Cliente ID : %s"
 
-#: resources/layouts/admin/metaboxes/customer_basic.php:11
+#: resources/layouts/admin/metaboxes/customer_basic.php:6
 #, php-format
 msgid "Customer via FullCulqi: %s"
 msgstr "Cliente via Culqi: %s"
 
-#: resources/layouts/admin/metaboxes/customer_basic.php:38
+#: resources/layouts/admin/metaboxes/customer_basic.php:33
 msgid "Address"
 msgstr "Dirección"
 
@@ -981,6 +974,17 @@ msgstr "Sincronizar con Culqi"
 msgid "Not now"
 msgstr "No ahora"
 
+#~ msgid "Complete synchronization."
+#~ msgstr "Sincronización completa."
+
+#, php-format
+#~ msgid ""
+#~ "Currently you have the Woocommerce option activated on Fullculqi plugin, "
+#~ "but %s is not activated."
+#~ msgstr ""
+#~ "Actualmente tienes la opción de Woocommerce activado en el plugin "
+#~ "FullCulqi, pero %s no está activado."
+
 #~ msgid "Culqi Provider Payment error : There was not set any refund"
 #~ msgstr "Culqi Error de Pago : No se estableció ningún reembolso"
 
@@ -998,9 +1002,6 @@ msgstr "No ahora"
 
 #~ msgid "FullCulqi payment transactions log"
 #~ msgstr "Log de transacciones de Culqi"
-
-#~ msgid "Synchronize Payments"
-#~ msgstr "Sincronizar Pagos"
 
 #~ msgid "Activate Payment Method in Woocommerce"
 #~ msgstr "Activar método de pago para Woocommerce"

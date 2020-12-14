@@ -138,7 +138,7 @@
 
 			// Ajax Start
 			$( document ).ajaxStart( function() {
-				$('#fullculqi_notify').empty();
+				$('#fullculqi_notify').removeClass('woocommerce-error').empty();
 				
 				$('#fullculqi_receipt_page').waitMe({
 					effect		: 'pulse',
@@ -167,8 +167,7 @@
 
 			if( Culqi.error ) {
 
-				const msg = '<p style="color:#e54848; font-weight:bold">' + Culqi.error.user_message + '</p>';
-				$('#fullculqi_notify').html( msg );
+				$('#fullculqi_notify').addClass('woocommerce-error').html( Culqi.error.user_message );
 			
 			} else {
 
@@ -224,8 +223,8 @@
 						location.href = fullculqi_vars.url_success;
 					
 					} else {
-						
-						$('#fullculqi_notify').html( '<p style="color:#e54848; font-weight:bold">'+ fullculqi_vars.msg_fail + '</p>' );
+
+						$('#fullculqi_notify').addClass('woocommerce-error').html( fullculqi_vars.msg_fail );
 					}			
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -235,7 +234,7 @@
 					console.log(errorThrown);
 					
 					$('#fullculqi_notify').empty();
-					$('#fullculqi_notify').html( fullculqi_vars.msg_error );
+					$('#fullculqi_notify').addClass('woocommerce-error').html( fullculqi_vars.msg_error );
 
 					$('#fullculqi_notify').trigger('fullculqi.checkout.error', [ post_data, jqXHR, textStatus, errorThrown ] );
 				}

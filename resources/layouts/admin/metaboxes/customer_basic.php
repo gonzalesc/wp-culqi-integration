@@ -1,18 +1,13 @@
-<?php
-if ( ! defined( 'ABSPATH' ) )
-	exit;
-?>
-
 <div class="culqi_customers_box">
-	<h2 class="culqi_customers_h2">
+	<h2 class="metabox_h2">
 		<?php printf( esc_html__( 'Customer ID : %s','fullculqi'), $id ); ?>
 	</h2>
-	<p class="culqi_customers_subh2">
-		<?php printf( esc_html__( 'Customer via FullCulqi: %s','fullculqi'), $names ); ?>
+	<p class="metabox_subh2">
+		<?php printf( esc_html__( 'Customer via FullCulqi: %s', 'fullculqi' ), $names ); ?>
 	</p>
 
-	<div class="culqi_data_column_container">
-		<div class="culqi_data_column">
+	<div class="metabox_column_container">
+		<div class="metabox_column">
 			<ul>
 				<li>
 					<b><?php esc_html_e( 'Email', 'fullculqi' ); ?> : </b>
@@ -32,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) )
 				</li>
 			</ul>
 		</div>
-		<div class="culqi_data_column">
+		<div class="metabox_column">
 			<ul>
 				<li>
 					<b><?php esc_html_e( 'Address', 'fullculqi' ); ?> : </b>

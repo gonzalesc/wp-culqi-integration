@@ -57,6 +57,10 @@ function fullculqi_currencies( $type = 'name' ) {
  * @return string
  */
 function fullculqi_format_price( $amount = 0, $currency = 'PEN' ) {
+
+	if( empty( $currency ) )
+		return floatval( $amount );
+
 	$symbols = fullculqi_currencies( 'symbol' );
 
 	$output = $symbols[ $currency ] . ' ' . number_format( $amount, 2 );
@@ -197,31 +201,37 @@ function fullculqi_multipayments_statuses() {
 }
 
 
-/**
- * Get PostID from Meta values
- * @param  string $meta_key
- * @param  string $meta_value
- * @return integer
- */
-function fullculqi_getPostFromMeta( $meta_key = '', $meta_value = '' ) {
+function fullculqi_class_from_status( $status = '', $type = 'charges' ) {
 
-	if( empty( $meta_key ) || empty( $meta_value ) )
-		return false;
+	$classes = [];
 
-	global $wpdb;
+	if( $type == 'charges' ) {
+		$classes = [
+			'captured'		=> 'success',
+			'authorized'	=> 'warning',
+			'expired'		=> 'secondary',
+			'refunded'		=> 'error',
+		];
+	} elseif( $type == 'orders' ) {
+		$classes = [
+			'paid'			=> 'success',
+			'pending'		=> 'warning',
+			'expired'		=> 'error',
+			'deleted'		=> 'error',
+			'created'		=> 'secondary',
+		];
+	}
 
-	$query = 'SELECT post_id FROM '. $wpdb->postmeta .' WHERE meta_key=%s && meta_value=%s LIMIT 1';
-	$query = $wpdb->prepare( $query, $meta_key, $meta_value );
+	$class = isset( $classes[$status] ) ? $classes[$status] : '';
 
-	$post_id = $wpdb->get_var( $query );
-
-	if( empty( $post_id ) )
-		return false;
-
-	return $post_id;
+	return apply_filters( 'fullculqi/class_from_status', $class, $status, $type );
 }
 
-
+/**
+ * Convert Unix Time to Date
+ * @param  string $unixTime
+ * @return string
+ */
 function fullculqi_convertToDate( $unixTime = '' ) {
 	if( empty( $unixTime ) )
 		return false;
@@ -234,4 +244,25 @@ function fullculqi_convertToDate( $unixTime = '' ) {
 	$date = intval( $unixTime );
 
 	return date( 'Y-m-d H:i:s', $date );
+}
+
+/**
+ * Get PostId from MetaValues
+ * @param  string $meta_key
+ * @param  string $meta_value
+ * @return integer
+ */
+function fullculqi_post_from_meta( $meta_key = '', $meta_value = '' ) {
+
+	if( empty( $meta_key ) )
+		return false;
+
+	global $wpdb;
+
+	$query = 'SELECT post_id FROM '.$wpdb->postmeta.' WHERE meta_key=%s && meta_value=%s LIMIT 1';
+	$query = $wpdb->prepare( $query, $meta_key, $meta_value );
+	
+	$post_id = $wpdb->get_var( $query );
+
+	return apply_filters( 'fullculqi/post_from_meta', $post_id, $meta_key, $meta_value );
 }

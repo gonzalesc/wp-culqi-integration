@@ -72,8 +72,8 @@ class FullCulqi_Customers {
 		return [
 			'status'	=> 'ok',
 			'data'		=> [
-				'remaining' => $customer->paging->remaining_items,
-				'after_id'	=> $customer->paging->cursors->after,
+				'remaining' => $customers->paging->remaining_items,
+				'after_id'	=> $customers->paging->cursors->after,
 			]
 		];
 	}
@@ -103,9 +103,7 @@ class FullCulqi_Customers {
 		$meta_key = 'culqi_user_id';
 		$meta_value = absint( $wpuser_id );
 
-		$query = 'SELECT post_id FROM '.$wpdb->postmeta.' WHERE meta_key=%s && meta_value=%s';
-		$query = $wpdb->prepare( $query, $meta_key, $meta_value );
-		$post_id = $wpdb->get_var( $query );
+		$post_id = fullculqi_post_from_meta( $meta_key, $meta_value );
 
 		if( empty( $post_id ) )
 			return false;
@@ -185,8 +183,9 @@ class FullCulqi_Customers {
 		update_post_meta( $post_id, 'culqi_data', $customer );
 		update_post_meta( $post_id, 'culqi_email', $customer->email );
 
+		update_post_meta( $post_id, 'culqi_creation_date', fullculqi_convertToDate( $customer->creation_date ) );
+
 		$basic = [
-			'culqi_creation'	=> fullculqi_convertToDate( $customer->creation_date ),
 			'culqi_first_name'	=> $customer->antifraud_details->first_name,
 			'culqi_last_name'	=> $customer->antifraud_details->last_name,
 			'culqi_names'		=> $names,
@@ -207,7 +206,6 @@ class FullCulqi_Customers {
 			update_user_meta( $user->ID, 'culqi_id', $customer->id );
 			update_user_meta( $user->ID, 'culqi_post_id', $post_id );
 		}
-
 
 		do_action( 'fullculqi/customers/wppost', $customer, $post_id );
 
@@ -254,7 +252,7 @@ class FullCulqi_Customers {
 
 		$wpdb->query( $query );
 
-		do_action( 'fullculqi/customers/delete' );
+		do_action( 'fullculqi/customers/wpdelete' );
 
 		return true;
 	}

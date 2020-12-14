@@ -16,6 +16,8 @@ class FullCulqi_Cards {
 
 		$args = apply_filters( 'fullculqi/cards/create/args', $args );
 
+		update_option('jolo_11', print_r($args,true));
+
 		try {
 			$card = $culqi->Cards->create( $args );
 		} catch(Exception $e) {
@@ -23,7 +25,9 @@ class FullCulqi_Cards {
 		}
 
 		if( ! isset( $card->object ) || $card->object == 'error' )
-			return [ 'status' => 'error', 'data' => $customer->merchant_message ];
+			return [ 'status' => 'error', 'data' => $card->merchant_message ];
+
+		update_option('jolo_12', print_r($card,true));
 
 		do_action( 'fullculqi/cards/create', $card );
 

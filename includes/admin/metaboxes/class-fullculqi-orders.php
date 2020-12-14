@@ -52,7 +52,8 @@ class FullCulqi_Metaboxes_Orders extends FullCulqi_Metaboxes {
 		switch( $col ) {
 			case 'culqi_cip'		: $value = get_post_meta( $post_id, 'culqi_cip', true );
 				break;
-			case 'culqi_creation'	: $value = $basic['culqi_creation']; break;
+			case 'culqi_creation'	:
+				$value = get_post_meta( $post_id, 'culqi_creation_date', true ); break;
 			case 'culqi_expiration'	: $value = $basic['culqi_expiration']; break;
 			case 'culqi_email'		:
 
@@ -73,10 +74,11 @@ class FullCulqi_Metaboxes_Orders extends FullCulqi_Metaboxes {
 			case 'culqi_status'		:
 				$statuses = fullculqi_multipayments_statuses();
 				$status = get_post_meta( $post_id, 'culqi_status', true );
+				$class = fullculqi_class_from_status( $status, 'orders' );
 
 				$value = sprintf(
-					'<mark class="culqi_status_2 %s"><span>%s</span></mark>',
-					$status, $statuses[$status]
+					'<mark class="metabox_badged %s"><span>%s</span></mark>',
+					$class, $statuses[$status]
 				);
 
 				break;
@@ -126,17 +128,20 @@ class FullCulqi_Metaboxes_Orders extends FullCulqi_Metaboxes {
 		$status_date = get_post_meta( $post->ID, 'culqi_status_date', true );
 		$cip		= get_post_meta( $post->ID, 'culqi_cip', true );
 
+		$status_class = fullculqi_class_from_status( $status, 'orders' );
+
 		$args = apply_filters( 'fullculqi/orders/metabox_basic/args', [
 			'post_id'		=> $post->ID,
 			'id'			=> get_post_meta( $post->ID, 'culqi_id', true ),
 			'order_id'		=> get_post_meta( $post->ID, 'culqi_order_id', true ),
-			'creation'		=> $basic['culqi_creation'],
+			'creation'		=> get_post_meta( $post->ID, 'culqi_creation_date', true ),
 			'expiration'	=> $basic['culqi_expiration'],
 			'currency'		=> $basic['culqi_currency'],
 			'amount'		=> $basic['culqi_amount'],
 			'cip'			=> $cip,
 			'statuses'		=> fullculqi_multipayments_statuses(),
 			'status'		=> $status,
+			'status_class'	=> $status_class,
 			'status_date'	=> $status_date,
 			'email'			=> $customer['culqi_email'],
 			'first_name'	=> $customer['culqi_first_name'],

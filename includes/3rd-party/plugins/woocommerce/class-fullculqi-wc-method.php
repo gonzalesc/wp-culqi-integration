@@ -81,10 +81,9 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			// Check if there is multipayment
 			if( $this->multipayment == 'yes' ) {
 
-				$culqi_order_id = get_post_meta( $order_id, 'culqi_order_id', true );
+				$culqi_order_id = get_post_meta( $order_id, '_culqi_order_id', true );
 
 				if( empty( $culqi_order_id ) ) {
-
 
 					// Antifraud Customer Data
 					$client_details = [ 'email' => $order->get_billing_email() ];
@@ -140,7 +139,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 						$culqi_order_id = $culqi_order['data']['culqi_order_id'];
 
 						// Save meta order
-						update_post_meta( $order->get_id(), 'culqi_order_id', $culqi_order_id );
+						update_post_meta( $order->get_id(), '_culqi_order_id', $culqi_order_id );
 
 						// Log
 						$notice = sprintf(
@@ -436,8 +435,8 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 		// Logs
 		$log = new FullCulqi_Logs( $order->get_id() );
 
-		$culqi_charges_id = get_post_meta( $order->get_id(), 'culqi_charge_id', true );
-		$post_charge_id = get_post_meta( $order->get_id(), 'post_charge_id', true );
+		$culqi_charges_id = get_post_meta( $order->get_id(), '_culqi_charge_id', true );
+		$post_charge_id = get_post_meta( $order->get_id(), '_post_charge_id', true );
 
 		$args = [
 			'amount'	=> round( $amount*100, 0 ),

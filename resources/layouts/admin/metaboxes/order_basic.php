@@ -1,14 +1,14 @@
 <div class="culqi_orders_box">
-	<h2 class="culqi_orders_h2">
+	<h2 class="metabox_h2">
 		<?php printf( esc_html__( 'Culqi ID : %s','fullculqi'), $id ); ?>
 	</h2>
-	<p class="culqi_orders_subh2">
+	<p class="metabox_subh2">
 		<?php printf( esc_html__( 'Created via FullCulqi on %s.', 'fullculqi' ), $creation ); ?>
 	</p>
 
-	<div class="culqi_data_column_container">
-		<div class="culqi_data_column">
-			<h3 class="culqi_orders_h3">
+	<div class="metabox_column_container">
+		<div class="metabox_column">
+			<h3 class="metabox_h3">
 				<?php esc_html_e( 'Order Data', 'fullculqi' ); ?>
 			</h3>
 			<ul>
@@ -40,13 +40,13 @@
 			</ul>
 			<?php
 				printf(
-					'<mark class="culqi_status_2 %s"><span>%s</span></mark>',
-					$status, $statuses[$status]
+					'<mark class="metabox_badged %s"><span>%s</span></mark>',
+					$status_class, $statuses[$status]
 				);
 			?>
 		</div>
-		<div class="culqi_data_column">
-			<h3 class="culqi_orders_h3">
+		<div class="metabox_column">
+			<h3 class="metabox_h3">
 				<?php esc_html_e( 'Customer', 'fullculqi' ); ?>
 			</h3>
 			<ul>

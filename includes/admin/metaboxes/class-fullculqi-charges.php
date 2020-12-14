@@ -10,6 +10,57 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 
 
 	/**
+	 * Add Custom Script to this PostType
+	 * @return mixed
+	 */
+	public function add_scripts() {
+		global $pagenow, $post;
+
+		$allowed_pages = [ 'post-new.php', 'post.php' ];
+
+		if( ! in_array( $pagenow, $allowed_pages ) || $this->post_type != get_post_type() )
+			return;
+
+		wp_enqueue_script(
+			'fullculqi-charges-js',
+			FULLCULQI_URL . 'resources/assets/js/admin-charges.js',
+			[ 'jquery' ], false, true
+		);
+
+		// Loading Gif
+		$img_loading = sprintf(
+			'<img src="%s" style="width: auto;" />',
+			admin_url( 'images/spinner.gif' )
+		);
+
+		// Success Icon
+		$img_success = sprintf(
+			'<img src="%s" style="width: auto;" />',
+			admin_url( 'images/yes.png' )
+		);
+
+		// Failure Icon
+		$img_failure = sprintf(
+			'<img src="%s" style="width: auto;" />',
+			admin_url('images/no.png')
+		);
+
+		wp_localize_script( 'fullculqi-charges-js', 'fullculqi_charges_vars',
+			apply_filters('fullculqi/metaboxes/charges/localize', [
+				'url_ajax'			=> admin_url( 'admin-ajax.php' ),
+				'img_loading'		=> $img_loading,
+				'img_success'		=> $img_success,
+				'img_failure'		=> $img_failure,
+				'refund_confirm'	=> esc_html__( 'Do you want to start the refund?', 'fullculqi' ),
+				'refund_loading'	=> esc_html__( 'Processing the refund.', 'fullculqi' ),
+				'refund_success'	=> esc_html__( 'Refund completed.', 'fullculqi' ),
+				'refund_failure'	=> esc_html__( 'Refund Error.', 'fullculqi' ),
+				'nonce'				=> wp_create_nonce( 'fullculqi-wpnonce' ),
+			] )
+		);
+	}
+
+	/**
 	 * Column Name
 	 * @param  array $cols
 	 * @return array
@@ -25,11 +76,11 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 			$newCols[ $key_column ] = $value_column;
 
 			if( $key_column == 'title' ) {			
-				$newCols['culqi_creation']	= esc_html__( 'Creation', 'fullculqi' );
 				$newCols['culqi_email']		= esc_html__( 'Email', 'fullculqi' );
 				$newCols['culqi_amount']	= esc_html__( 'Amount', 'fullculqi' );
 				$newCols['culqi_refunded']	= esc_html__( 'Refunded', 'fullculqi' );
 				$newCols['culqi_status']	= esc_html__( 'Status', 'fullculqi' );
+				$newCols['culqi_creation']	= esc_html__( 'Creation', 'fullculqi' );
 			}
 		}
 		
@@ -44,30 +95,31 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 	 */
 	public function column_value( $col = '', $post_id = 0 ) {
 
-		$basic 		= get_post_meta( $post_id, 'culqi_basic', true );
-		$customer 	= get_post_meta( $post_id, 'culqi_customer', true );
-
-		// Temporal
-		if( metadata_exists( 'post', $post_id, 'culqi_status' ) )
-			$status = get_post_meta($post_id, 'culqi_status', true);
-		else
-			$status = 'captured';
+		$basic = get_post_meta( $post_id, 'culqi_basic', true );
 
 		$value = '';
 
 		switch( $col ) {
-			case 'culqi_id'			: $value = get_post_meta( $post_id, 'culqi_id', true );
-				break;
-			case 'culqi_creation'	: $value = $basic['culqi_creation']; break;
+			case 'culqi_id'			:
+					$value = get_post_meta( $post_id, 'culqi_id', true ); break;
+			case 'culqi_creation'	:
+					$value = get_post_meta( $post_id, 'culqi_creation_date', true ); break;
 			case 'culqi_email'		:
+
+				$culqi_customer_id 	= get_post_meta( $post_id, 'culqi_customer_id', true );
+				$post_customer_id = fullculqi_post_from_meta( 'culqi_id', $culqi_customer_id );
 				
-				if( ! empty( $customer['post_id'] ) ) {
+				if( ! empty( $post_customer_id ) ) {
+					$customer_email = get_post_meta( $post_customer_id, 'culqi_email', true );
+
 					$value = sprintf(
 						'<a target="_blank" href="%s">%s</a>',
-						get_edit_post_link( $customer['post_id'] ), $customer['culqi_email']
+						get_edit_post_link( $post_customer_id ), $customer_email
 					);
-				} else 
+				} else {
+					$customer = get_post_meta( $post_id, 'culqi_customer', true );
 					$value = $customer['culqi_email'];
+				}
 
 				break;
 
@@ -87,10 +139,13 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 			case 'culqi_status'		:
 
 				$statuses = fullculqi_charges_statuses();
+				$status = get_post_meta( $post_id, 'culqi_status', true );
+	
+				$class = fullculqi_class_from_status( $status, 'charges' );
 
 				$value = sprintf(
-					'<mark class="culqi_status_2 %s"><span>%s</span></mark>',
-					$status, $statuses[$status]
+					'<mark class="metabox_badged %s"><span>%s</span></mark>',
+					$class, $statuses[$status]
 				);
 
 				break;
@@ -98,8 +153,6 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 
 		echo apply_filters( 'fullculqi/charges/column_value', $value, $col, $post_id );
 	}
-
-
 
 	/**
 	 * Add Meta Boxes to Shop Order CPT
@@ -135,40 +188,47 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 		global $post;
 
 		$basic 		= get_post_meta( $post->ID, 'culqi_basic', true );
-		$customer 	= get_post_meta( $post->ID, 'culqi_customer', true );
 
-		// Temporal
-		if( metadata_exists( 'post', $post->ID, 'culqi_status' ) )
-			$status = get_post_meta( $post->ID, 'culqi_status', true );
-		else
-			$status = 'captured';
+		$culqi_customer_id 	= get_post_meta( $post->ID, 'culqi_customer_id', true );
+		$post_customer_id = fullculqi_post_from_meta( 'culqi_id', $culqi_customer_id );
 
-		// Temporal
-		if( metadata_exists( 'post', $post->ID, 'culqi_capture' ) )
-			$capture = get_post_meta( $post->ID, 'culqi_capture', true );
-		else
-			$capture = 1;
+		if( ! empty( $post_customer_id ) ) {
+			$customer 	= get_post_meta( $post_customer_id, 'culqi_basic', true );
 
-		// Temporal
-		if( metadata_exists( 'post', $post->ID, 'culqi_capture_date' ) )
-			$capture_date = get_post_meta( $post->ID, 'culqi_capture_date', true );
-		else
-			$capture_date = $basic['culqi_creation'];
+			$customer_email	= get_post_meta( $post_customer_id, 'culqi_email', true );
+			$customer_email = sprintf(
+				'<a target="_blank" href="%s">%s</a>',
+				get_edit_post_link( $post_customer_id ), $customer_email
+			);
+		} else  {
+			$customer 	= get_post_meta( $post->ID, 'culqi_customer', true );
+			$customer_email = $customer['culqi_email'];
+		}
+
+		// Status
+		$status = get_post_meta( $post->ID, 'culqi_status', true );
+		$status_class = fullculqi_class_from_status( $status, 'charges' );
+
+		// Capture
+		$capture = get_post_meta( $post->ID, 'culqi_capture', true );
+		$capture_date = get_post_meta( $post->ID, 'culqi_capture_date', true );
+
 
 		$args = apply_filters( 'fullculqi/charges/metabox_basic/args', [
 			'post_id'		=> $post->ID,
 			'id'			=> get_post_meta( $post->ID, 'culqi_id', true ),
 			'ip'			=> get_post_meta( $post->ID, 'culqi_ip', true ),
 			'order_id'		=> get_post_meta( $post->ID, 'culqi_order_id', true ),
-			'creation_date'	=> $basic['culqi_creation'],
+			'creation_date'	=> get_post_meta( $post->ID, 'culqi_creation_date', true ),
 			'currency'		=> $basic['culqi_currency'],
 			'amount'		=> $basic['culqi_amount'],
 			'refunded'		=> $basic['culqi_amount_refunded'],
 			'statuses'		=> fullculqi_charges_statuses(),
 			'status'		=> $status,
+			'status_class'	=> $status_class,
 			'capture'		=> $capture,
 			'capture_date'	=> $capture_date,
-			'email'			=> $customer['culqi_email'],
+			'email'			=> $customer_email,
 			'first_name'	=> $customer['culqi_first_name'],
 			'last_name'		=> $customer['culqi_last_name'],
 			'city'			=> $customer['culqi_city'],
@@ -178,7 +238,6 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 
 		fullculqi_get_template( 'resources/layouts/admin/metaboxes/charge_basic.php', $args );
 	}
-
 
 	/**
 	 * Metabox Source

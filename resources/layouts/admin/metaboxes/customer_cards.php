@@ -1,21 +1,19 @@
 <div class="culqi_customers_box">
-	<h2 class="culqi_customers_h2">
+	<h2 class="metabox_h2">
 		<?php esc_html_e( 'Cards', 'fullculqi' ); ?>
 	</h2>
 
-	<div class="culqi_data_column_container">
+	<div class="metabox_column_container">
 
 		<?php if( ! empty( $cards ) ) : ?>
 			<table class="widefat">
 				<thead>
 					<tr>
-						<td><?php esc_html_e( 'ID', 'fullculqi' ); ?></td>
-						<td><?php esc_html_e( 'Bank', 'fullculqi' ); ?></td>
-						<td><?php esc_html_e( 'Country', 'fullculqi' ); ?></td>
-						<td><?php esc_html_e( 'Type', 'fullculqi' ); ?></td>
-						<td><?php esc_html_e( 'Brand', 'fullculqi' ); ?></td>
 						<td><?php esc_html_e( 'Number', 'fullculqi' ); ?></td>
-
+						<td><?php esc_html_e( 'Brand', 'fullculqi' ); ?></td>
+						<td><?php esc_html_e( 'Type', 'fullculqi' ); ?></td>
+						<td><?php esc_html_e( 'Creation', 'fullculqi' ); ?></td>
+						
 						<?php if( ! empty( $actions ) ) : ?>
 							<td><?php esc_html_e( 'Actions', 'fullculqi' ); ?></td>
 						<?php endif; ?>
@@ -24,12 +22,10 @@
 				<tbody>
 				<?php foreach( $cards as $card ) : ?>
 					<tr>
-						<td><?php echo $card['culqi_card_id']; ?></td>
-						<td><?php echo $card['culqi_card_bank']; ?></td>
-						<td><?php echo $card['culqi_card_country']; ?></td>
-						<td><?php echo $card['culqi_card_type']; ?></td>
-						<td><?php echo $card['culqi_card_brand']; ?></td>
-						<td><?php echo $card['culqi_card_number']; ?></td>
+						<td><?php echo $card['culqi_number']; ?></td>
+						<td><?php echo $card['culqi_brand']; ?></td>
+						<td><?php echo $card['culqi_type']; ?></td>
+						<td><?php echo $card['culqi_creation']; ?></td>						
 
 						<?php if( ! empty( $actions ) ) : ?>
 						<td>

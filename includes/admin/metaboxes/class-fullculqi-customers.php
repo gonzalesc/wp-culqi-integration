@@ -45,7 +45,8 @@ class FullCulqi_Metaboxes_Customers extends FullCulqi_Metaboxes {
 		$basic = get_post_meta( $post_id, 'culqi_basic', true );
 
 		switch($col) {
-			case 'culqi_creation'	: $value = $basic['culqi_creation']; break;
+			case 'culqi_creation'	:
+				$value = get_post_meta( $post_id, 'culqi_creation_date', true ); break;
 			case 'culqi_email'		: $value = get_post_meta( $post_id,'culqi_email', true ); break;
 			case 'culqi_name'		: $value = $basic['culqi_names']; break;
 			case 'culqi_country'	: $value = $basic['culqi_country']; break;
@@ -84,12 +85,14 @@ class FullCulqi_Metaboxes_Customers extends FullCulqi_Metaboxes {
 		}
 
 		// Source Metaboxes
-		/*add_meta_box(
-			'culqi_customers_source',
-			esc_html__( 'Source', 'fullculqi' ),
-			[ $this, 'metabox_source' ],
-			$this->post_type, 'normal', 'high'
-		);*/
+		if( apply_filters( 'fullculqi/customers/metabox_source/enable', false, $post ) ) {
+			add_meta_box(
+				'culqi_customers_source',
+				esc_html__( 'Source', 'fullculqi' ),
+				[ $this, 'metabox_source' ],
+				$this->post_type, 'normal', 'high'
+			);
+		}
 	}
 
 
@@ -106,7 +109,7 @@ class FullCulqi_Metaboxes_Customers extends FullCulqi_Metaboxes {
 		$args = apply_filters( 'fullculqi/customers/metabox_basic/args', [
 			'id'			=> get_post_meta( $post->ID, 'culqi_id', true ),
 			'email'			=> get_post_meta( $post->ID, 'culqi_email', true ),
-			'creation'		=> $basic['culqi_creation'],
+			'creation'		=> get_post_meta( $post->ID, 'culqi_creation_date', true ),
 			'names'			=> $basic['culqi_names'],
 			'first_name'	=> $basic['culqi_first_name'],
 			'last_name'		=> $basic['culqi_last_name'],

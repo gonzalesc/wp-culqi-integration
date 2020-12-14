@@ -15,7 +15,7 @@
 		<?php esc_html_e( 'Cancel', 'fullculqi' ); ?>
 	</a>
 
-	<div id="fullculqi_notify" style="padding:10px 0px;"></div>
+	<div id="fullculqi_notify" class="" style="margin:15px 0px;"></div>
 
 	<?php do_action( 'fullculqi/receipt_page/after', $order_id ); ?>
 </div>

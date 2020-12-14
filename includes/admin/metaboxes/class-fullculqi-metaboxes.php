@@ -14,6 +14,12 @@ abstract class FullCulqi_Metaboxes {
 		// Script JS & CSS
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 
+		// Save Post
+		add_action( 'save_post_' . $this->post_type, [ $this, 'save_post' ], 10, 3 );
+
+		// Delete Post
+		add_action( 'before_delete_post', [ $this, 'delete_post' ], 10, 2 );
+
 		// Metaboxes
 		add_action( 'add_meta_boxes_' . $this->post_type, [ $this, 'metaboxes' ], 10, 1 );
 
@@ -22,6 +28,9 @@ abstract class FullCulqi_Metaboxes {
 
 		// Column Value
 		add_action( 'manage_' . $this->post_type . '_posts_custom_column', [ $this, 'column_value' ], 10, 2);
+
+		// Order by creation
+		add_action( 'pre_get_posts', [ $this, 'sort_by_field' ] );
 	}
 
 
@@ -31,17 +40,18 @@ abstract class FullCulqi_Metaboxes {
 	 */
 	public function enqueue_scripts() {
 		global $pagenow, $post;
+		
+		$is_list = $pagenow == 'edit.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == $this->post_type;
 
-		$post_type = [ 'culqi_charges', 'culqi_customers', 'culqi_orders' ];
-		$pages = [ 'post-new.php', 'edit.php', 'post.php' ];
+		$is_edit = in_array( $pagenow, [ 'post-new.php', 'post.php' ] ) && get_post_type() == $this->post_type;
 
-		if ( in_array( $this->post_type, $post_type ) && in_array( $pagenow, $pages ) ) {
+		// CSS
+		if( $is_list || $is_edit ) {
 			
 			wp_enqueue_style(
 				'fullculqi-css',
 				FULLCULQI_URL . 'resources/assets/css/admin-metaboxes.css'
 			);
-
 
 			// Loading Gif
 			$img_loading = sprintf(
@@ -62,7 +72,8 @@ abstract class FullCulqi_Metaboxes {
 			);
 
 
-			if( $pagenow == 'edit.php' && $_GET['post_type'] == $this->post_type ) {
+			// JS
+			if( $is_list ) {
 
 				wp_enqueue_script(
 					'fullculqi-js',
@@ -88,35 +99,36 @@ abstract class FullCulqi_Metaboxes {
 					] )
 				);
 			}
-
-			
-			$allowed_pages = [ 'post-new.php', 'post.php' ];
-
-			if( in_array( $pagenow, $allowed_pages ) && $this->post_type == 'culqi_charges' ) {
-
-				wp_enqueue_script(
-					'fullculqi-charges-js',
-					FULLCULQI_URL . 'resources/assets/js/admin-charges.js',
-					[ 'jquery' ], false, true
-				);
-
-				wp_localize_script( 'fullculqi-charges-js', 'fullculqi_charges_vars',
-					apply_filters('fullculqi/metaboxes/charges/localize', [
-						'url_ajax'			=> admin_url( 'admin-ajax.php' ),
-						'img_loading'		=> $img_loading,
-						'img_success'		=> $img_success,
-						'img_failure'		=> $img_failure,
-						'refund_confirm'	=> esc_html__( 'Do you want to start the refund?', 'fullculqi' ),
-						'refund_loading'	=> esc_html__( 'Processing the refund.', 'fullculqi' ),
-						'refund_success'	=> esc_html__( 'Refund completed.', 'fullculqi' ),
-						'refund_failure'	=> esc_html__( 'Refund Error.', 'fullculqi' ),
-						'nonce'				=> wp_create_nonce( 'fullculqi-wpnonce' ),
-					] )
-				);
-			}
 		}
+
+		$this->add_scripts();
 
 		do_action( 'fullculqi/metaboxes/enqueue_scripts' );
 	}
+
+
+	public function sort_by_field( $wp_query ) {
+
+		// If WP-Admin
+		if( ! is_admin() )
+			return;
+
+		// Post Type
+		if( ! isset( $wp_query->query['post_type'] ) || $wp_query->query['post_type'] != $this->post_type )
+			return;
+
+		// orderby value can be any column name
+		$wp_query->set( 'orderby', 'meta_value' );
+		$wp_query->set( 'meta_key', 'culqi_creation_date' );
+		$wp_query->set( 'order', 'DESC' );
+
+		return true;
+	}
+
+	public function save_post( $post_id = 0, $post, $update = false ) {}
+
+	public function delete_post( $post_id = 0, $post ) {}
+
+	public function add_scripts() {}
 }
 ?>

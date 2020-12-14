@@ -18,8 +18,11 @@ class FullCulqi_WC {
 		// Actions
 		add_action( 'fullculqi/api/wc-actions', [ $this, 'actions' ] );
 
-		// Update Order
-		add_action( 'fullculqi/orders/update', [ $this, 'update' ] );
+		// Webhook Update order
+		add_action( 'fullculqi/orders/update', [ $this, 'update_order' ] );
+
+		// Old Webhook update order
+		add_action( 'woocommerce_api_fullculqi_update_order', [ $this, 'old_update_order' ] );
 	}
 
 
@@ -49,6 +52,11 @@ class FullCulqi_WC {
 	 * @return array
 	 */
 	public function include_class( $methods = [] ) {
+
+		// Check if FullCulqi Class is included
+		if ( ! class_exists( 'WC_Gateway_FullCulqi' ) )
+			return $methods;
+
 		$methods[] = 'WC_Gateway_FullCulqi';
 		
 		return $methods;
@@ -97,8 +105,7 @@ class FullCulqi_WC {
 			return false;
 		}
 			
-
-		// Settings WC
+		// Settings Gateway
 		$method = get_option( 'woocommerce_fullculqi_settings', [] );
 
 		if( empty( $method ) )
@@ -118,8 +125,8 @@ class FullCulqi_WC {
 		$post_customer_id = 0;
 		if( $this->customer( $order ) ) {
 		
-			$culqi_customer_id = get_post_meta( $order->get_id(), 'culqi_customer_id', true );
-			$post_customer_id = get_post_meta( $order->get_id(), 'post_customer_id', true );
+			$culqi_customer_id = get_post_meta( $order->get_id(), '_culqi_customer_id', true );
+			$post_customer_id = get_post_meta( $order->get_id(), '_post_customer_id', true );
 		}
 
 
@@ -131,14 +138,15 @@ class FullCulqi_WC {
 		$order->add_order_note( $notice );
 
 		// Status Orders
-		if( $method['multi_status'] == 'wc-completed' )
-			$order->payment_complete();
-		else
-			$order->update_status( $method['multi_status'] );
+		$order->update_status( $method['multi_status'],
+			sprintf(
+				esc_html__( 'Status changed by FullCulqi (to %s)', 'fullculqi' ),
+				$method['multi_status']
+			)
+		);
 
 		// Update CIP CODE in WC Order
-		update_post_meta( $order->get_id(), 'culqi_cip', $post_data['cip_code'] );
-
+		update_post_meta( $order->get_id(), '_culqi_cip', $post_data['cip_code'] );
 
 		// From Culqi
 		$culqi_order = FullCulqi_Orders::after_confirm( $post_data, $post_customer_id );
@@ -163,7 +171,7 @@ class FullCulqi_WC {
 		$this->log->set_notice( $notice );
 
 		// Update meta post in wc order
-		update_post_meta( $order->get_id(), 'post_order_id', $post_order_id );
+		update_post_meta( $order->get_id(), '_post_order_id', $post_order_id );
 
 		// Update WC Order IN in Culqi Orders
 		update_post_meta( $post_order_id, 'culqi_wc_order_id', $order->get_id() );
@@ -198,8 +206,8 @@ class FullCulqi_WC {
 		// If the user is logged
 		if( $this->customer( $order ) ) {
 
-			$culqi_customer_id = get_post_meta( $order->get_id(), 'culqi_customer_id', true );
-			$post_customer_id = get_post_meta( $order->get_id(), 'post_customer_id', true );
+			$culqi_customer_id = get_post_meta( $order->get_id(), '_culqi_customer_id', true );
+			$post_customer_id = get_post_meta( $order->get_id(), '_post_customer_id', true );
 
 			// Create Card
 			if( ! empty( $culqi_customer_id ) ) {
@@ -207,9 +215,14 @@ class FullCulqi_WC {
 				$args_card = [
 					'customer_id'	=> $culqi_customer_id,
 					'token_id'		=> $token,
+					'metadata'		=> [
+						'customer_id'	=> $post_customer_id,
+					]
 				];
 
 				$culqi_card = FullCulqi_Cards::create( $args_card );
+
+				do_action( 'fullculqi/wc/charge/card', $culqi_card, $order );
 
 				if( $culqi_card['status'] == 'ok' ) {
 					$token = $culqi_card['data']['culqi_card_id'];
@@ -223,116 +236,119 @@ class FullCulqi_WC {
 			}
 		}
 
-		// Charges
 
-		$pnames = [];
-
-		foreach( $order->get_items() as $item ) {
-			$product = $item->get_product();
-			$pnames[] = $product->get_name();
-		}
-
-		$desc = count( $pnames ) == 0 ? 'Product' : implode(', ', $pnames);
+		if( apply_filters( 'fullculqi/wc/charge/is_new', false, $order ) ) {
+			
+			return apply_filters( 'fullculqi/wc/charge/create', false, $order );
 		
+		} else {
 
-		// Antifraud Customer Data
-		$antifraud_charges = [ 'email' => $order->get_billing_email() ];
+			// Charges
+			$pnames = [];
 
-		$billing_first_name 	= $order->get_billing_first_name();
-		$billing_last_name 		= $order->get_billing_last_name();
-		$billing_address_1 		= $order->get_billing_address_1();
-		$billing_phone 			= $order->get_billing_phone();
-		$billing_city 			= $order->get_billing_city();
-		$billing_country 		= $order->get_billing_country();
+			foreach( $order->get_items() as $item ) {
+				$product = $item->get_product();
+				$pnames[] = $product->get_name();
+			}
 
-		if( ! empty( $billing_first_name ) )
-			$antifraud['first_name'] = $billing_first_name;
+			$desc = count( $pnames ) == 0 ? 'Product' : implode(', ', $pnames);
+			
 
-		if( ! empty( $billing_last_name ) )
-			$antifraud['last_name'] = $billing_last_name;
+			// Antifraud Customer Data
+			$antifraud_charges = [ 'email' => $order->get_billing_email() ];
 
-		if( ! empty( $billing_address_1 ) )
-			$antifraud['address'] = $billing_address_1;
+			$billing_first_name 	= $order->get_billing_first_name();
+			$billing_last_name 		= $order->get_billing_last_name();
+			$billing_address_1 		= $order->get_billing_address_1();
+			$billing_phone 			= $order->get_billing_phone();
+			$billing_city 			= $order->get_billing_city();
+			$billing_country 		= $order->get_billing_country();
 
-		if( ! empty( $billing_city ) )
-			$antifraud['address_city'] = $billing_city;
+			if( ! empty( $billing_first_name ) )
+				$antifraud_charges['first_name'] = $billing_first_name;
 
-		if( ! empty( $billing_country ) )
-			$antifraud['country_code'] = $billing_country;
-		elseif( ! empty($country_code) )
-			$antifraud['country_code'] = $country_code;
+			if( ! empty( $billing_last_name ) )
+				$antifraud_charges['last_name'] = $billing_last_name;
 
-		if( ! empty( $billing_phone ) )
-			$antifraud['phone_number'] = $billing_phone;
-		
+			if( ! empty( $billing_address_1 ) )
+				$antifraud_charges['address'] = $billing_address_1;
 
-		// Metadata Order
-		$metadata_charges = [
-			'order_id'			=> $order->get_id(),
-			'order_number'		=> $order->get_order_number(),
-			'order_key'			=> $order->get_order_key(),
-			'post_customer'		=> isset( $post_customer_id ) ? $post_customer_id : false,
-		];
+			if( ! empty( $billing_city ) )
+				$antifraud_charges['address_city'] = $billing_city;
 
-		$args_charges = [
-			'amount'			=> fullculqi_format_total( $order->get_total() ),
-			'currency_code'		=> $order->get_currency(),
-			'description'		=> substr( str_pad( $desc, 5, '_' ), 0, 80 ),
-			'capture'			=> true,
-			'email'				=> $order->get_billing_email(),
-			'installments'		=> $installments,
-			'source_id'			=> $token,
-			'metadata'			=> $metadata_charges,
-			'antifraud_details'	=> $antifraud_charges,
-		];
+			if( ! empty( $billing_country ) )
+				$antifraud_charges['country_code'] = $billing_country;
+			elseif( ! empty($country_code) )
+				$antifraud_charges['country_code'] = $country_code;
 
-		$culqi_charge = FullCulqi_Charges::create( $args_charges );
+			if( ! empty( $billing_phone ) )
+				$antifraud_charges['phone_number'] = $billing_phone;
+			
 
-		if( $culqi_charge['status'] != 'ok' ) {
+			// Metadata Order
+			$metadata_charges = [
+				'order_id'			=> $order->get_id(),
+				'order_number'		=> $order->get_order_number(),
+				'order_key'			=> $order->get_order_key(),
+				'post_customer'		=> isset( $post_customer_id ) ? $post_customer_id : false,
+			];
 
-			$error = sprintf(
-				esc_html__( 'Culqi Charge Error: %s', 'fullculqi' ),
-				$culqi_customer['data']
+			$args_charges = [
+				'amount'			=> fullculqi_format_total( $order->get_total() ),
+				'currency_code'		=> $order->get_currency(),
+				'description'		=> substr( str_pad( $desc, 5, '_' ), 0, 80 ),
+				'capture'			=> true,
+				'email'				=> $order->get_billing_email(),
+				'installments'		=> $installments,
+				'source_id'			=> $token,
+				'metadata'			=> $metadata_charges,
+				'antifraud_details'	=> $antifraud_charges,
+			];
+
+			$culqi_charge = FullCulqi_Charges::create( $args_charges );
+
+			if( $culqi_charge['status'] != 'ok' ) {
+
+				$error = sprintf(
+					esc_html__( 'Culqi Charge Error: %s', 'fullculqi' ),
+					$culqi_customer['data']
+				);
+
+				$this->log->set_notice( $error );
+
+				return false;
+			}
+				
+			
+			$culqi_charge_id = $culqi_charge['data']['culqi_charge_id'];
+			$post_charge_id = $culqi_charge['data']['post_charge_id'];
+
+			// Meta value
+			update_post_meta( $order->get_id(), '_culqi_charge_id', $culqi_charge_id );
+
+			// Log
+			$notice = sprintf(
+				esc_html__( 'Culqi Charge Created: %s', 'fullculqi' ),
+				$culqi_charge_id
 			);
 
-			$this->log->set_notice( $error );
-
-			return false;
-		}
-			
-		
-		$culqi_charge_id = $culqi_charge['data']['culqi_charge_id'];
-		$post_charge_id = $culqi_charge['data']['post_charge_id'];
-
-		// Meta value
-		update_post_meta( $order->get_id(), 'culqi_charge_id', $culqi_charge_id );
-
-		// Log
-		$notice = sprintf(
-			esc_html__( 'Culqi Charge Created: %s', 'fullculqi' ),
-			$culqi_charge_id
-		);
-
-		$order->add_order_note( $notice );
-		$this->log->set_notice( $notice );
+			$order->add_order_note( $notice );
+			$this->log->set_notice( $notice );
 
 
-		// Log
-		$notice = sprintf(
-			esc_html__( 'Post Charge Created: %s', 'fullculqi' ), $post_charge_id
-		);
-		$this->log->set_notice( $notice );
+			// Log
+			$notice = sprintf(
+				esc_html__( 'Post Charge Created: %s', 'fullculqi' ), $post_charge_id
+			);
+			$this->log->set_notice( $notice );
 
-		// Update PostID in WC-Order
-		update_post_meta( $order->get_id(), 'post_charge_id', $post_charge_id );
+			// Update PostID in WC-Order
+			update_post_meta( $order->get_id(), '_post_charge_id', $post_charge_id );
 
-		// Update OrderID in CulqiCharges
-		update_post_meta( $post_charge_id, 'culqi_wc_order_id', $order->get_id() );
+			// Update OrderID in CulqiCharges
+			update_post_meta( $post_charge_id, 'culqi_wc_order_id', $order->get_id() );
 
-		// Change Status		
-		if( $method['status_success'] == 'wc-completed')
-			$order->payment_complete();
-		else {
+			// Change Status		
 			$order->update_status( $method['status_success'],
 				sprintf(
 					esc_html__( 'Status changed by FullCulqi (to %s)', 'fullculqi' ),
@@ -366,7 +382,7 @@ class FullCulqi_WC {
 			$this->log->set_notice( $notice );
 
 			// Update meta culqi id in wc order
-			update_post_meta( $order->get_id(), 'culqi_customer_id', $culqi_customer['culqi_id'] );
+			update_post_meta( $order->get_id(), '_culqi_customer_id', $culqi_customer['culqi_id'] );
 
 			// Log
 			$notice = sprintf(
@@ -375,7 +391,7 @@ class FullCulqi_WC {
 			$this->log->set_notice( $notice );
 
 			// Update meta post in wc order
-			update_post_meta( $order->get_id(), 'post_customer_id', $culqi_customer['post_id'] );
+			update_post_meta( $order->get_id(), '_post_customer_id', $culqi_customer['post_id'] );
 
 			return true;
 		}
@@ -442,7 +458,7 @@ class FullCulqi_WC {
 		$this->log->set_notice( $notice );
 
 		// Update meta culqi id in wc order
-		update_post_meta( $order->get_id(), 'culqi_customer_id', $culqi_customer_id );
+		update_post_meta( $order->get_id(), '_culqi_customer_id', $culqi_customer_id );
 
 		// Log
 		$notice = sprintf(
@@ -451,7 +467,7 @@ class FullCulqi_WC {
 		$this->log->set_notice( $notice );
 
 		// Update meta post in wc order
-		update_post_meta( $order->get_id(), 'post_customer_id', $post_customer_id );
+		update_post_meta( $order->get_id(), '_post_customer_id', $post_customer_id );
 
 		return true;
 	}
@@ -462,13 +478,12 @@ class FullCulqi_WC {
 	 * @param  OBJECT $culqi_order
 	 * @return mixed
 	 */
-	public function update( $culqi_order ) {
+	public function update_order( $culqi_order ) {
 
-		if( ! isset( $culqi_order->metadata->order_id ) )
+		if( ! isset( $culqi_order->id ) )
 			return;
 
-		$order_id = absint( $culqi_order->metadata->order_id );
-		
+		$order_id = fullculqi_post_from_meta( '_culqi_order_id', $culqi_order->id );
 		$order = new WC_Order( $order_id );
 
 		if( ! $order )
@@ -532,6 +547,35 @@ class FullCulqi_WC {
 		}
 
 		return true;
+	}
+
+	/**
+	 * [old_update_order description]
+	 * @return [type] [description]
+	 */
+	public function old_update_order() {
+		
+		$inputJSON	= file_get_contents('php://input');
+
+		if( empty( $inputJSON ) )
+			return;
+
+		$input = json_decode( $inputJSON );
+
+		if( $input->object != 'event' )
+			return;
+
+		$data = json_decode( $input->data );
+
+		if( $input->type != 'order.status.changed' )
+			return;
+
+		// Update Order
+		FullCulqi_Orders::update( $data );
+
+		http_response_code(200);
+		echo wp_send_json( ['result' => 'success' ] );
+		die();
 	}
 
 	/**

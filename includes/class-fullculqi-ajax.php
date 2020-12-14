@@ -40,6 +40,10 @@ class FullCulqi_Ajax {
 		// Run a security check.
 		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
 
+		// Check the permissions
+		if( ! current_user_can( 'manage_options' ) )
+			wp_send_json_error( esc_html( 'You do not have permission.', 'fullculqi_subs' ) );
+
 		$record = isset( $_POST['record'] ) ? intval( $_POST['record'] ) : 100;
 		$after_id = isset( $_POST['after_id'] ) ? esc_html( $_POST['after_id'] ) : '';
 
@@ -60,6 +64,10 @@ class FullCulqi_Ajax {
 		// Run a security check.
 		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
 
+		// Check the permissions
+		if( ! current_user_can( 'manage_options' ) )
+			wp_send_json_error( esc_html( 'You do not have permission.', 'fullculqi_subs' ) );
+
 		$record = isset( $_POST['record'] ) ? intval( $_POST['record'] ) : 100;
 		$after_id = isset( $_POST['after_id'] ) ? esc_html( $_POST['after_id'] ) : '';
 
@@ -79,6 +87,10 @@ class FullCulqi_Ajax {
 	public function sync_customers() {
 		// Run a security check.
 		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
+
+		// Check the permissions
+		if( ! current_user_can( 'manage_options' ) )
+			wp_send_json_error( esc_html( 'You do not have permission.', 'fullculqi_subs' ) );
 
 		$record = isset( $_POST['record'] ) ? intval( $_POST['record'] ) : 100;
 		$after_id = isset( $_POST['after_id'] ) ? esc_html( $_POST['after_id'] ) : '';
@@ -101,6 +113,10 @@ class FullCulqi_Ajax {
 		// Run a security check.
 		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
 
+		// Check the permissions
+		if( ! current_user_can( 'manage_options' ) )
+			wp_send_json_error( esc_html( 'You do not have permission.', 'fullculqi_subs' ) );
+
 		$result = FullCulqi_Charges::delete_wpposts();
 		
 		if( $result )
@@ -118,6 +134,10 @@ class FullCulqi_Ajax {
 
 		// Run a security check.
 		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
+
+		// Check the permissions
+		if( ! current_user_can( 'manage_options' ) )
+			wp_send_json_error( esc_html( 'You do not have permission.', 'fullculqi_subs' ) );
 
 		$result = FullCulqi_Orders::delete_wpposts();
 		
@@ -137,6 +157,10 @@ class FullCulqi_Ajax {
 		// Run a security check.
 		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
 
+		// Check the permissions
+		if( ! current_user_can( 'manage_options' ) )
+			wp_send_json_error( esc_html( 'You do not have permission.', 'fullculqi_subs' ) );
+
 		$result = FullCulqi_Customers::delete_wpposts();
 		
 		if( $result )
@@ -154,6 +178,10 @@ class FullCulqi_Ajax {
 
 		// Run a security check.
 		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
+
+		// Check the permissions
+		if( ! current_user_can( 'manage_options' ) )
+			wp_send_json_error( esc_html( 'You do not have permission.', 'fullculqi_subs' ) );
 
 		// Check if the post exists
 		if( ! isset( $_POST['post_id'] ) || empty( $_POST['post_id'] ) )

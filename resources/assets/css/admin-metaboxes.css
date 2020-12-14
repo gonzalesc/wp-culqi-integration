@@ -1,27 +1,8 @@
-#culqi_charges_basic .postbox-header,
-#culqi_charges_basic .handlediv,
-#culqi_charges_basic .hndle,
-#culqi_charges_source .postbox-header,
-#culqi_charges_source .handlediv,
-#culqi_charges_source .hndle,
-#culqi_orders_basic .postbox-header,
-#culqi_orders_basic .handlediv,
-#culqi_orders_basic .hndle,
-#culqi_orders_source .postbox-header,
-#culqi_orders_source .handlediv,
-#culqi_orders_source .hndle,
-#culqi_customers_basic .postbox-header,
-#culqi_customers_basic .handlediv,
-#culqi_customers_basic .hndle,
-#culqi_customers_source .postbox-header,
-#culqi_customers_source .handlediv,
-#culqi_customers_source .hndle {
+.postbox-header, .handlediv, .hndle {
 	display: none;
 }
 
-#culqi_charges_basic .culqi_charges_h2,
-#culqi_orders_basic .culqi_orders_h2,
-#culqi_customers_basic .culqi_customers_h2 {
+#poststuff .metabox_h2 {
 	margin: 0;
 	font-size: 21px;
 	font-weight: 400;
@@ -30,17 +11,13 @@
 	padding: 0;
 }
 
-#culqi_charges_basic .culqi_charges_h3,
-#culqi_orders_basic .culqi_orders_h3,
-#culqi_customers_basic .culqi_customers_h3 {
+#poststuff .metabox_h3 {
 	color: #333;
     margin: 1.33em 0 0;
     font-size: 14px;
 }
 
-#culqi_charges_basic .culqi_charges_subh2,
-#culqi_orders_basic .culqi_orders_subh2,
-#culqi_customers_basic .culqi_customers_subh2 {
+#poststuff .metabox_subh2 {
 	margin: 0;
 	font-weight: 400;
 	line-height: 1.6em;
@@ -48,16 +25,16 @@
 	color: #777;
 }
 
-.culqi_data_column_container {
+.metabox_column_container {
 	clear: both;
 }
 
-.culqi_data_column_container .culqi_data_column {
+.metabox_column_container .metabox_column {
 	width: 50%;
 	float: left;
 }
 
-.plan_msg {
+.metabox_warnings_msg {
 	background-color: #EEE;
 	padding: 5px 20px;
 	font-weight: bold;
@@ -66,31 +43,31 @@
 }
 
 
-.culqi_data_column_container label {
+.metabox_column_container label {
 	display: block;
 	font-weight: bold;
 }
 
-.culqi_data_column_container input,
-.culqi_data_column_container select {
+.metabox_column_container input,
+.metabox_column_container select {
 	height: 32px;
 	width: 50%;
 }
 
-.fullculqi_refund_link {
+.metabox_simple_link {
 	color: #444;
 	border: 1px solid #FFF;
 	padding: 8px 12px;
 	border-radius: 8px;
 }
 
-.fullculqi_refund_link:hover {
+.metabox_simple_link:hover {
 	background-color: #f8d7da;
 	color: #721c24;
 	text-decoration: none;
 }
 
-.culqi_status_2 {
+.metabox_badged {
 	line-height: 2.5em;
 	color: #777;
 	background: #e5e5e5;
@@ -103,39 +80,82 @@
 	max-width: 100%;
 }
 
-.culqi_status_2.captured {
+.metabox_badged.success {
 	background-color: #c6e1c6;
 	color: #5b841b;
 }
 
-.culqi_status_2.authorized {
+.metabox_badged.warning {
 	background-color: #fff3cd;
 	color: #856404;
 }
 
-.culqi_status_2.expired {
+.metabox_badged.secondary {
 	background-color: #e2e3e5;
 	color: #383d41;
 }
 
-.culqi_status_2.refunded {
+.metabox_badged.error {
 	color : #721c24;
 	background-color: #f8d7da;
 }
 
-.culqi_status_2 > span {
+.metabox_badged > span {
 	margin: 0 1em;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-
-#culqi_charges span.dashicons,
-#culqi_customers span.dashicons,
-#culqi_orders span.dashicons {
+span.dashicons {
 	vertical-align:middle;
 }
 
-#notify_culqi_charges, #notify_culqi_customers, #notify_culqi_orders {
-	margin-left: 15px;
+input.disabled, select.disabled {
+	color: #32373c;
+	background-color: #EEE;
 }
+
+
+.font_success {
+	font-size: 20px;
+	color: green;
+}
+
+
+.font_error {
+	font-size: 20px;
+	color: red;
+}
+
+.font_success .dashicons,
+.font_error .dashicons {
+	padding-top: 4px;
+}
+
+/*.badged_activate,
+.badged_canceled,
+.badged_finished {
+	display: inline-block;
+	padding: .25em .5em;
+	font-weight: 700;
+	line-height: 1;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: .25rem;
+}
+
+.badged_activate {
+	color: #FFF;
+	background-color: #28a745;
+}
+
+.badged_canceled {
+	color: #fff;
+	background-color: #dc3545;
+}
+
+.badged_finished {
+	color: #212529;
+	background-color: #ffc107;
+}*/

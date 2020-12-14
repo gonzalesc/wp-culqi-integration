@@ -63,6 +63,8 @@ class FullCulqi_Charges {
 
 			// Create Charge Post
 			$post_id = self::create_wppost( $charge, $post_id );
+
+			do_action( 'fullculqi/charges/sync/loop', $charge, $post_id );
 		}
 
 		do_action( 'fullculqi/charges/sync/after', $charges );
@@ -137,12 +139,11 @@ class FullCulqi_Charges {
 		update_post_meta( $post_id, 'culqi_capture_date', fullculqi_convertToDate( $charge->capture_date ) );
 		update_post_meta( $post_id, 'culqi_data', $charge );
 
-		// Customer
-		$post_customer_id = $culqi_customer_id = false;
 
 		// If it use customer process
 		if( isset( $charge->source->object ) && $charge->source->object == 'card' ) {
-			$culqi_customer_id = $charge->source->customer_id;
+
+			update_post_meta( $post_id, 'culqi_customer_id', $charge->source->customer_id  );
 
 			update_post_meta( $post_id, 'culqi_ip', $charge->source->source->client->ip );
 		} else {
@@ -154,31 +155,23 @@ class FullCulqi_Charges {
 		$status = $charge->capture ? 'captured' : 'authorized';
 		update_post_meta( $post_id, 'culqi_status', $status );
 
+		// Creation Date
+		update_post_meta( $post_id, 'culqi_creation_date', fullculqi_convertToDate( $charge->creation_date ) );
+
 		// Meta Values
 		if( isset( $charge->metadata ) && ! empty( $charge->metadata ) ) {
-			$post_customer_id = isset( $charge->metadata->post_customer ) ? $charge->metadata->post_customer : false;
-
 			update_post_meta( $post_id, 'culqi_metadata', $charge->metadata );
 		}
 
 		$basic = [
-			'culqi_creation'		=> fullculqi_convertToDate( $charge->creation_date ),
 			'culqi_amount'			=> $amount,
 			'culqi_amount_refunded'	=> $refund,
 			'culqi_currency'		=> $charge->currency_code,
 		];
 
-		/*
-			'culqi_card_brand'		=> $charge->source->iin->card_brand,
-			'culqi_card_type'		=> $charge->source->iin->card_type,
-			'culqi_card_number'		=> $charge->source->card_number,
-		 */
-
 		update_post_meta( $post_id, 'culqi_basic', array_map( 'esc_html', $basic ) );
 
 		$customer = [
-			'culqi_id'			=> $culqi_customer_id,
-			'post_id'			=> $post_customer_id,
 			'culqi_email'		=> $charge->email,
 			'culqi_first_name'	=> '',
 			'culqi_last_name'	=> '',
@@ -246,7 +239,7 @@ class FullCulqi_Charges {
 
 		$wpdb->query( $query );
 
-		do_action( 'fullculqi/charges/delete' );
+		do_action( 'fullculqi/charges/wpdelete' );
 
 		return true;
 	}

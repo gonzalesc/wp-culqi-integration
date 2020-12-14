@@ -46,7 +46,10 @@
 		 */
 		executeUIActions: function() {
 
-			let $title_action = $('.edit-php .wrap .wp-heading-inline');
+			let $title_action = $('.edit-php .wrap .page-title-action:last');
+
+			if( $title_action.length == 0 )
+				$title_action = $('.edit-php .wrap .wp-heading-inline');
 
 			$title_action.after(
 				'<a href="" id ="' +
@@ -104,7 +107,7 @@
 					
 					if( response.success ) {
 
-						if( parseInt( response.data.remaining, 10 ) == 0 ) {
+						if( response.data.remaining == null || parseInt( response.data.remaining, 10 ) == 0 ) {
 							$('#' + fullculqi_vars.sync_notify).html( fullculqi_vars.img_success + ' ' + fullculqi_vars.sync_success );
 							location.reload();
 						} else {
