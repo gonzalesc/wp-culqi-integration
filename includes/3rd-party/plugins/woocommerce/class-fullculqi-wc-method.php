@@ -294,13 +294,6 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 				'default'		=> 'wc-pending',
 				'desc_tip'		=> true,
 			],
-			'multi_url' => [
-				'title'			=> esc_html__( 'Webhook URL', 'fullculqi' ),
-				'type'			=> 'multiurl',
-				'description'	=> esc_html__( 'If you have enabled the multipayment, so you need configure the webhooks usign this URL', 'fullculqi' ),
-				'desc_tip'		=> true,
-				'default'		=> 'yes',
-			],
 
 			'additional_section' => [
 				'title' => esc_html__( 'ADDITIONAL SETTING', 'fullculqi' ),

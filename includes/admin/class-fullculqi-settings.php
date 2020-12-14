@@ -223,7 +223,13 @@ class FullCulqi_Settings {
 			'fullculqi_section' // Section
 		);
 
-		do_action( 'fullculqi/settings/sync_fields' );
+		add_settings_field(
+			'fullculqi_webhook', // ID
+			esc_html__( 'Webhook URL', 'fullculqi' ), // Logo
+			[ $this, 'input_webhook' ], // Callback
+			'fullculqi_page', // Page
+			'fullculqi_section' // Section
+		);
 
 		add_settings_field(
 			'fullculqi_button_clear', // ID
@@ -296,6 +302,9 @@ class FullCulqi_Settings {
 		fullculqi_get_template( 'resources/layouts/admin/settings/input_logo.php', $settings );
 	}
 
+	public function input_webhook() {
+		fullculqi_get_template( 'resources/layouts/admin/settings/input_webhook.php' );
+	}
 
 	/**
 	 * Input Button Delete All
