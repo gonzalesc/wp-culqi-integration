@@ -117,8 +117,16 @@ class FullCulqi_Settings {
 			[ $this, 'settings_page' ]
 		);
 
+		add_submenu_page(
+			'fullculqi_menu',
+			esc_html__( 'Webhooks', 'fullculqi' ),
+			esc_html__( 'Webhooks', 'fullculqi' ),
+			'manage_options',
+			'fullculqi_webhooks',
+			[ $this, 'webhooks_page' ]
+		);
 
-		do_action('fullculqi/settings/after_menu');
+		do_action( 'fullculqi/settings/after_menu' );
 
 		add_submenu_page(
 			'fullculqi_menu',
@@ -170,6 +178,19 @@ class FullCulqi_Settings {
 	}
 
 
+	public function webhooks_page() {
+
+		$args = [
+			'webhook_url'	=> site_url( 'fullculqi-api/webhooks' ),
+			'webhook_list'	=> get_option( 'fullculqi_webhooks' ),
+		];
+
+		fullculqi_get_template(
+			'resources/layouts/admin/webhooks-page.php', $args
+		);
+	}
+
+
 	/**
 	 * Register Settings
 	 * @return mixed
@@ -186,7 +207,7 @@ class FullCulqi_Settings {
 
 		add_settings_section(
 			'fullculqi_section', // ID
-			esc_html__( 'Culqi Full Integration Settings', 'fullculqi' ), // Title
+			false, // Title
 			false, // Callback [ $this, 'print_section_info' ]
 			'fullculqi_page' // Page
 		);
@@ -219,14 +240,6 @@ class FullCulqi_Settings {
 			'fullculqi_logo', // ID
 			esc_html__( 'Logo URL', 'fullculqi' ), // Logo
 			[ $this, 'input_logo' ], // Callback
-			'fullculqi_page', // Page
-			'fullculqi_section' // Section
-		);
-
-		add_settings_field(
-			'fullculqi_webhook', // ID
-			esc_html__( 'Webhook URL', 'fullculqi' ), // Logo
-			[ $this, 'input_webhook' ], // Callback
 			'fullculqi_page', // Page
 			'fullculqi_section' // Section
 		);
@@ -300,10 +313,6 @@ class FullCulqi_Settings {
 		$settings = fullculqi_get_settings();
 
 		fullculqi_get_template( 'resources/layouts/admin/settings/input_logo.php', $settings );
-	}
-
-	public function input_webhook() {
-		fullculqi_get_template( 'resources/layouts/admin/settings/input_webhook.php' );
 	}
 
 	/**

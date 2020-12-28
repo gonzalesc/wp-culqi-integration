@@ -87,8 +87,8 @@ class FullCulqi_Customers {
 	public static function get( $wpuser_id = 0 ) {
 
 		// Check in the WP_USERS
-		$culqi_customer_id = get_user_meta( $wpuser_id, 'culqi_id', true );
-		$post_customer_id = get_user_meta( $wpuser_id, 'culqi_post_id', true );
+		$culqi_customer_id = get_user_meta( $wpuser_id, '_culqi_customer_id', true );
+		$post_customer_id = get_user_meta( $wpuser_id, '_post_customer_id', true );
 
 		if( ! empty( $culqi_customer_id ) && ! empty( $post_customer_id ) ) {
 			return [
@@ -100,7 +100,7 @@ class FullCulqi_Customers {
 		global $wpdb;
 
 		// Check in the Customer CPT
-		$meta_key = 'culqi_user_id';
+		$meta_key = 'culqi_wp_user_id';
 		$meta_value = absint( $wpuser_id );
 
 		$post_id = fullculqi_post_from_meta( $meta_key, $meta_value );
@@ -201,10 +201,10 @@ class FullCulqi_Customers {
 		$user = get_user_by( 'email', $customer->email );
 
 		if( $user ) {
-			update_post_meta( $post_id, 'culqi_user_id', $user->ID );
+			update_post_meta( $post_id, 'culqi_wp_user_id', $user->ID );
 			
-			update_user_meta( $user->ID, 'culqi_id', $customer->id );
-			update_user_meta( $user->ID, 'culqi_post_id', $post_id );
+			update_user_meta( $user->ID, '_culqi_customer_id', $customer->id );
+			update_user_meta( $user->ID, '_post_customer_id', $post_id );
 		}
 
 		do_action( 'fullculqi/customers/wppost', $customer, $post_id );

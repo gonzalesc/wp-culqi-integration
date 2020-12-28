@@ -27,7 +27,7 @@ class FullCulqi_WC_Admin {
 		//add_action( 'fullculqi/refunds/create/args', [ $this, 'create_refund_args' ], 10, 2 );
 		add_filter( 'fullculqi/ajax/refund/process', [ $this, 'create_refund_process' ], 10, 2 );
 
-		// Upgrader to 1.6.0
+		// Upgrader to 2.0.0
 		add_action( 'fullculqi/upgrader/2_0_0/charges', [ $this, 'upgrader_charges_2_0_0' ], 10, 1 );
 		add_action( 'fullculqi/upgrader/2_0_0/after', [ $this, 'upgrader_wc_orders_2_0_0' ] );
 	}

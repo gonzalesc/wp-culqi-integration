@@ -6,6 +6,8 @@
  */
 class FullCulqi_Webhooks {
 
+	protected $limit = 50;
+
 	/**
 	 * Construct
 	 */
@@ -31,11 +33,34 @@ class FullCulqi_Webhooks {
 
 		$data = json_decode( $input->data );
 
+		// Webhook History
+		$this->register( $input );
+
 		switch( $input->type ) {
 			case 'order.status.changed' : FullCulqi_Orders::update( $data ); break;
 		}
 
 		do_action( 'fullculqi/webhooks/to_receive', $input, $data );
+	}
+
+
+	private function register( $input ) {
+
+		$webhooks_saved = get_option( 'fullculqi_webhooks', [] );
+
+		// Delete if it has many elements
+		if( count( $webhooks_saved ) > $limit )
+			array_pop( $webhooks_saved );
+
+		$webhooks_in = [
+			'event_id'		=> $input->id,
+			'event_name'	=> $input->type,
+			'creation_date'	=> fullculqi_convertToDate( $input->creation_date ),
+		];
+
+		array_unshift( $webhooks_saved, $webhooks_in );
+
+		return true;
 	}
 }
 

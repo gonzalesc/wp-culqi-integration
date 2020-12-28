@@ -266,3 +266,19 @@ function fullculqi_post_from_meta( $meta_key = '', $meta_value = '' ) {
 
 	return apply_filters( 'fullculqi/post_from_meta', $post_id, $meta_key, $meta_value );
 }
+
+
+/**
+ * Apply esc_html recursive
+ * @param  string $input
+ * @return mixed
+ */
+function fullculqi_esc_html( $input = '' ) {
+
+	if( is_array( $input ) )
+		$output = array_map( 'fullculqi_esc_html', $input );
+	else
+		$output = esc_html( $input );
+
+	return apply_filters( 'fullculqi/esc_html', $output, $input );
+}

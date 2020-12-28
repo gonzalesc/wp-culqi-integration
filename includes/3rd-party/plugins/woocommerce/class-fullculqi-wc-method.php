@@ -12,8 +12,8 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 	public function __construct() {
 
 		$this->id 					= 'fullculqi';
-		$this->method_title			= esc_html__( 'Culqi Full Integration', 'fullculqi' );
-		$this->method_description 	= esc_html__( 'Culqi is the simplest way to accept payments in any online store or mobile application. Its function is to allow a store to accept payments by credit or debit card, of any of the brands', 'fullculqi' );
+		$this->method_title			= esc_html__( 'Culqi Card Credit', 'fullculqi' );
+		$this->method_description 	= esc_html__( 'Culqi Integration allows use the popup Culqi to enter the credit card and have a safe purchase.', 'fullculqi' );
 		$this->icon 				= FULLCULQI_WC_URL . 'assets/images/cards.png';
 		
 		// Define user set variables
@@ -142,11 +142,11 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 						update_post_meta( $order->get_id(), '_culqi_order_id', $culqi_order_id );
 
 						// Log
-						$notice = sprintf(
+						/*$notice = sprintf(
 							esc_html__( 'Culqi Multipayment Created : %s', 'fullculqi' ),
 							$culqi_order_id
 						);
-						$log->set_notice( $notice );
+						$log->set_notice( $notice );*/
 
 					} else {
 						$error = sprintf(
@@ -184,7 +184,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 
 			wp_localize_script( 'fullculqi-js', 'fullculqi_vars',
 				apply_filters('fullculqi/method/localize', [
-					'url_culqi'		=> site_url( 'fullculqi-api/wc-actions/' ),
+					'url_actions'	=> site_url( 'fullculqi-api/wc-actions/' ),
 					'url_success'	=> $order->get_checkout_order_received_url(),
 					'public_key'	=> sanitize_text_field( $settings['public_key'] ),
 					'installments'	=> sanitize_title( $this->installments ),
@@ -205,8 +205,10 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 				], $order )
 			);
 
-			do_action( 'fullculqi/method/enqueue_scripts', $order );
+			do_action( 'fullculqi/method/enqueue_scripts/pay_page', $order );
 		}
+
+		do_action( 'fullculqi/method/enqueue_scripts/after', $this );
 	}
 	
 
@@ -241,6 +243,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 				'type'			=> 'text',
 				'description'	=> esc_html__( 'This controls the title which the user sees during checkout.', 'fullculqi' ),
 				'desc_tip'		=> true,
+				'default'		=> esc_html__( 'Card Payment', 'fullculqi' ),
 			],
 			'description' => [
 				'title'			=> esc_html__( 'Description', 'fullculqi' ),
@@ -390,7 +393,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			'redirect' => $order->get_checkout_payment_url( true ),
 		];
 
-		return apply_filters( 'fullculqi/method/redirect', $output, $order, $this );
+		return apply_filters( 'fullculqi/method/process_payment', $output, $order, $this );
 	}
 
 

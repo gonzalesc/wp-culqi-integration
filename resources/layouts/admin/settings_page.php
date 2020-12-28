@@ -1,4 +1,7 @@
 <div class="wrap">
+	<h1 class="wp-heading-inline">
+		<?php esc_html_e( 'Culqi Full Integration Settings', 'fullculqi' ); ?>
+	</h1>
 	<form method="post" action="options.php">
 	<?php
 		// This prints out all hidden setting fields

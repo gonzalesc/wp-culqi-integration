@@ -208,14 +208,14 @@
 		loadAjax: function( post_data ) {
 
 			$.ajax({
-				url 		: fullculqi_vars.url_culqi,
+				url 		: fullculqi_vars.url_actions,
 				type 		: 'POST',
 				dataType	: 'json',
 				data 		: post_data,
 				
 				success: function( response ) {
 
-					$('#fullculqi_notify').trigger( 'fullculqi.checkout.success', [ post_data, response ] );
+					$( document.body ).trigger( 'fullculqi.checkout.success', [ post_data, response ] );
 					
 					if( response.success ) {
 
@@ -236,7 +236,7 @@
 					$('#fullculqi_notify').empty();
 					$('#fullculqi_notify').addClass('woocommerce-error').html( fullculqi_vars.msg_error );
 
-					$('#fullculqi_notify').trigger('fullculqi.checkout.error', [ post_data, jqXHR, textStatus, errorThrown ] );
+					$( document.body ).trigger('fullculqi.checkout.error', [ post_data, jqXHR, textStatus, errorThrown ] );
 				}
 			});
 		}
