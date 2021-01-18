@@ -6,7 +6,7 @@
 		 * Global variables
 		 * @type Integer
 		 */
-		record: 100,
+		record: 50,
 
 		/**
 		 * Start the engine.
@@ -54,7 +54,7 @@
 			$title_action.after(
 				'<a href="" id ="' +
 				fullculqi_vars.sync_id +
-				'" class="page-title-action" data-record="100">' +
+				'" class="page-title-action" data-record="50">' +
 				'<span class="dashicons dashicons-update-alt" style="vertical-align:middle"></span> ' +
 				fullculqi_vars.sync_text +
 				'</a>' +
@@ -77,7 +77,8 @@
 				if( ! confirm( fullculqi_vars.sync_confirm ) )
 					return;
 
-				FullCulqi.record = $(this).data('record');
+				if( typeof $(this).data('record') !== 'undefined' )
+					FullCulqi.record = $(this).data('record');
 
 				FullCulqi.syncEntities();
 			} );

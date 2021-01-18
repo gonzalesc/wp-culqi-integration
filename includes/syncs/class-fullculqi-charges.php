@@ -19,12 +19,18 @@ class FullCulqi_Charges {
 		if( ! empty( $after_id ) )
 			$params[ 'after' ] = $after_id;
 
+		update_option('kono_1', print_r($params,true));
+
 		// Connect to the API Culqi
 		try {
 			$charges = $culqi->Charges->all( $params );
+			update_option('kono_2', print_r($charges,true));
 		} catch(Exception $e) {
+			update_option('kono_3', print_r($e->getMessage(),true));
 			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
+
+
 
 		if( isset( $charges->object ) && $charges->object == 'error' )
 			return [ 'status' => 'error', 'data' => $charges->merchant_message ];
