@@ -302,10 +302,11 @@ class FullCulqi_WC_Process {
 	 */
 	public static function customer( $order ) {
 
-		if( ! is_user_logged_in() )
-			return false;
+		if( is_user_logged_in() )
+			$culqi_customer = FullCulqi_Customers::get( get_current_user_id() );
+		else
+			$culqi_customer = FullCulqi_Customers::getByEmail( $order->get_billing_email() );
 
-		$culqi_customer = FullCulqi_Customers::get( get_current_user_id() );
 
 		if( ! empty( $culqi_customer ) ) {
 
@@ -330,6 +331,9 @@ class FullCulqi_WC_Process {
 			return true;
 		}
 
+
+		if( ! is_user_logged_in() )
+			return false;
 
 		$args_customer = [
 			'email'		=> $order->get_billing_email(),

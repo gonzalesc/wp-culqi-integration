@@ -119,6 +119,35 @@ class FullCulqi_Customers {
 		];
 	}
 
+	/**
+	 * Get Customer by Email
+	 * @param  string $email
+	 * @return array
+	 */
+	public static function getByEmail( $email = '' ) {
+
+		if( empty( $email ) )
+			return false;
+
+		$args = [
+			'post_type'		=> 'culqi_customers',
+			'post_status'	=> 'publish',
+			'culqi_email'	=> $email,
+		];
+
+		$posts = get_posts( $args );
+
+		if( $posts ) {
+			foreach( $posts as $post ) {
+				return [
+					'culqi_id'	=> get_post_meta( $post->ID, 'culqi_id', true ),
+					'post_id'	=> $post->ID,
+				];
+			}
+		}
+
+		return false;
+	}
 
 	
 	/**

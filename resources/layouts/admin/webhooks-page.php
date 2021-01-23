@@ -2,7 +2,7 @@
 	<h1 class="wp-heading-inline"><?php esc_html_e( 'Webhooks History', 'fullculqi' ); ?></h1>
 
 	<p>
-		<?php esc_html_e('You will be able to see the last 50 notifications from Culqi. ','fullculqi'); ?>
+		<?php esc_html_e('You will be able to see the last 25 notifications from Culqi. ','fullculqi'); ?>
 		<a href="" target="_blank">
 			<?php esc_html_e( 'What is a webhook? How can I use it?', 'fullculqi' ); ?>
 		</a>
@@ -17,9 +17,11 @@
 	<table class="wp-list-table widefat fixed striped table-view-list">
 		<thead>
 			<tr>
-				<th><?php esc_html_e( 'ID', 'fullculqi' ); ?></th>
-				<th><?php esc_html_e( 'Name', 'fullculqi' ); ?></th>
-				<th><?php esc_html_e( 'Date', 'fullculqi' ); ?></th>
+				<th><?php esc_html_e( 'Event Date', 'fullculqi' ); ?></th>
+				<th><?php esc_html_e( 'Event ID', 'fullculqi' ); ?></th>
+				<th><?php esc_html_e( 'Event Name', 'fullculqi' ); ?></th>
+				<th><?php esc_html_e( 'Webhook ID', 'fullculqi' ); ?></th>
+				<th><?php esc_html_e( 'Webhook Description', 'fullculqi' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -33,9 +35,11 @@
 					
 				<?php foreach( $webhook_list as $webhook ) : ?>
 					<tr>
+						<td><?php echo $webhook['creation_date']; ?></td>
 						<td><?php echo $webhook['event_id']; ?></td>
 						<td><?php echo $webhook['event_name']; ?></td>
-						<td><?php echo $webhook['creation_date']; ?></td>
+						<td><?php echo $webhook['data_id']; ?></td>
+						<td><?php echo $webhook['data_description']; ?></td>
 					</tr>
 				<?php endforeach; ?>
 					

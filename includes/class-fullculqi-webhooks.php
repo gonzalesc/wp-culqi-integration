@@ -6,7 +6,7 @@
  */
 class FullCulqi_Webhooks {
 
-	protected $limit = 50;
+	protected $limit = 25;
 
 	/**
 	 * Construct
@@ -44,21 +44,32 @@ class FullCulqi_Webhooks {
 	}
 
 
+	/**
+	 * [register description]
+	 * @param  object $input
+	 * @return mixed
+	 */
 	private function register( $input ) {
 
 		$webhooks_saved = get_option( 'fullculqi_webhooks', [] );
 
 		// Delete if it has many elements
-		if( count( $webhooks_saved ) > $limit )
+		if( count( $webhooks_saved ) > $this->limit )
 			array_pop( $webhooks_saved );
 
+		$data = json_decode( $input->data );
+
 		$webhooks_in = [
-			'event_id'		=> $input->id,
-			'event_name'	=> $input->type,
-			'creation_date'	=> fullculqi_convertToDate( $input->creation_date ),
+			'event_id'			=> $input->id,
+			'event_name'		=> $input->type,
+			'data_id'			=> isset( $data->id ) ? $data->id : '',
+			'data_description'	=> isset( $data->description ) ? $data->description : '',
+			'creation_date'		=> fullculqi_convertToDate( $input->creation_date ),
 		];
 
 		array_unshift( $webhooks_saved, $webhooks_in );
+
+		update_option( 'fullculqi_webhooks', $webhooks_saved );
 
 		return true;
 	}

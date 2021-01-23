@@ -12,7 +12,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 	public function __construct() {
 
 		$this->id 					= 'fullculqi';
-		$this->method_title			= esc_html__( 'Culqi Popup', 'fullculqi' );
+		$this->method_title			= esc_html__( 'Culqi Integration Popup', 'fullculqi' );
 		$this->method_description 	= esc_html__( 'Culqi Integration allows use the popup Culqi to enter the credit card and have a safe purchase.', 'fullculqi' );
 		$this->icon 				= FULLCULQI_WC_URL . 'assets/images/cards.png';
 		
