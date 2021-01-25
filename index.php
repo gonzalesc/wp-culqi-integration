@@ -14,7 +14,7 @@ Tested up to: 5.6.0
 Stable tag: 5.2
 Requires PHP: 5.6
 WC requires at least: 4.2.0
-WC tested up to: 4.8.0
+WC tested up to: 4.9.1
 */
 
 // If this file is called directly, abort.
