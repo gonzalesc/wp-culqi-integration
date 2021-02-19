@@ -14,7 +14,7 @@ abstract class FullCulqi_Metaboxes {
 		// Script JS & CSS
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 
-		// Save Post
+		// After - Save Post
 		add_action( 'save_post_' . $this->post_type, [ $this, 'save_post' ], 10, 3 );
 
 		// Delete Post

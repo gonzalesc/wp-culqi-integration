@@ -83,7 +83,7 @@ class FullCulqi_Welcome {
 	 * @return mixed
 	 */
 	public function welcome_content() {
-		fullculqi_get_template( 'resources/layouts/admin/welcome_panel.php' );
+		fullculqi_get_template( 'resources/layouts/admin/welcome-panel.php' );
 	}
 
 	/**

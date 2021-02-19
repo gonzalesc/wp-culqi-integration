@@ -1,6 +1,6 @@
 <div class="wrap about-wrap full-width-layout">
 	<div style="float: right;">
-		<img src="<?php echo FULLCULQI_UR; ?>resources/assets/images/culqi_logo.png" alt="FullCulqi Logo" />
+		<img src="<?php echo FULLCULQI_URL; ?>resources/assets/images/culqi_logo.png" alt="FullCulqi Logo" />
 	</div>
 	<h1><?php esc_html_e( 'FullCulqi Integration', 'fullculqi' ); ?></h1>
 
