@@ -10,60 +10,76 @@ class FullCulqi_Updater {
 	 * Construct
 	 */
 	public function __construct() {
-		add_action( 'upgrader_process_complete', [ $this, 'upgrader_process' ], 10, 2 );
-	}
+		
+		// Check available updates
+		add_action( 'admin_notices', [ $this, 'check_available_updates' ] );
 
-
-	/**
-	 * Plugin Upgrader
-	 * @param  WP_Upgrader	$upgrader
-	 * @param  array  		$options
-	 * @return mixed
-	 */
-	public function upgrader_process( $upgrader, $options = [] ) {
-
-		// Check the params
-		if( $options['action'] != 'update' || $options['type'] != 'plugin' || ! isset( $options['plugins'] ) )
-			return;
-
-		foreach( $options['plugins'] as $plugin ) {
-			
-			if( $plugin == FULLCULQI_BASE ) {
-				//set_transient( 'fullculqi_updated', 1 );
-				
-				$this->upgrader_compare();
-				break;
-			}
-		}
-
-		return true;
+		// Process available updates
+		add_action( 'wp_ajax_update_2_0_0', [ $this, 'process_update_2_0_0' ] );
 	}
 
 	/**
-	 * Compare version to calls the method
+	 * Chec Available Updates
 	 * @return mixed
 	 */
-	public function upgrader_compare() {
-
+	public function check_available_updates() {
 		$plugin = get_file_data( FULLCULQI_FILE, [ 'Version' => 'Version' ] );
 
-		// Compare version
-		if( version_compare( $plugin['Version'], '2.0.0', '>=' ) )
-			$this->upgrader_2_0_0();
-
-		return true;
+		// Compare version 2.0.0
+		if( version_compare( $plugin['Version'], '2.0.0', '>=' ) &&
+			! get_option( 'fullculqi_2_0_0_updated', false ) ) {
+			$this->screen_update_2_0_0();
+		}
+			
 	}
 
 	/**
-	 * Upgrade to 1.6.0 or higher
+	 * Screen box 2.0.0
+	 * @return html
+	 */
+	public function screen_update_2_0_0() {
+
+		$args = [
+			'title'		=> esc_html__( 'Culqi Integration update required', 'fullculqi' ),
+			'content'	=> esc_html__( 'Culqi Integration plugin has been updated to 2.0.0 version! To keep things running smoothly, we have to update your database to the newest version', 'fullculqi' ),
+			'text_button'	=> esc_html__( 'Continue', 'fullculqi' ),
+			'link_button'	=> add_query_arg([
+					'action'	=> 'update_2_0_0',
+					'wpnonce'	=> wp_create_nonce( 'fullculqi-wpnonce' ),
+					'return'	=> urlencode( fullculqi_get_current_admin_url() ),
+				],
+				admin_url( 'admin-ajax.php' )
+			),
+			'class_title'	=> 'notice-title',
+			'class_box'		=> 'notice notice-warning notice-large',
+			'class_button'	=> 'button button-primary',
+			'version'		=> '2.0.0',
+		];
+
+		fullculqi_get_template( 'resources/layouts/admin/notice-box.php', $args );
+	}
+
+
+
+	/**
+	 * Upgrade to 2.0.0 or higher
 	 * @return mixed
 	 */
-	public function upgrader_2_0_0() {
-		
+	public function process_update_2_0_0() {
+
+		// Run a security check.
+		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
+
+		// Check the permissions
+		if( ! current_user_can( 'manage_options' ) )
+			return;
+	
 		// Chek if this version was updated
 		if( get_option( 'fullculqi_2_0_0_updated', false ) )
 			return;
 
+		// Return to URL
+		$return = isset( $_GET['return'] ) ? urldecode( $_GET['return'] ) : admin_url();
 
 		// Charges
 		$args = [
@@ -73,35 +89,39 @@ class FullCulqi_Updater {
 
 		$posts = get_posts( $args );
 
-		foreach( $posts as $post ) {
-			
-			// Get			
-			$basic = get_post_meta( $post->ID, 'culqi_basic', true );
+		if( $posts ) {
 
-			// Update
-			update_post_meta( $post->ID, 'culqi_creation_date', $basic['culqi_creation'] );
+			foreach( $posts as $post ) {
+				
+				// Get			
+				$basic = get_post_meta( $post->ID, 'culqi_basic', true );
 
-			// Process
-			unset( $basic['culqi_creation'] );
-			unset( $basic['culqi_card_brand'] );
-			unset( $basic['culqi_card_type'] );
-			unset( $basic['culqi_card_number'] );
+				// Update
+				update_post_meta( $post->ID, 'culqi_creation_date', $basic['culqi_creation'] );
 
-			// Delete || New values
-			update_post_meta( $post->ID, 'culqi_basic', $basic );
+				// Process
+				unset( $basic['culqi_creation'] );
+				unset( $basic['culqi_card_brand'] );
+				unset( $basic['culqi_card_type'] );
+				unset( $basic['culqi_card_number'] );
 
-			// Change the CPT
-			wp_update_post( [ 'ID' => $post->ID, 'post_type' => 'culqi_charges' ] );
+				// Delete || New values
+				update_post_meta( $post->ID, 'culqi_basic', $basic );
 
-			// Modify by 3rd parties
-			do_action( 'fullculqi/upgrader/2_0_0/charges', $post->ID );
+				// Change the CPT
+				wp_update_post( [ 'ID' => $post->ID, 'post_type' => 'culqi_charges' ] );
+
+				// Modify by 3rd parties
+				do_action( 'fullculqi/update/2_0_0/charges', $post->ID );
+			}
 		}
 
-		do_action( 'fullculqi/upgrader/2_0_0/after' );
+		do_action( 'fullculqi/update/2_0_0/after' );
 
 		update_option( 'fullculqi_2_0_0_updated', true );
 
-		return true;
+		wp_redirect( $return );
+		die();
 	}
 }
 
