@@ -28,7 +28,14 @@ class FullCulqi_Updater {
 		// Compare version 2.0.0
 		if( version_compare( $plugin['Version'], '2.0.0', '>=' ) &&
 			! get_option( 'fullculqi_2_0_0_updated', false ) ) {
-			$this->screen_update_2_0_0();
+
+			// Check if it has posts
+			$count_posts = wp_count_posts( 'culqi_charges' );
+			
+			if( isset( $count_posts->publish ) && $count_posts->publish == 0 )
+				$this->screen_update_2_0_0();
+			else
+				update_option( 'fullculqi_2_0_0_updated', true );
 		}
 			
 	}

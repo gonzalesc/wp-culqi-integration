@@ -86,6 +86,22 @@ class FullCulqi_Charges {
 
 
 	/**
+	 * Update Charge
+	 * @param  OBJ $charge
+	 * @return mixed
+	 */
+	public static function update( $charge ) {
+
+		$post_id = fullculqi_post_from_meta( 'culqi_id', $charge->id );
+
+		if( ! empty( $post_id ) )
+			$post_id = self::create_wppost( $charge, $post_id );
+
+		do_action( 'fullculqi/charges/update', $charge );
+	}
+
+
+	/**
 	 * Create a charge
 	 * @param  array  $post_data
 	 * @return bool

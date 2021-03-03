@@ -227,7 +227,7 @@ class FullCulqi_WC_Process {
 				'post_customer'		=> isset( $post_customer_id ) ? $post_customer_id : false,
 			];
 
-			$args_charges = [
+			$args_charges = apply_filters( 'fullculqi/process/charge_args', [
 				'amount'			=> fullculqi_format_total( $order->get_total() ),
 				'currency_code'		=> $order->get_currency(),
 				'description'		=> substr( str_pad( $desc, 5, '_' ), 0, 80 ),
@@ -237,7 +237,7 @@ class FullCulqi_WC_Process {
 				'source_id'			=> $token,
 				'metadata'			=> $metadata_charges,
 				'antifraud_details'	=> $antifraud_charges,
-			];
+			], $order );
 
 			$culqi_charge = FullCulqi_Charges::create( $args_charges );
 
@@ -282,14 +282,20 @@ class FullCulqi_WC_Process {
 			// Update OrderID in CulqiCharges
 			update_post_meta( $post_charge_id, 'culqi_wc_order_id', $order->get_id() );
 
-			// Change Status		
-			$order->update_status( $method['status_success'],
-				sprintf(
+
+			$status = apply_filters( 'fullculqi/process/change_status', [
+				'name'	=> $method['status_success'],
+				'note'	=> sprintf(
 					esc_html__( 'Status changed by FullCulqi (to %s)', 'fullculqi' ),
 					$method['status_success']
-				)
-			);
+				),
+			], $order );
+
+			// Change Status
+			$order->update_status( $status['name'], $status['note'] );
 		}
+
+		do_action( 'fullculqi/process/charge_success', $order );
 
 		return true;
 	}

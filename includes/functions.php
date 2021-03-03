@@ -63,7 +63,7 @@ function fullculqi_format_price( $amount = 0, $currency = 'PEN' ) {
 
 	$symbols = fullculqi_currencies( 'symbol' );
 
-	$output = $symbols[ $currency ] . ' ' . number_format( $amount, 2 );
+	$output = $symbols[ $currency ] . ' ' . number_format( str_replace(',', '', $amount), 2 );
 
 	return apply_filters('fullculqi/format_price', $output, $amount, $currency );
 }

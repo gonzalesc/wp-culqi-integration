@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Culqi Integration\n"
-"POT-Creation-Date: 2020-12-28 18:34-0300\n"
-"PO-Revision-Date: 2020-12-28 18:34-0300\n"
+"POT-Creation-Date: 2021-03-03 02:46-0300\n"
+"PO-Revision-Date: 2021-03-03 02:49-0300\n"
 "Last-Translator: \n"
 "Language-Team: Letsgodev\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: __;_e;esc_html__;esc_html_e\n"
@@ -38,7 +38,7 @@ msgstr "El CIP %s fue pagado"
 
 #: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-main.php:138
 #: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:59
-#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:288
+#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:289
 #, php-format
 msgid "Status changed by FullCulqi (to %s)"
 msgstr "Estado cambiado por FullCulqi (a %s)"
@@ -54,9 +54,8 @@ msgid "The CIP %s was deleted"
 msgstr "El CIP %s fue borrado"
 
 #: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-method.php:15
-#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-method.php:246
-msgid "Culqi Popup"
-msgstr "Popup de Culqi"
+msgid "Culqi Integration Popup"
+msgstr "Culqi Integración Popup"
 
 #: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-method.php:16
 msgid ""
@@ -116,6 +115,10 @@ msgstr "Título"
 msgid "This controls the title which the user sees during checkout."
 msgstr ""
 "Esto controla el título que el usuario mira durante el proceso de pago."
+
+#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-method.php:246
+msgid "Culqi Popup"
+msgstr "Popup de Culqi"
 
 #: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-method.php:249
 msgid "Description"
@@ -304,27 +307,27 @@ msgstr "Culqi Cargo Creado: %s"
 msgid "Post Charge Created: %s"
 msgstr "Post Cargo creado : %s"
 
-#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:314
+#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:321
 #, php-format
 msgid "Culqi Customer: %s"
 msgstr "Culqi Clientes: %s"
 
-#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:323
+#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:330
 #, php-format
 msgid "Post Customer: %s"
 msgstr "Post Cliente: %s"
 
-#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:373
+#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:383
 #, php-format
 msgid "Culqi Customer Error: %s"
 msgstr "Culqi Cliente Error: %s"
 
-#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:387
+#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:397
 #, php-format
 msgid "Culqi Customer Created: %s"
 msgstr "Culqi Cliente Creado: %s"
 
-#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:396
+#: includes/3rd-party/plugins/woocommerce/class-fullculqi-wc-process.php:406
 #, php-format
 msgid "Post Customer Created: %s"
 msgstr "Post Cliente Creado: %s"
@@ -369,7 +372,6 @@ msgstr ""
 #: includes/admin/metaboxes/class-fullculqi-charges.php:72
 #: includes/admin/metaboxes/class-fullculqi-customers.php:18
 #: includes/admin/metaboxes/class-fullculqi-orders.php:20
-#: resources/layouts/admin/webhooks-page.php:20
 msgid "ID"
 msgstr "ID"
 
@@ -438,12 +440,12 @@ msgid "Commerce name"
 msgstr "Nombre del Comercio"
 
 #: includes/admin/class-fullculqi-settings.php:225
-#: resources/layouts/admin/welcome_panel.php:57
+#: resources/layouts/admin/welcome-panel.php:57
 msgid "Public Key"
 msgstr "Lláve Pública"
 
 #: includes/admin/class-fullculqi-settings.php:233
-#: resources/layouts/admin/welcome_panel.php:64
+#: resources/layouts/admin/welcome-panel.php:64
 msgid "Secret Key"
 msgstr "Llave Secreta"
 
@@ -455,12 +457,29 @@ msgstr "URL del Logo"
 msgid "Delete all the entities"
 msgstr "Borrar todas las entidades"
 
+#: includes/admin/class-fullculqi-updater.php:50
+msgid "Culqi Integration update required"
+msgstr "Culqi Integración actualización requerida"
+
+#: includes/admin/class-fullculqi-updater.php:51
+msgid ""
+"Culqi Integration plugin has been updated to 2.0.0 version! To keep things "
+"running smoothly, we have to update your database to the newest version"
+msgstr ""
+"El plugin Culqi Integración a sido actualizado a la version 2.0.0! Para que "
+"todo funcione sin problemas, debemos actualizar tu base de datos a la nueva "
+"versión"
+
+#: includes/admin/class-fullculqi-updater.php:52
+msgid "Continue"
+msgstr "Continuar"
+
 #: includes/admin/class-fullculqi-welcome.php:73
 msgid "Welcome to FullCulqi Integration"
 msgstr "Bienvenido a Culqi Integración"
 
 #: includes/admin/class-fullculqi-welcome.php:74
-#: resources/layouts/admin/welcome_panel.php:5
+#: resources/layouts/admin/welcome-panel.php:5
 msgid "FullCulqi Integration"
 msgstr "Culqi Integración"
 
@@ -521,7 +540,6 @@ msgid "Source"
 msgstr "Fuente"
 
 #: includes/admin/metaboxes/class-fullculqi-customers.php:27
-#: resources/layouts/admin/webhooks-page.php:21
 msgid "Name"
 msgstr "Nombre"
 
@@ -933,8 +951,8 @@ msgid "Webhooks History"
 msgstr "Historial de Webhooks"
 
 #: resources/layouts/admin/webhooks-page.php:5
-msgid "You will be able to see the last 50 notifications from Culqi. "
-msgstr "Podrás ver las últimas 50 notificaciones desde Culqi. "
+msgid "You will be able to see the last 25 notifications from Culqi. "
+msgstr "Podrás ver las últimas 25 notificaciones desde Culqi. "
 
 #: resources/layouts/admin/webhooks-page.php:7
 msgid "What is a webhook? How can I use it?"
@@ -945,30 +963,46 @@ msgstr "Qué es un Webhook? Cómo puedo usarlo?"
 msgid "Webhook : %s"
 msgstr "Webhook : %s"
 
-#: resources/layouts/admin/webhooks-page.php:22
-msgid "Date"
-msgstr "Fecha"
+#: resources/layouts/admin/webhooks-page.php:20
+msgid "Event Date"
+msgstr "Día del evento"
 
-#: resources/layouts/admin/webhooks-page.php:29
+#: resources/layouts/admin/webhooks-page.php:21
+msgid "Event ID"
+msgstr "ID del evento"
+
+#: resources/layouts/admin/webhooks-page.php:22
+msgid "Event Name"
+msgstr "Nombre del Evento"
+
+#: resources/layouts/admin/webhooks-page.php:23
+msgid "Webhook ID"
+msgstr "ID del Webhook"
+
+#: resources/layouts/admin/webhooks-page.php:24
+msgid "Webhook Description"
+msgstr "Descripción del Webhook"
+
+#: resources/layouts/admin/webhooks-page.php:31
 msgid "There are no events"
 msgstr "No hay eventos"
 
-#: resources/layouts/admin/welcome_panel.php:8
+#: resources/layouts/admin/welcome-panel.php:8
 msgid "Thanks for use the last version!"
 msgstr "Gracias por usar la útima versión!"
 
-#: resources/layouts/admin/welcome_panel.php:17
+#: resources/layouts/admin/welcome-panel.php:17
 msgid "This will just take a minute!"
 msgstr "Esto tomará un minuto!"
 
-#: resources/layouts/admin/welcome_panel.php:18
+#: resources/layouts/admin/welcome-panel.php:18
 msgid ""
 "To continue with this integration, you need provide the public and secret "
 "key."
 msgstr ""
 "Para continuar con la integración, necesitas la llave pública y secreta."
 
-#: resources/layouts/admin/welcome_panel.php:36
+#: resources/layouts/admin/welcome-panel.php:36
 msgid ""
 "We have realized that you have posts related to fullculqi plugin. It is "
 "advisable to delete that information before proceeding."
@@ -976,21 +1010,24 @@ msgstr ""
 "Nos hemos dado cuenta que tienes posts relacionados a nuestro plugin de "
 "Culqi. Es aconsejable borrar esta información antes de proceder."
 
-#: resources/layouts/admin/welcome_panel.php:39
+#: resources/layouts/admin/welcome-panel.php:39
 msgid "Clear all"
 msgstr "Limpiar todo"
 
-#: resources/layouts/admin/welcome_panel.php:50
+#: resources/layouts/admin/welcome-panel.php:50
 msgid "Commerce Name"
 msgstr "Nombre del Comercio"
 
-#: resources/layouts/admin/welcome_panel.php:70
+#: resources/layouts/admin/welcome-panel.php:70
 msgid "Synchronize with Culqi"
 msgstr "Sincronizar con Culqi"
 
-#: resources/layouts/admin/welcome_panel.php:77
+#: resources/layouts/admin/welcome-panel.php:77
 msgid "Not now"
 msgstr "No ahora"
+
+#~ msgid "Date"
+#~ msgstr "Fecha"
 
 #, fuzzy
 #~| msgid "Payment"
@@ -1073,9 +1110,6 @@ msgstr "No ahora"
 
 #~ msgid "Customize Culqi Payment Gateway"
 #~ msgstr "Personalizar Pasarela de Pago Culqi"
-
-#~ msgid "Payment Data"
-#~ msgstr "Día del pago"
 
 #~ msgid "Activate the payment method for Woocommerce"
 #~ msgstr "Activar método de pago para Woocommerce"

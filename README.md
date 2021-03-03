@@ -1,6 +1,6 @@
 # Culqi Integration - Wordpress Plugin
 
-Bienvenido al respositorio de Culqi Integración para Wordpress. Este plugin te permite sincronizar tus pagos con Culqi y activar la pasarela de pagos para Woocommerce y capturar pagos si lo requieres.
+Bienvenido al respositorio de Culqi Integración para WordPress. Este plugin te permite sincronizar tus pagos, tus ordenes y tus clientes desde Culqi; y además, mediante WooCommerce puedes realizar pagos simples de una manera segura.
 
 
 ## Requisitos ##
@@ -11,11 +11,11 @@ Bienvenido al respositorio de Culqi Integración para Wordpress. Este plugin te 
 
 ## Instalación desde el repositorio de WP ##
 
-Podes descargar el plugin desde el repositorio de Wordpress :
+Puedes descargar el plugin desde el repositorio de WordPress :
 [https://wordpress.org/plugins/culqi-full-integration/](https://wordpress.org/plugins/culqi-full-integration/)
 
 
-O podes instalarlo desde el mismo Wordpress. Ir a Plugins > Agregar nuevo
+O puedes instalarlo desde el mismo WordPress. Ir a Plugins > Agregar nuevo
 
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/08/install_plugin1.png "Add New Plugin")
 
@@ -35,7 +35,7 @@ Buscar "Culqi", instalar y activar
 
 ## Credenciales de Culqi ##
 
-Debes registrarte en [https://www.culqi.com](https://www.culqi.com) y luego accedes al panel de integración. Una vez ahi, irás a Desarrollo > ApiKey y así obtendrás tus credenciales:
+Debes registrarte en [https://www.culqi.com](https://www.culqi.com) y luego acceder al panel de integración. Una vez ahi, irás a Desarrollo > ApiKey y así obtendrás tus credenciales:
 
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2019/04/apikey.png "Credenciales Culqi")
 
@@ -48,16 +48,29 @@ Cuando actives el plugin, éste te redireccionará a una página de bienvenida d
 
 ## Página de Configuración ##
 
-Una vez llenado todo correctamente, al presionar "Guardar", éste le enviará a la página de configuración del plugin y empezará a sincronizar los pagos automáticamente.
+Una vez llenado todo correctamente, al presionar "Guardar", éste le enviará a la página de configuración del plugin.
 
-![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/settings.jpg "Configure you Settings page")
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2021/03/base_2_settings.jpg "Configure you Settings page")
 
+## Servicios y Sincronización ##
 
-## Pasarela Culqi para Woocommerce ##
+### Cargos ###
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2021/03/base_3_charges.jpg "Charges List")
 
-Si activaste el método de pago, debes ir a configurarlo.
+### Ordenes ( PagoEfectivo ) ###
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2021/03/base_4_orders.jpg "Order List")
 
-![Alt text](https://www.letsgodev.com/wp-content/uploads/2015/07/woo2.jpg "Woocommerce Payment")
+### Clientes ###
+
+El plugin registrará a los clientes en Culqi sólo si el comprador esta logueado en la tienda.
+
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2021/03/base_5_customers.jpg "Customer List")
+
+## Popup de Culqi para WooCommerce ##
+
+Tienes activada la pasarela de pago para WooCommerce y sólo debes ir a personalizarlo.
+
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2021/03/base_6_wc.jpg "WooCommerce Payment")
 
 
 ## Log de transacciones ##
@@ -89,11 +102,11 @@ Podrás hacer reembolsos usando la API de Culqi con un sólo click, además de r
 ![Alt text](https://www.letsgodev.com/wp-content/uploads/2020/06/woo_refund.jpg "Refund")
 
 
-## Multipagos - Configurar Evento ##
+## Webhooks - Ordenes ( PagoEfectivo ) ##
 
 Puedes habilitar Multipagos en la sección de configuración de la pasarela de pago Culqi. Cada vez que se genera una orden de pago, le llegará al cliente un email con el CIP de pago.
 
-![Alt text](https://www.letsgodev.com/wp-content/uploads/2020/06/webhook_settings.jpg "Multipagos")
+![Alt text](https://www.letsgodev.com/wp-content/uploads/2021/03/base_7_webhook.jpg "Multipagos")
 
 
 Cuando el cliente page su código CIP, Culqi avisará al comercio mediante un `evento` el cual debemos configurar: para ello, debemos entrar al panel de Culqi e ir a la sección de `eventos` y al submenu de `webhooks`. Finalmente le damos click al botón `Añadir` que está arriba a la derecha.
@@ -102,7 +115,11 @@ Cuando el cliente page su código CIP, Culqi avisará al comercio mediante un `e
 
 
 Debes elegir el evento : `order.status.changed`
-y la URL que debes poner está en la configuración de la pasarela de pago Culqi para Woocommerce: `URL del Webhook`
+y la URL que debes poner está en la sección Webhooks del plugin.
+
+```
+https://{tuweb}/fullculqi-api/webhooks
+```
 
 
 ## Problemas Comunes desde el servicio de Culqi ##
