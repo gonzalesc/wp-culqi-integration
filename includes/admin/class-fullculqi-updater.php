@@ -115,6 +115,11 @@ class FullCulqi_Updater {
 				// Delete || New values
 				update_post_meta( $post->ID, 'culqi_basic', $basic );
 
+				// Status
+				$status = get_post_meta( $post->ID, 'culqi_status', true );
+				if( empty( $status ) )
+					update_post_meta( $post->ID, 'culqi_status', 'captured' );
+
 				// Change the CPT
 				wp_update_post( [ 'ID' => $post->ID, 'post_type' => 'culqi_charges' ] );
 
