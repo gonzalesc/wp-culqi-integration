@@ -114,6 +114,7 @@ class FullCulqi_Customers {
 			return false;
 
 		return [
+			'wpuser_id'	=> $wpuser_id,
 			'culqi_id'	=> $culqi_customer_id,
 			'post_id'	=> $post_id
 		];
@@ -140,6 +141,7 @@ class FullCulqi_Customers {
 		if( $posts ) {
 			foreach( $posts as $post ) {
 				return [
+					'wpuser_id' => get_post_meta( $post->ID, 'culqi_wp_user_id', true ),
 					'culqi_id'	=> get_post_meta( $post->ID, 'culqi_id', true ),
 					'post_id'	=> $post->ID,
 				];

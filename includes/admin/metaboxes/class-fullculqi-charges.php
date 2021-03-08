@@ -143,10 +143,12 @@ class FullCulqi_Metaboxes_Charges extends FullCulqi_Metaboxes {
 	
 				$class = fullculqi_class_from_status( $status, 'charges' );
 
-				$value = sprintf(
-					'<mark class="metabox_badged %s"><span>%s</span></mark>',
-					$class, $statuses[$status]
-				);
+				if( ! empty( $status ) && isset( $statuses[$status] ) ) {
+					$value = sprintf(
+						'<mark class="metabox_badged %s"><span>%s</span></mark>',
+						$class, $statuses[$status]
+					);
+				}
 
 				break;
 		}
