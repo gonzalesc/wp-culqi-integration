@@ -35,22 +35,24 @@
 				<?php do_action( 'fullculqi/charges/basic/print_data', $post_id ); ?>
 			</ul>
 			<?php
-				printf(
-					'<mark class="metabox_badged %s"><span>%s</span></mark>',
-					$status_class, $statuses[$status]
-				);
-
-				if( $status == 'captured' || $status == 'authorized' ) {
-					echo '&nbsp';
-
+				if( ! empty( $status ) && isset( $statuses[$status] ) ) {
 					printf(
-						'<a href="" id="culqi_refunds" class="metabox_simple_link" data-post="%d">%s</a>',
-						$post_id, esc_html__( 'Refund Charge', 'fullculqi' )
+						'<mark class="metabox_badged %s"><span>%s</span></mark>',
+						$status_class, $statuses[$status]
 					);
 
-					echo '&nbsp';
+					if( $status == 'captured' || $status == 'authorized' ) {
+						echo '&nbsp';
 
-					echo '<span id="culqi_refunds_notify"></span>';
+						printf(
+							'<a href="" id="culqi_refunds" class="metabox_simple_link" data-post="%d">%s</a>',
+							$post_id, esc_html__( 'Refund Charge', 'fullculqi' )
+						);
+
+						echo '&nbsp';
+
+						echo '<span id="culqi_refunds_notify"></span>';
+					}
 				}
 			?>
 			<?php do_action( 'fullculqi/layout_basic/status' ); ?>
