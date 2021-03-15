@@ -10,130 +10,80 @@ class FullCulqi_Updater {
 	 * Construct
 	 */
 	public function __construct() {
-		
-		// Check available updates
-		add_action( 'admin_notices', [ $this, 'check_available_updates' ] );
 
-		// Process available updates
-		add_action( 'wp_ajax_update_2_0_0', [ $this, 'process_update_2_0_0' ] );
+		// Error messages
+		add_action( 'admin_notices', [ $this, 'updater_notices' ] );
 	}
 
+
 	/**
-	 * Chec Available Updates
+	 * Deactivate plugins
 	 * @return mixed
 	 */
-	public function check_available_updates() {
-		$plugin = get_file_data( FULLCULQI_FILE, [ 'Version' => 'Version' ] );
+	public function updater_notices() {
 
-		// Compare version 2.0.0
-		if( version_compare( $plugin['Version'], '2.0.0', '>=' ) &&
-			! get_option( 'fullculqi_2_0_0_updated', false ) ) {
+		// Check if the Culqi CC plugin is activated
+		$is_cc_activated = is_plugin_active( 'wp-culqi-integration-creditcard/index.php' );
+		$is_cc_version = defined( 'FULLCULQI_CC_VERSION' ) && version_compare( FULLCULQI_CC_VERSION, '2.0.0', '<' );
 
-			// Check if it has posts
-			$count_posts = wp_count_posts( 'culqi_charges' );
-			
-			if( isset( $count_posts->publish ) && $count_posts->publish == 0 )
-				$this->screen_update_2_0_0();
-			else
-				update_option( 'fullculqi_2_0_0_updated', true );
-		}
-			
-	}
+		if( $is_cc_activated && $is_cc_version ) {
+			$args_cc = [
+				'title'		=> esc_html__( 'Culqi One Click update required', 'fullculqi' ),
+				'content'	=> esc_html__( 'Currently, the Culqi One Click plugin is activated, please update it to 2.0.0 version', 'fullculqi' ),
+				'class_title'	=> 'notice-title',
+				'class_box'		=> 'notice notice-error',
+			];
 
-	/**
-	 * Screen box 2.0.0
-	 * @return html
-	 */
-	public function screen_update_2_0_0() {
-
-		$args = [
-			'title'		=> esc_html__( 'Culqi Integration update required', 'fullculqi' ),
-			'content'	=> esc_html__( 'Culqi Integration plugin has been updated to 2.0.0 version! To keep things running smoothly, we have to update your database to the newest version', 'fullculqi' ),
-			'text_button'	=> esc_html__( 'Continue', 'fullculqi' ),
-			'link_button'	=> add_query_arg([
-					'action'	=> 'update_2_0_0',
-					'wpnonce'	=> wp_create_nonce( 'fullculqi-wpnonce' ),
-					'return'	=> urlencode( fullculqi_get_current_admin_url() ),
-				],
-				admin_url( 'admin-ajax.php' )
-			),
-			'class_title'	=> 'notice-title',
-			'class_box'		=> 'notice notice-warning notice-large',
-			'class_button'	=> 'button button-primary',
-			'version'		=> '2.0.0',
-		];
-
-		fullculqi_get_template( 'resources/layouts/admin/notice-box.php', $args );
-	}
-
-
-
-	/**
-	 * Upgrade to 2.0.0 or higher
-	 * @return mixed
-	 */
-	public function process_update_2_0_0() {
-
-		// Run a security check.
-		check_ajax_referer( 'fullculqi-wpnonce', 'wpnonce' );
-
-		// Check the permissions
-		if( ! current_user_can( 'manage_options' ) )
-			return;
-	
-		// Chek if this version was updated
-		if( get_option( 'fullculqi_2_0_0_updated', false ) )
-			return;
-
-		// Return to URL
-		$return = isset( $_GET['return'] ) ? urldecode( $_GET['return'] ) : admin_url();
-
-		// Charges
-		$args = [
-			'post_type'		=> 'culqi_payments',
-			'numberposts'	=> -1,
-		];
-
-		$posts = get_posts( $args );
-
-		if( $posts ) {
-
-			foreach( $posts as $post ) {
-				
-				// Get			
-				$basic = get_post_meta( $post->ID, 'culqi_basic', true );
-
-				// Update
-				update_post_meta( $post->ID, 'culqi_creation_date', $basic['culqi_creation'] );
-
-				// Process
-				unset( $basic['culqi_creation'] );
-				unset( $basic['culqi_card_brand'] );
-				unset( $basic['culqi_card_type'] );
-				unset( $basic['culqi_card_number'] );
-
-				// Delete || New values
-				update_post_meta( $post->ID, 'culqi_basic', $basic );
-
-				// Status
-				$status = get_post_meta( $post->ID, 'culqi_status', true );
-				if( empty( $status ) )
-					update_post_meta( $post->ID, 'culqi_status', 'captured' );
-
-				// Change the CPT
-				wp_update_post( [ 'ID' => $post->ID, 'post_type' => 'culqi_charges' ] );
-
-				// Modify by 3rd parties
-				do_action( 'fullculqi/update/2_0_0/charges', $post->ID );
-			}
+			fullculqi_get_template( 'resources/layouts/admin/notice-box.php', $args_cc );
 		}
 
-		do_action( 'fullculqi/update/2_0_0/after' );
 
-		update_option( 'fullculqi_2_0_0_updated', true );
+		// Check if the Culqi Subscription plugin is activated
+		$is_subs_activated = is_plugin_active( 'wp-culqi-integration-subscription/index.php' );
+		$is_subs_version = defined( 'FULLCULQI_VERSION' ) && version_compare( FULLCULQI_VERSION, '2.0.0', '<' );
 
-		wp_redirect( $return );
-		die();
+		if( $is_subs_activated && $is_subs_version ) {
+			$args_subs = [
+				'title'		=> esc_html__( 'Culqi Subscription update required', 'fullculqi' ),
+				'content'	=> esc_html__( 'Currently, the Culqi Subscription plugin is activated, please update it to 2.0.0 version', 'fullculqi' ),
+				'class_title'	=> 'notice-title',
+				'class_box'		=> 'notice notice-error',
+			];
+			
+			fullculqi_get_template( 'resources/layouts/admin/notice-box.php', $args_subs );
+		}
+
+
+		// Check if the Culqi Button Subs plugin is activated
+		$is_bt_activated = is_plugin_active( 'wp-culqi-integration-button/index.php' );
+		$is_bt_version = defined( 'FULLCULQI_BT_VERSION' ) && version_compare( FULLCULQI_BT_VERSION, '2.0.0', '<' );
+
+		if( $is_bt_activated && $is_bt_version ) {
+			$args_bt = [
+				'title'		=> esc_html__( 'Culqi Button update required', 'fullculqi' ),
+				'content'	=> esc_html__( 'Currently, the Culqi Button plugin is activated, please update it to 2.0.0 version', 'fullculqi' ),
+				'class_title'	=> 'notice-title',
+				'class_box'		=> 'notice notice-error',
+			];
+			
+			fullculqi_get_template( 'resources/layouts/admin/notice-box.php', $args_bt );
+		}
+
+
+		// Check if the Culqi Deferred Payment plugin is activated
+		$is_df_activated = is_plugin_active( 'wp-culqi-integration-capture/index.php' );
+		$is_df_version = defined( 'FULLCULQI_DF_VERSION' ) && version_compare( FULLCULQI_DF_VERSION, '2.0.0', '<' );
+
+		if( $is_df_activated && $is_df_version ) {
+			$args_bt = [
+				'title'		=> esc_html__( 'Culqi Deferred Payment update required', 'fullculqi' ),
+				'content'	=> esc_html__( 'Currently, the Culqi Deferred Payment plugin is activated, please update it to 2.0.0 version', 'fullculqi' ),
+				'class_title'	=> 'notice-title',
+				'class_box'		=> 'notice notice-error',
+			];
+			
+			fullculqi_get_template( 'resources/layouts/admin/notice-box.php', $args_bt );
+		}
 	}
 }
 

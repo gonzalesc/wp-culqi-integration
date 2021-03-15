@@ -109,6 +109,7 @@ class FullCulqi {
 		
 		if( is_admin() ) {
 			require_once FULLCULQI_DIR . 'includes/admin/class-fullculqi-updater.php';
+			require_once FULLCULQI_DIR . 'includes/admin/class-fullculqi-upgrader.php';
 			require_once FULLCULQI_DIR . 'includes/admin/class-fullculqi-settings.php';
 			require_once FULLCULQI_DIR . 'includes/admin/class-fullculqi-welcome.php';
 			

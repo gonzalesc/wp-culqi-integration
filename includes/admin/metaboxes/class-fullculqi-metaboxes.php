@@ -107,6 +107,11 @@ abstract class FullCulqi_Metaboxes {
 	}
 
 
+	/**
+	 * Sort list posts by meta value
+	 * @param  [type] $wp_query
+	 * @return mixed
+	 */
 	public function sort_by_field( $wp_query ) {
 
 		// If WP-Admin
@@ -115,6 +120,12 @@ abstract class FullCulqi_Metaboxes {
 
 		// Post Type
 		if( ! isset( $wp_query->query['post_type'] ) || $wp_query->query['post_type'] != $this->post_type )
+			return;
+
+		global $pagenow;
+
+		// Only in the table posts
+		if( $pagenow != 'edit.php' )
 			return;
 
 		// orderby value can be any column name

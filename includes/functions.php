@@ -293,3 +293,16 @@ function fullculqi_get_current_admin_url() {
 
 	return remove_query_arg( array( '_wpnonce', '_wc_notice_nonce', 'wc_db_update', 'wc_db_update_nonce', 'wc-hide-notice' ), admin_url( $uri ) );
 }
+
+
+/**
+	Depreciate Functions
+ */
+function fullculqi_get_woo_settings() {
+
+	$settings = fullculqi_get_settings();
+
+	$method = get_option('woocommerce_fullculqi_settings', []);
+
+	return apply_filters('fullculqi/global/get_woo_settings', $method);
+}
