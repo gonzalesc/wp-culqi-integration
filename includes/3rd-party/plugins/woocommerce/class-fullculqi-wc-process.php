@@ -245,7 +245,7 @@ class FullCulqi_WC_Process {
 
 				$error = sprintf(
 					esc_html__( 'Culqi Charge Error: %s', 'fullculqi' ),
-					$culqi_customer['data']
+					$culqi_charge['data']
 				);
 
 				self::$log->set_notice( $error );

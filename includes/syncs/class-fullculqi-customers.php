@@ -92,6 +92,7 @@ class FullCulqi_Customers {
 
 		if( ! empty( $culqi_customer_id ) && ! empty( $post_customer_id ) ) {
 			return [
+				'wpuser_id'	=> $wpuser_id,
 				'culqi_id'	=> $culqi_customer_id,
 				'post_id'	=> $post_customer_id
 			];
