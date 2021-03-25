@@ -267,6 +267,27 @@ function fullculqi_post_from_meta( $meta_key = '', $meta_value = '' ) {
 	return apply_filters( 'fullculqi/post_from_meta', $post_id, $meta_key, $meta_value );
 }
 
+/**
+ * Get UserId from MetaValues
+ * @param  string $meta_key
+ * @param  string $meta_value
+ * @return integer
+ */
+function fullculqi_user_from_meta( $meta_key = '', $meta_value = '' ) {
+
+	if( empty( $meta_key ) )
+		return false;
+
+	global $wpdb;
+
+	$query = 'SELECT user_id FROM '.$wpdb->usermeta.' WHERE meta_key=%s && meta_value=%s LIMIT 1';
+	$query = $wpdb->prepare( $query, $meta_key, $meta_value );
+	
+	$post_id = $wpdb->get_var( $query );
+
+	return apply_filters( 'fullculqi/user_from_meta', $post_id, $meta_key, $meta_value );
+}
+
 
 /**
  * Apply esc_html recursive

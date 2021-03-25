@@ -134,7 +134,12 @@ class FullCulqi_Customers {
 		$args = [
 			'post_type'		=> 'culqi_customers',
 			'post_status'	=> 'publish',
-			'culqi_email'	=> $email,
+			'meta_query'	=> [[
+					'key'		=> 'culqi_email',
+					'value'		=> $email,
+					'compare'	=> '=',
+				]
+			]
 		];
 
 		$posts = get_posts( $args );
@@ -229,14 +234,21 @@ class FullCulqi_Customers {
 
 		update_post_meta( $post_id, 'culqi_basic', $basic );
 
-		// Get WPUser
-		$user = get_user_by( 'email', $customer->email );
+		if( has_action( 'fullculqi/customers/link_to_email' ) ) {
 
-		if( $user ) {
-			update_post_meta( $post_id, 'culqi_wp_user_id', $user->ID );
-			
-			update_user_meta( $user->ID, '_culqi_customer_id', $customer->id );
-			update_user_meta( $user->ID, '_post_customer_id', $post_id );
+			do_action( 'fullculqi/customers/link_to_email', $customer, $post_id );
+
+		} else {
+
+			// Get WPUser
+			$user = get_user_by( 'email', $customer->email );
+
+			if( $user ) {
+				update_post_meta( $post_id, 'culqi_wp_user_id', $user->ID );
+				
+				update_user_meta( $user->ID, '_culqi_customer_id', $customer->id );
+				update_user_meta( $user->ID, '_post_customer_id', $post_id );
+			}
 		}
 
 		do_action( 'fullculqi/customers/wppost', $customer, $post_id );

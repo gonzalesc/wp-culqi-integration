@@ -217,6 +217,8 @@ class FullCulqi_WC_Process {
 
 			if( ! empty( $billing_phone ) )
 				$antifraud_charges['phone_number'] = $billing_phone;
+
+
 			
 
 			// Metadata Order

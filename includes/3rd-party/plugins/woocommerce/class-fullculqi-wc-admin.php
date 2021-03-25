@@ -22,6 +22,7 @@ class FullCulqi_WC_Admin {
 
 		// Create WPPost
 		add_action( 'fullculqi/charges/sync/loop', [ $this, 'link_to_wc_orders' ], 10, 2 );
+		add_action( 'fullculqi/customers/link_to_email', [ $this, 'link_to_wc_email' ], 10, 2 );
 
 		// Ajax Refund
 		//add_action( 'fullculqi/refunds/create/args', [ $this, 'create_refund_args' ], 10, 2 );
@@ -132,7 +133,7 @@ class FullCulqi_WC_Admin {
 
 	/**
 	 * Link Charge to WC Orders
-	 * @param  object  $charge
+	 * @param  Culqi Object  $charge
 	 * @param  integer $post_id
 	 * @return mixed
 	 */
@@ -164,6 +165,33 @@ class FullCulqi_WC_Admin {
 		// WC Order - Charge
 		update_post_meta( $order->get_id(), '_culqi_charge_id', $charge->id );
 		update_post_meta( $order->get_id(), '_post_charge_id', $post_id );
+
+		return true;
+	}
+
+
+	/**
+	 * [link_to_wc_email description]
+	 * @param  Culqi Object  $customer
+	 * @param  integer $post_id
+	 * @return mixed
+	 */
+	public function link_to_wc_email( $customer, $post_id = 0 ) {
+
+		$user_id = fullculqi_user_from_meta( 'billing_email', $customer->email );
+
+		if( empty( $user_id ) ) {
+			$user = get_user_by( 'email', $customer->email );
+
+			if( empty( $user ) )
+				return;
+
+			$user_id = $user->ID;
+		}
+
+		update_post_meta( $post_id, 'culqi_wp_user_id', $user_id );
+		update_user_meta( $user_id, '_culqi_customer_id', $customer->id );
+		update_user_meta( $user_id, '_post_customer_id', $post_id );
 
 		return true;
 	}
