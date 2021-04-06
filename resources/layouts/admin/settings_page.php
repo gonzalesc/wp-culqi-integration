@@ -7,6 +7,9 @@
 		// This prints out all hidden setting fields
 		settings_fields( 'fullculqi_group' );
 		do_settings_sections( 'fullculqi_page' );
+
+		do_action( 'fullculqi/settings/section' );
+
 		submit_button(); 
 	?>
 	</form>

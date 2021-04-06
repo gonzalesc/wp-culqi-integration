@@ -264,11 +264,12 @@ class FullCulqi_Settings {
 	public function settings_sanitize( $inputs = [] ) {
 
 		$default = fullculqi_get_default();
-		$settings = array_map( 'sanitize_text_field', $inputs );
 
 		foreach( $default as $key => $value) {
-			if( ! isset( $settings[$key] ) || empty( $settings[$key] ) )
-				$settings[$key] = $default[$key];	
+			if( ! isset( $inputs[$key] ) || empty( $inputs[$key] ) )
+				$settings[$key] = $default[$key];
+			else
+				$settings[$key] = is_array( $inputs[$key] ) ? array_map( 'sanitize_text_field', $inputs[$key] ) : sanitize_text_field( $inputs[$key] );
 		}
 
 		return $settings;

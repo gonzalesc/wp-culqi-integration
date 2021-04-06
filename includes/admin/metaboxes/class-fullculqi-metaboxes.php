@@ -53,6 +53,11 @@ abstract class FullCulqi_Metaboxes {
 				FULLCULQI_URL . 'resources/assets/css/admin-metaboxes.css'
 			);
 
+			wp_enqueue_style(
+				'fullculqi-css',
+				FULLCULQI_URL . 'resources/assets/css/tags.css'
+			);
+
 			// Loading Gif
 			$img_loading = sprintf(
 				'<img src="%s" style="width: auto;" />',
