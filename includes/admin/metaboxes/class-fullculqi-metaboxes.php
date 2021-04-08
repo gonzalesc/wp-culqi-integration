@@ -49,12 +49,12 @@ abstract class FullCulqi_Metaboxes {
 		if( $is_list || $is_edit ) {
 			
 			wp_enqueue_style(
-				'fullculqi-css',
+				'fullculqi-metaboxes-css',
 				FULLCULQI_URL . 'resources/assets/css/admin-metaboxes.css'
 			);
 
 			wp_enqueue_style(
-				'fullculqi-css',
+				'fullculqi-tags-css',
 				FULLCULQI_URL . 'resources/assets/css/tags.css'
 			);
 

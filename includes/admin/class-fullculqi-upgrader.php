@@ -32,7 +32,7 @@ class FullCulqi_Upgrader {
 			// Check if it has posts
 			$count_posts = wp_count_posts( 'culqi_charges' );
 			
-			if( isset( $count_posts->publish ) && $count_posts->publish == 0 )
+			if( isset( $count_posts->publish ) && $count_posts->publish > 0 )
 				$this->screen_upgrade_2_0_0();
 			else
 				update_option( 'fullculqi_2_0_0_upgraded', true );
