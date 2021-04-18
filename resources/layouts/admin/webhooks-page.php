@@ -3,7 +3,7 @@
 
 	<p>
 		<?php esc_html_e('You will be able to see the last 25 notifications from Culqi. ','fullculqi'); ?>
-		<a href="" target="_blank">
+		<a href="https://blog.letsgodev.com/tips-es/usando-los-webhooks-de-culqi-en-wordpress/" target="_blank">
 			<?php esc_html_e( 'What is a webhook? How can I use it?', 'fullculqi' ); ?>
 		</a>
 	</p>

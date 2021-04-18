@@ -14,14 +14,13 @@ Podrás hacer pagos desde Woocommerce usando el servicio de Culqi, además de re
 
 == Description ==
 
-Culqi Integracion te permite sincronizar todos los pagos con tu Wordpress.
+Culqi Integracion te permite sincronizar todos los pagos, ordenes y clientes con tu WordPress.
 
 Con este plugin podrás:
 
-* Sincronizar los pagos desde Culqi con un click.
 * Administrar los cargos
 * Administrar las ordenes ( PagoEfectivo )
-* Administrar los compradores
+* Administrar los clientes
 * Si usas WooCommerce podrás activar el popup de Culqi como método de pago.
 * Hacer reembolsos con un click desde algún pedido de WooCommerce
 * Tener un log de actividades de Culqi para cada pedido de WooCommerce.
@@ -48,11 +47,12 @@ Con este plugin podrás:
 >
 > Mira la **nueva versión premium** disponible en ([https://www.letsgodev.com/product/wordpress-culqi-integracion-subscripciones/](http://bit.ly/2UZO7j9))
 >
-> * Permite sincronizar con planes y suscripciones.
+> * Permite sincronizar planes y suscripciones desde Culqi con un click.
 > * Permite crear y borrar planes.
 > * Permite crear productos con pagos recurrentes.
 > * Podrás relacionar uno o varios productos con un plan de pago de Culqi.
 > * Podras usar la pasarela de pago de WooCommerce para pagos recurrentes.
+> * Podrás restringir contenido de acuerdo al tipo de suscripción.
 > * Soporte Premium
 >
 
