@@ -11,7 +11,7 @@ Developer URI: https://vcard.gonzalesc.org/
 Text Domain: culqi, woocommerce, method payment
 Requires at least: 5.4
 Tested up to: 5.7.1
-Stable tag: 5.2
+Stable tag: 5.4
 Requires PHP: 5.6
 WC requires at least: 4.9.0
 WC tested up to: 5.2.2
