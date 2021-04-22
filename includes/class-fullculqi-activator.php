@@ -34,7 +34,7 @@ class fullculqi_Activator {
 	public static function set_capabilities() {
 		$administrator = get_role( 'administrator' );
 	
-		$admin_caps = apply_filters( 'fullculqi/charges/set_capabilities', [
+		$admin_caps = apply_filters( 'fullculqi/set_capabilities', [
 			//'delete_charges',
 			//'delete_others_charges',
 			//'delete_published_charges',

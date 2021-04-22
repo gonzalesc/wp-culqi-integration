@@ -29,8 +29,8 @@ class FullCulqi_Upgrader {
 		if( version_compare( $plugin['Version'], '2.0.0', '>=' ) &&
 			! get_option( 'fullculqi_2_0_0_upgraded', false ) ) {
 
-			// Check if it has posts
-			$count_posts = wp_count_posts( 'culqi_charges' );
+			// Check if it has payments
+			$count_posts = wp_count_posts( 'culqi_payments' );
 			
 			if( isset( $count_posts->publish ) && $count_posts->publish > 0 )
 				$this->screen_upgrade_2_0_0();
@@ -48,7 +48,7 @@ class FullCulqi_Upgrader {
 
 		$args = [
 			'title'		=> esc_html__( 'Culqi Integration update required', 'fullculqi' ),
-			'content'	=> esc_html__( 'Culqi Integration plugin has been updated to 2.0.0 version! To keep things running smoothly, we have to update your database to the newest version', 'fullculqi' ),
+			'content'	=> esc_html__( 'Culqi Integration plugin has been updated to 2.x.x version! To keep things running smoothly, we have to update your database to the newest version', 'fullculqi' ),
 			'text_button'	=> esc_html__( 'Continue', 'fullculqi' ),
 			'link_button'	=> add_query_arg([
 					'action'	=> 'upgrade_2_0_0',
@@ -84,6 +84,9 @@ class FullCulqi_Upgrader {
 		// Chek if this version was updated
 		if( get_option( 'fullculqi_2_0_0_upgraded', false ) )
 			return;
+
+		// Set permission
+		$this->set_capabilities();
 
 		// Return to URL
 		$return = isset( $_GET['return'] ) ? urldecode( $_GET['return'] ) : admin_url();
@@ -134,6 +137,36 @@ class FullCulqi_Upgrader {
 
 		wp_redirect( $return );
 		die();
+	}
+
+
+	/**
+	 * Set Permission to Admin
+	 */
+	private function set_capabilities() {
+		$administrator = get_role( 'administrator' );
+	
+		$admin_caps = apply_filters( 'fullculqi/set_capabilities', [		
+			'edit_others_charges',
+			'edit_charges',
+			'edit_published_charges',
+			'publish_charges',
+
+			'edit_others_orders',
+			'edit_orders',
+			'edit_published_orders',
+			'publish_orders',
+
+			'edit_others_customers',
+			'edit_customers',
+			'edit_published_customers',
+			'publish_customers',
+		] );
+	
+		foreach( $admin_caps as $cap )
+			$administrator->add_cap( $cap );
+
+		return true;
 	}
 }
 
