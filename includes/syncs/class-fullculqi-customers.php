@@ -30,6 +30,17 @@ class FullCulqi_Customers {
 			return [ 'status' => 'error', 'data' => $customers->merchant_message ];
 
 
+		// Empty data
+		if( isset( $customers->data ) && empty( $customers->data ) ) {
+			return [
+				'status'	=> 'ok',
+				'data'		=> [
+					'after_id'	=> null,
+				]
+			];
+		}
+
+
 		global $wpdb;
 
 		$query = 'SELECT
@@ -72,7 +83,6 @@ class FullCulqi_Customers {
 		return [
 			'status'	=> 'ok',
 			'data'		=> [
-				'remaining' => $customers->paging->remaining_items,
 				'after_id'	=> $customers->paging->cursors->after,
 			]
 		];

@@ -19,8 +19,6 @@ class FullCulqi_Charges {
 		if( ! empty( $after_id ) )
 			$params[ 'after' ] = $after_id;
 
-		update_option('kono_1', print_r($params,true));
-
 		// Connect to the API Culqi
 		try {
 			$charges = $culqi->Charges->all( $params );
@@ -30,10 +28,18 @@ class FullCulqi_Charges {
 			return [ 'status' => 'error', 'data' => $e->getMessage() ];
 		}
 
-
-
 		if( isset( $charges->object ) && $charges->object == 'error' )
 			return [ 'status' => 'error', 'data' => $charges->merchant_message ];
+
+		// Empty data
+		if( isset( $charges->data ) && empty( $charges->data ) ) {
+			return [
+				'status'	=> 'ok',
+				'data'		=> [
+					'after_id'	=> null,
+				]
+			];
+		}
 
 		global $wpdb;
 
@@ -78,7 +84,6 @@ class FullCulqi_Charges {
 		return [
 			'status'	=> 'ok',
 			'data'		=> [
-				'remaining' => $charges->paging->remaining_items,
 				'after_id'	=> $charges->paging->cursors->after,
 			]
 		];

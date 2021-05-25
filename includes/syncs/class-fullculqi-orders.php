@@ -29,6 +29,15 @@ class FullCulqi_Orders {
 		if( isset( $culqi_orders->object ) && $culqi_orders->object == 'error' )
 			return [ 'status' => 'error', 'data' => $culqi_orders->merchant_message ];
 
+		// Empty data
+		if( isset( $culqi_orders->data ) && empty( $culqi_orders->data ) ) {
+			return [
+				'status'	=> 'ok',
+				'data'		=> [
+					'after_id'	=> null,
+				]
+			];
+		}
 
 		global $wpdb;
 
@@ -72,7 +81,6 @@ class FullCulqi_Orders {
 		return [
 			'status'	=> 'ok',
 			'data'		=> [
-				'remaining' => $culqi_orders->paging->remaining_items,
 				'after_id'	=> $culqi_orders->paging->cursors->after,
 			]
 		];
