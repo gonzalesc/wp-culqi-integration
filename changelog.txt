@@ -1,3 +1,6 @@
+2021-05-25 - version 2.0.3
+Fix: sync to Culqi entities
+
 2021-03-03 - version 2.0.2
 * Fix: fix: upgrade process
 
