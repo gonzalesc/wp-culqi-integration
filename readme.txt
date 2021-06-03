@@ -151,6 +151,15 @@ Necesitamos validar si el servicio de Culqi está disponible, para ello te sugie
 
 == Changelog ==
 
+= 2.0.4 =
+* Fix: check if the product class exists
+
+= 2.0.3 =
+* Fix: sync to Culqi entities
+
+= 2.0.2 =
+* Fix: fix: upgrade process
+
 = 2.0.0 =
 * Feature: new structure
 * Feature: new webhook section
