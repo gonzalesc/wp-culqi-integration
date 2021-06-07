@@ -76,6 +76,19 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 			$this->multipayment = apply_filters( 'fullculqi/method/disabled_multipayments', false, $order, 'order') ? 'no' : $this->multipayment;
 
 			$this->installments = apply_filters( 'fullculqi/method/disabled_installments', false, $order, 'order') ? 'no' : $this->installments;
+
+
+			// Description
+			$pnames = [];
+
+			foreach( $order->get_items() as $item ) {
+				$product = $item->get_product();
+
+				if( $product && method_exists( $product, 'get_name' ) )
+					$pnames[] = $product->get_name();
+			}
+
+			$desc = count( $pnames ) == 0 ? 'Product' : implode(', ', $pnames);
 			
 
 			// Check if there is multipayment
@@ -100,17 +113,6 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 
 					if( ! empty( $billing_phone ) )
 						$client_details['phone_number'] = $billing_phone;
-
-
-					// Description
-					$pnames = [];
-
-					foreach( $order->get_items() as $item ) {
-						$product = $item->get_product();
-						$pnames[] = $product->get_name();
-					}
-
-					$desc = count( $pnames ) == 0 ? 'Product' : implode(', ', $pnames);
 
 					$args_order = apply_filters( 'fullculqi/orders/create/args', [
 						'amount'			=> fullculqi_format_total( $order->get_total() ),
@@ -141,13 +143,6 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 						// Save meta order
 						update_post_meta( $order->get_id(), '_culqi_order_id', $culqi_order_id );
 
-						// Log
-						/*$notice = sprintf(
-							esc_html__( 'Culqi Multipayment Created : %s', 'fullculqi' ),
-							$culqi_order_id
-						);
-						$log->set_notice( $notice );*/
-
 					} else {
 						$error = sprintf(
 							esc_html__( 'Culqi Multipayment Error: %s', 'fullculqi' ),
@@ -158,18 +153,7 @@ class WC_Gateway_FullCulqi extends WC_Payment_Gateway {
 				}
 			}
 
-			// Description
-			$pnames = [];
-
-			foreach( $order->get_items() as $item ) {
-				$product = $item->get_product();
-
-				if( $product && method_exists( $product, 'get_name' ) )
-					$pnames[] = $product->get_name();
-			}
-
-			$desc = count( $pnames ) == 0 ? 'Product' : implode( ', ', $pnames );
-			
+		
 			$js_library		= 'https://checkout.culqi.com/js/v3';
 			$js_checkout	= FULLCULQI_WC_URL . 'assets/js/wc-checkout.js';
 			$js_waitme		= FULLCULQI_WC_URL . 'assets/js/waitMe.min.js';
